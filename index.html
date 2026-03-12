@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teduh — Coffee & Space</title>
+  <meta name="description" content="Teduh is a specialty coffee café in Muar, offering café, wholesale, retail, and drip bag coffee." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    /* Fade-in utility */
+    .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: none; }
+    .nav-active { color: var(--ink) !important; }
+  </style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav>
+  <a class="nav-logo" href="#" data-page="home">
+    <!-- Replace the span below with: <img src="images/logo.png" alt="Teduh"> once you have your logo file -->
+    <img src="images/logo.png" alt="Teduh">
+  </a>
+  <ul class="nav-links">
+    <li><a href="#" data-page="home">Home</a></li>
+    <li><a href="#" data-page="menu">Menu</a></li>
+    <li><a href="#" data-page="shop">Shop</a></li>
+    <li><a href="#" data-page="about">About</a></li>
+    <li><a href="#" data-page="contact" class="btn-nav">Find Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<main>
+
+<!-- ============================================
+     HOME PAGE
+     ============================================ -->
+<div id="home" class="page">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-text fade-in">
+      <div class="hero-eyebrow">Specialty Coffee, Muar</div>
+      <h1 class="hero-headline">A place to<br><em>slow down.</em></h1>
+      <p class="hero-sub">Teduh is a space for coffee, conversation, and calm — where every cup is made with intention and every visit feels like home.</p>
+      <div class="hero-actions">
+        <a href="#" data-page="menu" class="btn-primary">View Menu</a>
+        <a href="#" data-page="about" class="btn-ghost">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-image fade-in">
+      <!-- Replace div below with: <img src="images/hero.jpg" alt="Teduh café interior" class="hero-image-main"> -->
+      <img src="images/hero.jpg" alt="Teduh café interior" class="hero-image-main">
+      <div class="hero-image-badge">
+        <div class="badge-num">90<span style="font-size:1.4rem">kg</span></div>
+        <div class="badge-label">Roasted Monthly</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Strip -->
+  <div class="features-strip">
+    <div class="features-grid">
+      <div class="feature-item fade-in">
+        <div class="feature-icon">☕</div>
+        <div class="feature-title">Café</div>
+        <div class="feature-desc">Dine in and enjoy single-origin brews in a calm, thoughtful space.</div>
+      </div>
+      <div class="feature-item fade-in">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Wholesale</div>
+        <div class="feature-desc">Quality beans for businesses, restaurants, and fellow coffee lovers.</div>
+      </div>
+      <div class="feature-item fade-in">
+        <div class="feature-icon">🛍️</div>
+        <div class="feature-title">Retail</div>
+        <div class="feature-desc">Take home your favourite roasts — whole bean or ground to order.</div>
+      </div>
+      <div class="feature-item fade-in">
+        <div class="feature-icon">💧</div>
+        <div class="feature-title">Drip Bags</div>
+        <div class="feature-desc">Café-quality coffee anywhere. Easy, portable, and delicious.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <section class="intro-section">
+    <div class="intro-grid container">
+      <div class="intro-image-wrap fade-in">
+        <!-- Replace with: <img src="images/about-thumb.jpg" alt="Coffee being brewed" class="intro-image"> -->
+        <img src="images/about-thumb.jpg" alt="Coffee being brewed" class="intro-image">
+        <div class="intro-image-accent"></div>
+      </div>
+      <div class="intro-text fade-in">
+        <div class="section-label">Who We Are</div>
+        <h2 class="section-title">Built on craft,<br><em>rooted in place.</em></h2>
+        <p>Teduh started with a simple belief: that great coffee deserves a great space. We roast our own beans, brew with care, and welcome everyone who walks through our door.</p>
+        <p>Whether you're here for a quick espresso or a long afternoon with your laptop, Teduh is your spot.</p>
+        <a href="#" data-page="about" class="btn-ghost">Read our story →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Menu Preview -->
+  <section class="menu-preview">
+    <div class="container">
+      <div class="section-label">What We Brew</div>
+      <h2 class="section-title">Our Favourites</h2>
+      <div class="menu-preview-grid">
+        <div class="menu-card fade-in">
+          <div class="menu-card-tag">Espresso</div>
+          <div class="menu-card-name">Black Teduh</div>
+          <div class="menu-card-desc">Our house blend — balanced, smooth, with a hint of dark chocolate and caramel.</div>
+          <div class="menu-card-price">RM 8</div>
+        </div>
+        <div class="menu-card fade-in">
+          <div class="menu-card-tag">White</div>
+          <div class="menu-card-name">Flat White</div>
+          <div class="menu-card-desc">Silky microfoam over a double ristretto. Creamy, clean, no fuss.</div>
+          <div class="menu-card-price">RM 12</div>
+        </div>
+        <div class="menu-card fade-in">
+          <div class="menu-card-tag">Specialty</div>
+          <div class="menu-card-name">Cold Brew Tonic</div>
+          <div class="menu-card-desc">Slow-steeped cold brew over tonic water. Bright, effervescent, refreshing.</div>
+          <div class="menu-card-price">RM 16</div>
+        </div>
+      </div>
+      <div class="menu-preview-cta">
+        <button class="btn-outline-light" data-page="menu">See Full Menu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shop Preview -->
+  <section class="shop-preview">
+    <div class="container">
+      <div class="shop-header">
+        <div>
+          <div class="section-label">Take Home</div>
+          <h2 class="section-title">From Our <em>Shop</em></h2>
+        </div>
+        <a href="#" data-page="shop" class="btn-ghost">View all →</a>
+      </div>
+      <div class="shop-grid">
+        <div class="product-card fade-in">
+          <div class="product-img-wrap">
+            <!-- Replace with: <img src="images/product-drip.jpg" alt="Drip Coffee Bags" class="product-img"> -->
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Teduh Drip Bag Pack</div>
+          <div class="product-sub">10 sachets · House Blend</div>
+          <div class="product-price">RM 35</div>
+        </div>
+        <div class="product-card fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Single Origin Beans</div>
+          <div class="product-sub">250g · Ethiopia Yirgacheffe</div>
+          <div class="product-price">RM 48</div>
+        </div>
+        <div class="product-card fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Teduh Tote Bag</div>
+          <div class="product-sub">Canvas · Natural & Black</div>
+          <div class="product-price">RM 28</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /home -->
+
+
+<!-- ============================================
+     MENU PAGE
+     ============================================ -->
+<div id="menu" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="section-label">What We Serve</div>
+      <h1 class="section-title">Our Menu</h1>
+    </div>
+  </div>
+
+  <section class="menu-section">
+    <div class="container">
+
+      <div class="menu-category fade-in">
+        <h2 class="menu-category-title">Espresso</h2>
+        <div class="menu-items">
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Espresso</div>
+              <div class="menu-item-desc">Single or double shot. Our house blend.</div>
+            </div>
+            <div class="menu-item-price">RM 6 / 8</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Black Teduh</div>
+              <div class="menu-item-desc">Double shot, long black. Balanced and clean.</div>
+            </div>
+            <div class="menu-item-price">RM 8</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Cappuccino</div>
+              <div class="menu-item-desc">Equal parts espresso, steamed milk, and foam.</div>
+            </div>
+            <div class="menu-item-price">RM 11</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Flat White</div>
+              <div class="menu-item-desc">Double ristretto with silky microfoam.</div>
+            </div>
+            <div class="menu-item-price">RM 12</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Latte</div>
+              <div class="menu-item-desc">Smooth and creamy. Classic comfort.</div>
+            </div>
+            <div class="menu-item-price">RM 12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-category fade-in">
+        <h2 class="menu-category-title">Filter & Brews</h2>
+        <div class="menu-items">
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">V60 Pour Over</div>
+              <div class="menu-item-desc">Rotating single origins. Ask our barista what's on today.</div>
+            </div>
+            <div class="menu-item-price">RM 14</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Cold Brew</div>
+              <div class="menu-item-desc">Steeped 18 hours. Dark, smooth, low acidity.</div>
+            </div>
+            <div class="menu-item-price">RM 14</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Cold Brew Tonic</div>
+              <div class="menu-item-desc">Cold brew over tonic water with a citrus peel.</div>
+            </div>
+            <div class="menu-item-price">RM 16</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Aeropress</div>
+              <div class="menu-item-desc">Dense, complex, and full-bodied. Barista's method.</div>
+            </div>
+            <div class="menu-item-price">RM 13</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-category fade-in">
+        <h2 class="menu-category-title">Non-Coffee</h2>
+        <div class="menu-items">
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Matcha Latte</div>
+              <div class="menu-item-desc">Ceremonial grade matcha, steamed oat milk.</div>
+            </div>
+            <div class="menu-item-price">RM 14</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Hojicha</div>
+              <div class="menu-item-desc">Roasted green tea latte. Earthy and warm.</div>
+            </div>
+            <div class="menu-item-price">RM 13</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Sparkling Water</div>
+              <div class="menu-item-desc">Still or sparkling.</div>
+            </div>
+            <div class="menu-item-price">RM 5</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-category fade-in">
+        <h2 class="menu-category-title">Food</h2>
+        <div class="menu-items">
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Butter Croissant</div>
+              <div class="menu-item-desc">Freshly baked. Flaky, buttery, simple.</div>
+            </div>
+            <div class="menu-item-price">RM 8</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Pavlova</div>
+              <div class="menu-item-desc">Light meringue, seasonal fruit, fresh cream.</div>
+            </div>
+            <div class="menu-item-price">RM 16</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Pizza (Rotating)</div>
+              <div class="menu-item-desc">Ask us what's on today. Always freshly made.</div>
+            </div>
+            <div class="menu-item-price">From RM 22</div>
+          </div>
+          <div class="menu-item">
+            <div class="menu-item-left">
+              <div class="menu-item-name">Cheesecake (Rotating)</div>
+              <div class="menu-item-desc">Mocha, Strawberry Matcha, or Lemon — seasonal selection.</div>
+            </div>
+            <div class="menu-item-price">RM 14</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</div><!-- /menu -->
+
+
+<!-- ============================================
+     SHOP PAGE
+     ============================================ -->
+<div id="shop" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="section-label">Take Home Teduh</div>
+      <h1 class="section-title">Our Shop</h1>
+    </div>
+  </div>
+
+  <section class="shop-section">
+    <div class="container">
+      <div class="shop-full-grid">
+
+        <div class="product-card product-card-full fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Teduh Drip Bag — House Blend</div>
+          <div class="product-sub">10 sachets · Balanced & smooth</div>
+          <div class="product-price">RM 35</div>
+          <button class="add-to-cart" onclick="orderViaWhatsApp('Teduh Drip Bag — House Blend (RM 35)')">Order via WhatsApp</button>
+        </div>
+
+        <div class="product-card product-card-full fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Teduh Drip Bag — Single Origin</div>
+          <div class="product-sub">10 sachets · Rotating origins</div>
+          <div class="product-price">RM 42</div>
+          <button class="add-to-cart" onclick="orderViaWhatsApp('Teduh Drip Bag — Single Origin (RM 42)')">Order via WhatsApp</button>
+        </div>
+
+        <div class="product-card product-card-full fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Whole Bean — House Blend</div>
+          <div class="product-sub">250g · Freshly roasted</div>
+          <div class="product-price">RM 38</div>
+          <button class="add-to-cart" onclick="orderViaWhatsApp('Whole Bean — House Blend 250g (RM 38)')">Order via WhatsApp</button>
+        </div>
+
+        <div class="product-card product-card-full fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Whole Bean — Ethiopia Yirgacheffe</div>
+          <div class="product-sub">250g · Floral &amp; fruity</div>
+          <div class="product-price">RM 48</div>
+          <button class="add-to-cart" onclick="orderViaWhatsApp('Whole Bean — Ethiopia Yirgacheffe 250g (RM 48)')">Order via WhatsApp</button>
+        </div>
+
+        <div class="product-card product-card-full fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Teduh Canvas Tote</div>
+          <div class="product-sub">Natural &amp; Black · One size</div>
+          <div class="product-price">RM 28</div>
+          <button class="add-to-cart" onclick="orderViaWhatsApp('Teduh Canvas Tote (RM 28)')">Order via WhatsApp</button>
+        </div>
+
+        <div class="product-card product-card-full fade-in">
+          <div class="product-img-wrap">
+            <div class="product-img">[ Product photo ]</div>
+          </div>
+          <div class="product-name">Wholesale Enquiry</div>
+          <div class="product-sub">For cafés, restaurants &amp; businesses</div>
+          <div class="product-price">Let's talk</div>
+          <button class="add-to-cart" onclick="orderViaWhatsApp('Wholesale Enquiry')">Contact via WhatsApp</button>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function orderViaWhatsApp(product) {
+      // Replace 60XXXXXXXXX with your actual WhatsApp number
+      const number = '60187924608';
+      const message = encodeURIComponent(`Hi Teduh! I'm interested in: ${product}`);
+      window.open(`https://wa.me/${number}?text=${message}`, '_blank');
+    }
+  </script>
+
+</div><!-- /shop -->
+
+
+<!-- ============================================
+     ABOUT PAGE
+     ============================================ -->
+<div id="about" class="page">
+
+  <section class="about-hero">
+    <div class="about-hero-text fade-in">
+      <div class="section-label">Our Story</div>
+      <h1 class="section-title">Made with<br><em>care & intention.</em></h1>
+      <p>Teduh began as a dream of making specialty coffee accessible — not intimidating. We wanted a place that felt like home, where the coffee is honest and the atmosphere is warm.</p>
+      <br>
+      <p>Today, Teduh is a multi-channel coffee brand rooted in Muar. We roast our own beans, run a café, supply to wholesale clients, and pack drip bags for coffee lovers to enjoy anywhere.</p>
+    </div>
+    <!-- Replace with: <img src="images/about-hero.jpg" alt="Teduh founders" class="about-hero-image"> -->
+    <img src="images/about-hero.jpg" alt="Teduh founders" class="about-hero-image">
+  </section>
+
+  <section class="about-values">
+    <div class="container">
+      <div class="section-label">What Drives Us</div>
+      <h2 class="section-title">Our Values</h2>
+      <div class="values-grid">
+        <div class="value-item fade-in">
+          <div class="value-num">01</div>
+          <div class="value-title">Craft</div>
+          <div class="value-desc">Every roast, every brew, every cup is treated as an opportunity to do something well. No shortcuts, no compromises.</div>
+        </div>
+        <div class="value-item fade-in">
+          <div class="value-num">02</div>
+          <div class="value-title">Community</div>
+          <div class="value-desc">We're a place for Muar — a gathering point for good people, good conversation, and good coffee.</div>
+        </div>
+        <div class="value-item fade-in">
+          <div class="value-num">03</div>
+          <div class="value-title">Calm</div>
+          <div class="value-desc">Teduh means shelter. We want everyone who visits to feel unhurried — comfortable to stay, slow down, and breathe.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /about -->
+
+
+<!-- ============================================
+     CONTACT PAGE
+     ============================================ -->
+<div id="contact" class="page">
+
+  <div class="page-hero">
+    <div class="container">
+      <div class="section-label">Come Visit</div>
+      <h1 class="section-title">Find Us</h1>
+    </div>
+  </div>
+
+  <section class="contact-section">
+    <div class="contact-grid">
+      <div class="contact-info fade-in">
+        <div class="contact-detail">
+          <div class="contact-detail-label">Address</div>
+          <div class="contact-detail-value">
+            <!-- Update with your actual address -->
+            No 11, Jalan Sulaiman,<br>
+            84000 Johor, Malaysia
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Opening Hours</div>
+          <div class="hours-grid">
+            <div class="hours-row"><span>Mon – Fri</span><span>10:00 am – 11:00 pm</span></div>
+            <div class="hours-row"><span>Saturday</span><span>9:00 am – 11:00 pm</span></div>
+            <div class="hours-row"><span>Sunday</span><span>9:00 am – 11:00 pm</span></div>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Contact</div>
+          <div class="contact-detail-value">
+            <!-- Update with your details -->
+            <a href="tel:+60187924608">+601 8792 4608</a><br>
+            <a href="mailto:hello@teduh.com.my">hello@teduh.com.my</a>
+          </div>
+        </div>
+        <div class="contact-detail">
+          <div class="contact-detail-label">Follow Us</div>
+          <div class="contact-detail-value">
+            <a href="#" target="_blank">@perniagaan.teduh</a> on Instagram<br>
+            <a href="#" target="_blank">@perniagaanteduh</a> on TikTok
+          </div>
+        </div>
+      </div>
+
+      <!-- Map — replace src with your Google Maps embed link -->
+      <div class="map-wrap fade-in">
+        <!-- To embed your location:
+             1. Go to maps.google.com
+             2. Search your address
+             3. Click Share → Embed a map → Copy HTML
+             4. Paste the <iframe ...> here and remove the placeholder div -->
+        <span>[ Google Maps embed — paste your iframe here ]</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact-form">
+    <div class="container">
+      <div class="section-label">Get in Touch</div>
+      <h2 class="section-title">Send Us<br><em>a Message</em></h2>
+      <p class="sub">For wholesale enquiries, events, or just to say hello.</p>
+      <form id="contactForm">
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" placeholder="Ahmad Tuah" required>
+          </div>
+          <div class="form-field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="hello@example.com" required>
+          </div>
+          <div class="form-field full">
+            <label for="subject">Subject</label>
+            <select id="subject" name="subject">
+              <option value="">Select a topic…</option>
+              <option>General Enquiry</option>
+              <option>Wholesale</option>
+              <option>Events & Collab</option>
+              <option>Feedback</option>
+            </select>
+          </div>
+          <div class="form-field full">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Write your message here…" required></textarea>
+          </div>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn-primary">Send Message</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+</div><!-- /contact -->
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Teduh</div>
+      <p>A specialty coffee brand rooted in Muar — café, wholesale, retail, and drip bags.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="#" data-page="home">Home</a></li>
+        <li><a href="#" data-page="menu">Menu</a></li>
+        <li><a href="#" data-page="shop">Shop</a></li>
+        <li><a href="#" data-page="about">About</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="#" data-page="contact">Location & Hours</a></li>
+        <li><a href="https://wa.me/60187924608" target="_blank">WhatsApp Us</a></li>
+        <li><a href="mailto:hello@teduh.com.my">Email Us</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="#" target="_blank">Instagram</a></li>
+        <li><a href="#" target="_blank">Facebook</a></li>
+        <li><a href="#" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Teduh. All rights reserved.</span>
+    <div class="footer-socials">
+      <a href="#">Instagram</a>
+      <a href="#">Facebook</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
