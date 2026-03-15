@@ -62,16 +62,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Contact Form ---
   const form = document.getElementById('contactForm');
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const btn = form.querySelector('.btn-primary');
-    btn.textContent = 'Message Sent ✓';
-    btn.style.background = '#6B8C6B';
-    setTimeout(() => {
-      btn.textContent = 'Send Message';
-      btn.style.background = '';
-      form.reset();
-    }, 3000);
-  });
+form?.addEventListener('submit', () => {
+  const btn = form.querySelector('.btn-primary');
+  btn.textContent = 'Sending…';
+  btn.style.background = '#6B8C6B';
+});
 
 });

@@ -680,46 +680,58 @@
   </section>
 
   <section class="contact-form">
-    <div class="container">
-      <div class="section-label">Get in Touch</div>
-      <h2 class="section-title">Send Us<br><em>a Message</em></h2>
-      <p class="sub">For wholesale enquiries, events, or just to say hello.</p>
-      <form id="contactForm" action="https://formspree.io/f/xreyaqka" method="POST">
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="name">Your Name</label>
-            <input type="text" id="name" name="name" placeholder="Akmal" required>
-          </div>
-          <div class="form-field">
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="akmal@teduh.com.my" required>
-          </div>
-          <div class="form-field full">
-            <label for="subject">Subject</label>
-            <select id="subject" name="subject">
-              <option value="">Select a topic…</option>
-              <option>General Enquiry</option>
-              <option>Wholesale</option>
-              <option>Events & Collab</option>
-              <option>Feedback</option>
-              <option>Career</option>
-            </select>
-          </div>
-          <div class="form-field full">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" placeholder="Hello…" required></textarea>
-          </div>
+  <div class="container">
+    <div class="section-label">Get in Touch</div>
+    <h2 class="section-title">Send Us<br><em>a Message</em></h2>
+    <p class="sub">For wholesale enquiries, events, or just to say hello.</p>
+    <form id="contactForm" onsubmit="sendWhatsApp(event)">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" placeholder="Akmal" required>
         </div>
-        <div class="form-submit">
-          <button type="submit" class="btn-primary">Send Message</button>
+        <div class="form-field">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="akmal@teduh.com.my" required>
         </div>
-      </form>
-    </div>
-  </section>
+        <div class="form-field full">
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            <option value="">Select a topic…</option>
+            <option>General Enquiry</option>
+            <option>Wholesale</option>
+            <option>Events & Collab</option>
+            <option>Feedback</option>
+            <option>Career</option>
+          </select>
+        </div>
+        <div class="form-field full">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Hello…" required></textarea>
+        </div>
+      </div>
+      <div class="form-submit">
+        <button type="submit" class="btn-primary">Send via WhatsApp</button>
+      </div>
+    </form>
+  </div>
+</section>
 
 </div><!-- /contact -->
 
 </main>
+
+<script>
+function sendWhatsApp(e) {
+  e.preventDefault();
+  const name = document.getElementById('name').value;
+  const email = document.getElementById('email').value;
+  const subject = document.getElementById('subject').value;
+  const message = document.getElementById('message').value;
+  const text = `Hi Teduh!\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
+  window.open(`https://wa.me/60187924608?text=${encodeURIComponent(text)}`, '_blank');
+}
+</script>
 
 <!-- ============ FOOTER ============ -->
 <footer>
