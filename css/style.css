@@ -573,103 +573,88 @@ section { padding: 100px 48px; }
 /* ============================================
    COMMUNITY PAGE
    ============================================ */
-
 .community-hero {
-  min-height: 70vh;
   display: grid;
   grid-template-columns: 1fr 1fr;
   align-items: center;
   padding: 80px 48px;
   gap: 80px;
 }
-
-.community-text .section-title {
-  margin: 8px 0 24px;
-}
-
-.community-text p {
-  font-size: 1rem;
-  color: var(--ink-light);
-  line-height: 1.8;
-  font-weight: 300;
-  max-width: 480px;
-}
-
-.community-image {
+.community-hero-text .section-title { margin: 8px 0 24px; }
+.community-hero-image {
   width: 100%;
   height: 60vh;
   min-height: 400px;
   object-fit: cover;
 }
 
-.community-journal {
-  padding: 100px 48px;
-}
-
+/* Journal Grid */
+.community-journal { padding: 80px 48px; background: var(--white); }
 .journal-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 40px;
   margin-top: 40px;
 }
-
 .journal-card img {
   width: 100%;
-  height: 220px;
+  aspect-ratio: 4/3;
   object-fit: cover;
+  margin-bottom: 16px;
 }
-
 .journal-card h3 {
-  margin-top: 16px;
-  font-size: 1rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-bottom: 8px;
 }
-
 .journal-card p {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--ink-muted);
-  margin-top: 8px;
+  line-height: 1.6;
+  margin-bottom: 12px;
 }
-
 .journal-card a {
-  display: inline-block;
-  margin-top: 12px;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-light);
 }
 
+/* Mobile fixes */
+@media (max-width: 1024px) {
+  .community-hero { grid-template-columns: 1fr; gap: 40px; }
+  .journal-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .community-hero { padding: 60px 24px; }
+  .community-hero-image {
+    width: 100%;
+    height: 280px;
+    min-height: unset;
+  }
+  .community-hero-text p { max-width: 100%; }
+  .journal-grid { grid-template-columns: 1fr; }
+  .community-journal { padding: 60px 24px; }
+}
 
-/* ============================================
-   SHOP PAGE
-   ============================================ */
-.shop-section { padding: 80px 48px; }
-.shop-section .container { max-width: var(--max-width); }
-.shop-full-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 40px;
-  margin-top: 60px;
-}
-.product-card-full .product-img {
-  aspect-ratio: 4/5;
-}
-.add-to-cart {
-  display: block;
-  width: 100%;
-  padding: 12px;
-  margin-top: 14px;
-  background: none;
-  border: 1px solid var(--border);
-  font-family: var(--font-body);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-light);
-  cursor: pointer;
-  transition: all var(--transition);
-}
-.add-to-cart:hover {
-  background: var(--ink);
-  color: var(--white);
-  border-color: var(--ink);
+/* Last line of your existing CSS above */
+
+@media (max-width: 768px) {
+  .community-hero {
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 60px 24px !important;
+  }
+  .community-hero-image {
+    width: 100% !important;
+    height: 280px !important;
+    order: 2;
+  }
+  .community-hero-text {
+    order: 1;
+    width: 100% !important;
+  }
 }
 
 /* ============================================
