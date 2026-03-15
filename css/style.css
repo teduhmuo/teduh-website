@@ -505,6 +505,27 @@ section { padding: 100px 48px; }
 }
 
 /* ============================================
+   SHOP PAGE
+   ============================================ */
+.shop-section .container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.shop-full-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 60px;
+}
+
+.product-card-full .product-img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+}
+
+/* ============================================
    ABOUT PAGE
    ============================================ */
 .about-hero {
