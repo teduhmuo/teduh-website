@@ -729,7 +729,14 @@ function sendWhatsApp(e) {
   const subject = document.getElementById('subject').value;
   const message = document.getElementById('message').value;
   const text = `Hi Teduh!\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
-  window.open(`https://wa.me/60187924608?text=${encodeURIComponent(text)}`, '_blank');
+  const url = `https://wa.me/60187924608?text=${encodeURIComponent(text)}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 </script>
 
