@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order — Teduh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F7F3EE;
+    --warm-brown: #3D2B1F;
+    --medium-brown: #7A5C46;
+    --light-brown: #C4A882;
+    --accent: #5B7E5A;
+    --accent-light: #EAF0E9;
+    --border: #E2D9CE;
+    --white: #FFFFFF;
+    --error: #C0392B;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--warm-brown);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--warm-brown);
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  header .logo {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+  }
+
+  header .tagline {
+    font-size: 0.75rem;
+    color: var(--light-brown);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .page-hero {
+    background: var(--warm-brown);
+    padding: 2rem 2rem 3rem;
+    text-align: center;
+  }
+
+  .page-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    color: var(--cream);
+    font-weight: 400;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-hero p {
+    color: var(--light-brown);
+    font-size: 0.9rem;
+    font-weight: 300;
+  }
+
+  main {
+    max-width: 820px;
+    margin: -1.5rem auto 4rem;
+    padding: 0 1.25rem;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--warm-brown);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card-title .step-badge {
+    width: 24px;
+    height: 24px;
+    background: var(--warm-brown);
+    color: var(--cream);
+    border-radius: 50%;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Fulfillment toggle */
+  .fulfillment-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .fulfillment-option {
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+  }
+
+  .fulfillment-option:hover {
+    border-color: var(--medium-brown);
+  }
+
+  .fulfillment-option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .fulfillment-option .fo-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .fulfillment-option .fo-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--warm-brown);
+    display: block;
+  }
+
+  .fulfillment-option .fo-sub {
+    font-size: 0.75rem;
+    color: var(--medium-brown);
+    margin-top: 0.2rem;
+    display: block;
+  }
+
+  /* Product categories */
+  .category-tabs {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .cat-tab {
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    background: transparent;
+    color: var(--medium-brown);
+    font-family: var(--font-body);
+    transition: all 0.15s;
+  }
+
+  .cat-tab:hover { border-color: var(--medium-brown); color: var(--warm-brown); }
+  .cat-tab.active { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
+
+  /* Products grid */
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .product-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    position: relative;
+  }
+
+  .product-card:hover { border-color: var(--medium-brown); }
+
+  .product-card.in-cart {
+    border-color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .product-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--warm-brown);
+    margin-bottom: 0.25rem;
+  }
+
+  .product-desc {
+    font-size: 0.75rem;
+    color: var(--medium-brown);
+    line-height: 1.4;
+    margin-bottom: 0.6rem;
+  }
+
+  .product-price {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .qty-control {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.6rem;
+  }
+
+  .qty-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--white);
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--warm-brown);
+    font-family: var(--font-body);
+    transition: background 0.1s;
+  }
+
+  .qty-btn:hover { background: var(--cream); }
+
+  .qty-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  /* Category sections */
+  .category-section { display: none; }
+  .category-section.visible { display: block; }
+
+  /* Form fields */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  @media (max-width: 500px) {
+    .form-row { grid-template-columns: 1fr; }
+    .fulfillment-toggle { grid-template-columns: 1fr 1fr; }
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--medium-brown);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--warm-brown);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--medium-brown);
+  }
+
+  textarea { resize: vertical; min-height: 80px; }
+
+  .pickup-info {
+    background: var(--cream);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: var(--medium-brown);
+    line-height: 1.5;
+    margin-top: 0.75rem;
+  }
+
+  /* Cart summary */
+  .cart-empty {
+    text-align: center;
+    color: var(--light-brown);
+    font-size: 0.85rem;
+    padding: 1.5rem 0;
+  }
+
+  .cart-items { margin-bottom: 1rem; }
+
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+
+  .cart-item:last-child { border-bottom: none; }
+
+  .cart-item-name { color: var(--warm-brown); font-weight: 400; }
+  .cart-item-qty { color: var(--medium-brown); font-size: 0.8rem; margin-top: 0.15rem; }
+  .cart-item-price { color: var(--warm-brown); font-weight: 500; }
+
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0 0;
+    border-top: 1.5px solid var(--warm-brown);
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .delivery-note {
+    font-size: 0.78rem;
+    color: var(--medium-brown);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  /* Payment button */
+  .pay-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--warm-brown);
+    color: var(--cream);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: background 0.15s, opacity 0.15s;
+    margin-top: 1rem;
+    letter-spacing: 0.02em;
+  }
+
+  .pay-btn:hover { background: #2C1E14; }
+  .pay-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .pay-logos {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .pay-logo {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--medium-brown);
+    letter-spacing: 0.04em;
+  }
+
+  /* Loading overlay */
+  .loading-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(61,43,31,0.7);
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+
+  .loading-overlay.active { display: flex; }
+
+  .loading-box {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 2rem 2.5rem;
+    text-align: center;
+  }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--warm-brown);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-box p {
+    font-size: 0.9rem;
+    color: var(--medium-brown);
+  }
+
+  /* Error message */
+  .error-msg {
+    background: #fdf0ef;
+    border: 1px solid #f5c6c6;
+    color: var(--error);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    margin-top: 0.75rem;
+    display: none;
+  }
+
+  .error-msg.visible { display: block; }
+
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.78rem;
+    color: var(--light-brown);
+  }
+
+  footer a { color: var(--medium-brown); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">Teduh</a>
+  <span class="tagline">Specialty Coffee · Muar</span>
+</header>
+
+<div class="page-hero">
+  <h1>Place Your Order</h1>
+  <p>Freshly roasted, delivered to your door or ready for pickup</p>
+</div>
+
+<main>
+
+  <!-- Step 1: Fulfillment -->
+  <div class="card">
+    <div class="card-title">
+      <span class="step-badge">1</span>
+      How would you like to receive your order?
+    </div>
+    <div class="fulfillment-toggle">
+      <div class="fulfillment-option selected" id="opt-delivery" onclick="selectFulfillment('delivery')">
+        <span class="fo-icon">🚚</span>
+        <span class="fo-label">Delivery</span>
+        <span class="fo-sub">Lalamove · Muar area</span>
+      </div>
+      <div class="fulfillment-option" id="opt-pickup" onclick="selectFulfillment('pickup')">
+        <span class="fo-icon">☕</span>
+        <span class="fo-label">Self-Pickup</span>
+        <span class="fo-sub">At Teduh café</span>
+      </div>
+    </div>
+    <div id="pickup-note" class="pickup-info" style="display:none;">
+      📍 Teduh Coffee Roastery, Muar, Johor — We'll WhatsApp you when your order is ready.
+    </div>
+  </div>
+
+  <!-- Step 2: Products -->
+  <div class="card">
+    <div class="card-title">
+      <span class="step-badge">2</span>
+      What would you like to order?
+    </div>
+
+    <div class="category-tabs">
+      <button class="cat-tab active" onclick="showCategory('beans', this)">Coffee Beans</button>
+      <button class="cat-tab" onclick="showCategory('drip', this)">Drip Bags</button>
+      <button class="cat-tab" onclick="showCategory('menu', this)">Café Menu</button>
+      <button class="cat-tab" onclick="showCategory('merch', this)">Merchandise</button>
+    </div>
+
+    <!-- Coffee Beans -->
+    <div class="category-section visible" id="cat-beans">
+      <div class="products-grid">
+        <div class="product-card" id="pc-bean-250">
+          <div class="product-name">House Blend · 250g</div>
+          <div class="product-desc">Brazil Mogiana, medium-dark. Notes of dark chocolate and walnut.</div>
+          <div class="product-price">RM 35.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('bean-250', -1)">−</button>
+            <span class="qty-value" id="qty-bean-250">0</span>
+            <button class="qty-btn" onclick="changeQty('bean-250', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-bean-500">
+          <div class="product-name">House Blend · 500g</div>
+          <div class="product-desc">Brazil Mogiana, medium-dark. Notes of dark chocolate and walnut.</div>
+          <div class="product-price">RM 60.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('bean-500', -1)">−</button>
+            <span class="qty-value" id="qty-bean-500">0</span>
+            <button class="qty-btn" onclick="changeQty('bean-500', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-bean-1kg">
+          <div class="product-name">House Blend · 1kg</div>
+          <div class="product-desc">Brazil Mogiana, medium-dark. Best value for home or office.</div>
+          <div class="product-price">RM 105.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('bean-1kg', -1)">−</button>
+            <span class="qty-value" id="qty-bean-1kg">0</span>
+            <button class="qty-btn" onclick="changeQty('bean-1kg', 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Drip Bags -->
+    <div class="category-section" id="cat-drip">
+      <div class="products-grid">
+        <div class="product-card" id="pc-drip-5">
+          <div class="product-name">Drip Bag Set · 5 pcs</div>
+          <div class="product-desc">Single-serve pour-over bags. Easy to brew anywhere.</div>
+          <div class="product-price">RM 25.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('drip-5', -1)">−</button>
+            <span class="qty-value" id="qty-drip-5">0</span>
+            <button class="qty-btn" onclick="changeQty('drip-5', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-drip-10">
+          <div class="product-name">Drip Bag Set · 10 pcs</div>
+          <div class="product-desc">Single-serve pour-over bags. Great for gifts or the office.</div>
+          <div class="product-price">RM 45.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('drip-10', -1)">−</button>
+            <span class="qty-value" id="qty-drip-10">0</span>
+            <button class="qty-btn" onclick="changeQty('drip-10', 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Café Menu (pickup only items flagged) -->
+    <div class="category-section" id="cat-menu">
+      <div class="products-grid">
+        <div class="product-card" id="pc-espresso">
+          <div class="product-name">Espresso</div>
+          <div class="product-desc">Double shot, house blend.</div>
+          <div class="product-price">RM 6.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('espresso', -1)">−</button>
+            <span class="qty-value" id="qty-espresso">0</span>
+            <button class="qty-btn" onclick="changeQty('espresso', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-latte">
+          <div class="product-name">Café Latte</div>
+          <div class="product-desc">Espresso and steamed milk.</div>
+          <div class="product-price">RM 12.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('latte', -1)">−</button>
+            <span class="qty-value" id="qty-latte">0</span>
+            <button class="qty-btn" onclick="changeQty('latte', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-cappuccino">
+          <div class="product-name">Cappuccino</div>
+          <div class="product-desc">Equal parts espresso, milk, foam.</div>
+          <div class="product-price">RM 12.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('cappuccino', -1)">−</button>
+            <span class="qty-value" id="qty-cappuccino">0</span>
+            <button class="qty-btn" onclick="changeQty('cappuccino', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-americano">
+          <div class="product-name">Americano</div>
+          <div class="product-desc">Espresso with hot water.</div>
+          <div class="product-price">RM 9.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('americano', -1)">−</button>
+            <span class="qty-value" id="qty-americano">0</span>
+            <button class="qty-btn" onclick="changeQty('americano', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-signature">
+          <div class="product-name">Teduh Signature</div>
+          <div class="product-desc">House blend, coconut milk, gula melaka.</div>
+          <div class="product-price">RM 15.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('signature', -1)">−</button>
+            <span class="qty-value" id="qty-signature">0</span>
+            <button class="qty-btn" onclick="changeQty('signature', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-coldbrew">
+          <div class="product-name">Cold Brew</div>
+          <div class="product-desc">12-hour steep, smooth and low-acid.</div>
+          <div class="product-price">RM 13.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('coldbrew', -1)">−</button>
+            <span class="qty-value" id="qty-coldbrew">0</span>
+            <button class="qty-btn" onclick="changeQty('coldbrew', 1)">+</button>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.78rem; color: var(--medium-brown); margin-top: 0.75rem; font-style:italic;">
+        * Café menu items are for pre-ordering pickup only. We'll prepare them upon your arrival.
+      </p>
+    </div>
+
+    <!-- Merchandise -->
+    <div class="category-section" id="cat-merch">
+      <div class="products-grid">
+        <div class="product-card" id="pc-mug">
+          <div class="product-name">Teduh Mug</div>
+          <div class="product-desc">Ceramic mug with Teduh logo, 350ml.</div>
+          <div class="product-price">RM 35.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('mug', -1)">−</button>
+            <span class="qty-value" id="qty-mug">0</span>
+            <button class="qty-btn" onclick="changeQty('mug', 1)">+</button>
+          </div>
+        </div>
+        <div class="product-card" id="pc-tote">
+          <div class="product-name">Teduh Tote Bag</div>
+          <div class="product-desc">Canvas tote, natural color with logo print.</div>
+          <div class="product-price">RM 25.00</div>
+          <div class="qty-control">
+            <button class="qty-btn" onclick="changeQty('tote', -1)">−</button>
+            <span class="qty-value" id="qty-tote">0</span>
+            <button class="qty-btn" onclick="changeQty('tote', 1)">+</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Your Details -->
+  <div class="card">
+    <div class="card-title">
+      <span class="step-badge">3</span>
+      Your details
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="field-name">Name</label>
+        <input type="text" id="field-name" placeholder="Your full name" />
+      </div>
+      <div class="form-group">
+        <label for="field-phone">Phone number</label>
+        <input type="tel" id="field-phone" placeholder="e.g. 012-3456789" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group full">
+        <label for="field-email">Email (for receipt)</label>
+        <input type="email" id="field-email" placeholder="your@email.com" />
+      </div>
+    </div>
+
+    <!-- Delivery address (shown only when delivery selected) -->
+    <div id="delivery-fields">
+      <div class="form-row" style="margin-top:0.5rem;">
+        <div class="form-group full">
+          <label for="field-address">Delivery address</label>
+          <textarea id="field-address" placeholder="Full address including postcode, Muar, Johor"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group full">
+        <label for="field-notes">Special requests (optional)</label>
+        <input type="text" id="field-notes" placeholder="e.g. coarse grind, call upon arrival…" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Order Summary & Payment -->
+  <div class="card">
+    <div class="card-title">
+      <span class="step-badge">4</span>
+      Order summary
+    </div>
+    <div id="cart-empty" class="cart-empty">Your cart is empty — add items above</div>
+    <div id="cart-items" class="cart-items" style="display:none;"></div>
+    <div id="cart-total" style="display:none;">
+      <div class="cart-total">
+        <span>Subtotal</span>
+        <span id="total-amount">RM 0.00</span>
+      </div>
+      <p class="delivery-note" id="delivery-fee-note">+ Delivery fee will be calculated by Lalamove and charged separately.</p>
+    </div>
+
+    <div id="error-msg" class="error-msg"></div>
+
+    <button class="pay-btn" id="pay-btn" onclick="submitOrder()" disabled>
+      Proceed to Payment
+    </button>
+
+    <div class="pay-logos">
+      <span class="pay-logo">FPX</span>
+      <span class="pay-logo">DuitNow</span>
+      <span class="pay-logo">Visa</span>
+      <span class="pay-logo">Mastercard</span>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="mailto:hello@teduh.com.my">hello@teduh.com.my</a></p>
+  <p style="margin-top:0.5rem;">© 2025 Teduh Coffee Roastery · Muar, Johor</p>
+</footer>
+
+<div class="loading-overlay" id="loading">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p>Preparing your payment…</p>
+  </div>
+</div>
+
+<script>
+// ── Product catalogue ──────────────────────────────────────────────
+const PRODUCTS = {
+  'bean-250': { name: 'House Blend 250g', price: 35 },
+  'bean-500': { name: 'House Blend 500g', price: 60 },
+  'bean-1kg': { name: 'House Blend 1kg', price: 105 },
+  'drip-5':   { name: 'Drip Bags ×5', price: 25 },
+  'drip-10':  { name: 'Drip Bags ×10', price: 45 },
+  'espresso':   { name: 'Espresso', price: 6 },
+  'latte':      { name: 'Café Latte', price: 12 },
+  'cappuccino': { name: 'Cappuccino', price: 12 },
+  'americano':  { name: 'Americano', price: 9 },
+  'signature':  { name: 'Teduh Signature', price: 15 },
+  'coldbrew':   { name: 'Cold Brew', price: 13 },
+  'mug':  { name: 'Teduh Mug', price: 35 },
+  'tote': { name: 'Teduh Tote Bag', price: 25 },
+};
+
+const PORTAL_KEY = '50423c0a44098dd31210a91e335e6192';
+const BAYARCASH_API = 'https://portal.bayarcash.com/api/v3/transaction-intents';
+
+// ── State ──────────────────────────────────────────────────────────
+const cart = {};
+let fulfillment = 'delivery';
+
+// ── Fulfillment toggle ─────────────────────────────────────────────
+function selectFulfillment(type) {
+  fulfillment = type;
+  document.getElementById('opt-delivery').classList.toggle('selected', type === 'delivery');
+  document.getElementById('opt-pickup').classList.toggle('selected', type === 'pickup');
+  document.getElementById('delivery-fields').style.display = type === 'delivery' ? 'block' : 'none';
+  document.getElementById('pickup-note').style.display = type === 'pickup' ? 'block' : 'none';
+  document.getElementById('delivery-fee-note').style.display = type === 'delivery' ? 'block' : 'none';
+}
+
+// ── Category tabs ──────────────────────────────────────────────────
+function showCategory(cat, btn) {
+  document.querySelectorAll('.category-section').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('cat-' + cat).classList.add('visible');
+  btn.classList.add('active');
+}
+
+// ── Cart logic ─────────────────────────────────────────────────────
+function changeQty(id, delta) {
+  cart[id] = Math.max(0, (cart[id] || 0) + delta);
+  if (cart[id] === 0) delete cart[id];
+  document.getElementById('qty-' + id).textContent = cart[id] || 0;
+  document.getElementById('pc-' + id).classList.toggle('in-cart', !!cart[id]);
+  renderCart();
+}
+
+function renderCart() {
+  const keys = Object.keys(cart);
+  const empty = document.getElementById('cart-empty');
+  const items = document.getElementById('cart-items');
+  const totalDiv = document.getElementById('cart-total');
+  const payBtn = document.getElementById('pay-btn');
+
+  if (keys.length === 0) {
+    empty.style.display = 'block';
+    items.style.display = 'none';
+    totalDiv.style.display = 'none';
+    payBtn.disabled = true;
+    return;
+  }
+
+  empty.style.display = 'none';
+  items.style.display = 'block';
+  totalDiv.style.display = 'block';
+  payBtn.disabled = false;
+
+  let total = 0;
+  items.innerHTML = keys.map(k => {
+    const p = PRODUCTS[k];
+    const subtotal = p.price * cart[k];
+    total += subtotal;
+    return `<div class="cart-item">
+      <div>
+        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-qty">× ${cart[k]} @ RM ${p.price.toFixed(2)}</div>
+      </div>
+      <div class="cart-item-price">RM ${subtotal.toFixed(2)}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('total-amount').textContent = 'RM ' + total.toFixed(2);
+}
+
+// ── Validation ─────────────────────────────────────────────────────
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.add('visible');
+}
+
+function clearError() {
+  document.getElementById('error-msg').classList.remove('visible');
+}
+
+function validate() {
+  const name = document.getElementById('field-name').value.trim();
+  const phone = document.getElementById('field-phone').value.trim();
+  const email = document.getElementById('field-email').value.trim();
+  const address = document.getElementById('field-address').value.trim();
+
+  if (Object.keys(cart).length === 0) { showError('Please add at least one item to your order.'); return false; }
+  if (!name) { showError('Please enter your name.'); return false; }
+  if (!phone) { showError('Please enter your phone number.'); return false; }
+  if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return false; }
+  if (fulfillment === 'delivery' && !address) { showError('Please enter your delivery address.'); return false; }
+  return true;
+}
+
+// ── Build order description ────────────────────────────────────────
+function buildOrderDesc() {
+  const lines = Object.keys(cart).map(k => `${PRODUCTS[k].name} ×${cart[k]}`);
+  return lines.join(', ');
+}
+
+function getTotal() {
+  return Object.keys(cart).reduce((sum, k) => sum + PRODUCTS[k].price * cart[k], 0);
+}
+
+// ── Submit to Bayarcash ────────────────────────────────────────────
+async function submitOrder() {
+  clearError();
+  if (!validate()) return;
+
+  document.getElementById('loading').classList.add('active');
+
+  const name = document.getElementById('field-name').value.trim();
+  const phone = document.getElementById('field-phone').value.trim();
+  const email = document.getElementById('field-email').value.trim();
+  const notes = document.getElementById('field-notes').value.trim();
+  const address = document.getElementById('field-address').value.trim();
+  const total = getTotal();
+  const orderRef = 'TEDUH-' + Date.now();
+
+  const fulfillmentNote = fulfillment === 'delivery'
+    ? `[DELIVERY] ${address}`
+    : '[PICKUP at Teduh]';
+
+  const description = `${buildOrderDesc()} | ${fulfillmentNote}${notes ? ' | Note: ' + notes : ''}`;
+
+  const payload = {
+    portal_key: PORTAL_KEY,
+    order_no: orderRef,
+    amount: total.toFixed(2),
+    payer_name: name,
+    payer_phone: phone,
+    payer_email: email,
+    description: description,
+    return_url: window.location.origin + '/order/thank-you',
+    callback_url: 'https://teduh.com.my/api/payment-callback',
+  };
+
+  try {
+    const res = await fetch(BAYARCASH_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (data && data.payment_url) {
+      window.location.href = data.payment_url;
+    } else {
+      document.getElementById('loading').classList.remove('active');
+      const msg = (data && data.message) ? data.message : 'Payment could not be initiated. Please try again or WhatsApp us.';
+      showError(msg);
+    }
+  } catch (err) {
+    document.getElementById('loading').classList.remove('active');
+    showError('Network error. Please check your connection and try again.');
+  }
+}
+</script>
+</body>
+</html>
