@@ -464,7 +464,7 @@
 
 <header>
   <a href="/" class="logo">Teduh</a>
-  <span class="tagline">Coffee Shop & Community · Muar</span>
+  <span class="tagline">Specialty Coffee · Muar</span>
 </header>
 
 <div class="page-hero">
@@ -484,13 +484,12 @@
       <div class="fulfillment-option selected" id="opt-delivery" onclick="selectFulfillment('delivery')">
         <span class="fo-icon">🚚</span>
         <span class="fo-label">Delivery</span>
-        <span class="fo-sub">We offer delivery through Lalamove for Muar area orders, 
-          and courier service for deliveries outside Muar</span>
+        <span class="fo-sub">We offer delivery through Lalamove for Muar area orders, and courier service for deliveries outside Muar</span>
       </div>
       <div class="fulfillment-option" id="opt-pickup" onclick="selectFulfillment('pickup')">
         <span class="fo-icon">☕</span>
         <span class="fo-label">Self-Pickup</span>
-        <span class="fo-sub">At Teduh café</span>
+        <span class="fo-sub">At Teduh Coffee Shop, Jalan Sulaiman Muar, Johor.</span>
       </div>
     </div>
     <div id="pickup-note" class="pickup-info" style="display:none;">
@@ -744,7 +743,7 @@
 </main>
 
 <footer>
-  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="mailto:hello@teduh.com.my">hello@teduh.com.my</a></p>
+  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="/cdn-cgi/l/email-protection#d9b1bcb5b5b699adbcbdacb1f7bab6b4f7b4a0"><span class="__cf_email__" data-cfemail="4129242d2d2e0135242534296f222e2c6f2c38">[email&#160;protected]</span></a></p>
   <p style="margin-top:0.5rem;">© 2025 Teduh Coffee Roastery · Muar, Johor</p>
 </footer>
 
@@ -755,7 +754,7 @@
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── Product catalogue ──────────────────────────────────────────────
 const PRODUCTS = {
   'bean-250': { name: 'House Blend 250g', price: 35 },
@@ -925,14 +924,4 @@ async function submitOrder() {
       window.location.href = data.payment_url;
     } else {
       document.getElementById('loading').classList.remove('active');
-      const msg = (data && data.message) ? data.message : 'Payment could not be initiated. Please try again or WhatsApp us.';
-      showError(msg);
-    }
-  } catch (err) {
-    document.getElementById('loading').classList.remove('active');
-    showError('Network error. Please check your connection and try again.');
-  }
-}
-</script>
-</body>
-</html>
+      const msg = (data && data.message) ? data.message : 'Payment could not be initiated. Please try again
