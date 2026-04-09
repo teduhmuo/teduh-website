@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thank You — Teduh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --cream: #F7F3EE; --warm-brown: #3D2B1F; --medium-brown: #7A5C46;
+    --light-brown: #C4A882; --accent: #5B7E5A; --accent-light: #EAF0E9;
+    --border: #E2D9CE; --white: #FFFFFF;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--cream); color: var(--warm-brown); min-height: 100vh; }
+  header { background: var(--warm-brown); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  header .logo { font-family: var(--font-display); font-size: 1.6rem; color: var(--cream); text-decoration: none; }
+  header .tagline { font-size: 0.75rem; color: var(--light-brown); letter-spacing: 0.08em; text-transform: uppercase; }
+  main { max-width: 520px; margin: 3rem auto; padding: 0 1.25rem; text-align: center; }
+  .check-circle {
+    width: 72px; height: 72px; background: var(--accent); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.5rem; font-size: 2rem;
+  }
+  h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; }
+  .sub { color: var(--medium-brown); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
+  .loyalty-card {
+    background: var(--warm-brown); border-radius: 12px;
+    padding: 1.5rem; color: var(--cream); margin-bottom: 1.5rem;
+    display: none;
+  }
+  .loyalty-card .lc-label { font-size: 0.78rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+  .loyalty-card .lc-pts { font-size: 2.2rem; font-weight: 500; line-height: 1; }
+  .loyalty-card .lc-sub { font-size: 0.8rem; opacity: 0.65; margin-top: 0.25rem; }
+  .btn-home {
+    display: inline-block; padding: 0.85rem 2rem;
+    background: var(--warm-brown); color: var(--cream);
+    border-radius: 8px; font-family: var(--font-display);
+    font-size: 1rem; text-decoration: none;
+    transition: background 0.15s;
+  }
+  .btn-home:hover { background: #2C1E14; }
+  footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--light-brown); }
+  footer a { color: var(--medium-brown); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo">Teduh</a>
+  <span class="tagline">Coffee Shop & Community · Muar</span>
+</header>
+
+<main>
+  <div class="check-circle">✓</div>
+  <h1>Order confirmed!</h1>
+  <p class="sub">Thank you for your order. We'll WhatsApp you with updates shortly.<br>Check your email for the receipt.</p>
+
+  <div class="loyalty-card" id="loyalty-card">
+    <div class="lc-label">Loyalty points earned</div>
+    <div class="lc-pts" id="lc-pts">+0</div>
+    <div class="lc-sub" id="lc-sub">Total balance: 0 pts</div>
+  </div>
+
+  <a href="/" class="btn-home">Back to Teduh</a>
+</main>
+
+<footer>
+  <p>© 2025 Teduh Coffee Roastery · Muar, Johor</p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
+
+async function creditPoints() {
+  const raw = sessionStorage.getItem('teduh_pending_loyalty');
+  if (!raw) return;
+  sessionStorage.removeItem('teduh_pending_loyalty');
+
+  let pending;
+  try { pending = JSON.parse(raw); } catch { return; }
+  if (!pending || !pending.phone || !pending.points) return;
+
+  try {
+    // Get current points
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}&limit=1`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    });
+    const data = await res.json();
+    if (!data[0]) return;
+
+    const current = data[0].points;
+    const newTotal = current + pending.points;
+
+    // Update points
+    await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ points: newTotal, updated_at: new Date().toISOString() })
+    });
+
+    // Log transaction
+    await fetch(`${SUPABASE_URL}/rest/v1/loyalty_transactions`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        phone: pending.phone,
+        description: `Purchase · Order ${pending.orderRef}`,
+        points: pending.points,
+        order_ref: pending.orderRef
+      })
+    });
+
+    // Show loyalty card
+    const card = document.getElementById('loyalty-card');
+    card.style.display = 'block';
+    document.getElementById('lc-pts').textContent = '+' + pending.points;
+    document.getElementById('lc-sub').textContent = 'New balance: ' + newTotal + ' pts';
+
+  } catch(e) {
+    console.error('Points credit error:', e);
+  }
+}
+
+creditPoints();
+</script>
+</body>
+</html>

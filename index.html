@@ -11,10 +11,93 @@
   <meta name="description" content="Teduh is a coffee shop in Muar, offering coffee beans, wholesale, retail, and drip bag coffee." />
   <link rel="stylesheet" href="css/style.css" />
   <style>
-    /* Fade-in utility */
     .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .fade-in.visible { opacity: 1; transform: none; }
     .nav-active { color: var(--ink) !important; }
+
+    /* ── Loyalty banner ── */
+    .loyalty-banner {
+      background: var(--ink, #1a1208);
+      padding: 3.5rem 1.5rem;
+    }
+    .loyalty-banner .container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 2rem;
+    }
+    .loyalty-eyebrow {
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #C4A882;
+      margin-bottom: 0.5rem;
+    }
+    .loyalty-banner h2 {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: #F7F3EE;
+      font-weight: 400;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+    .loyalty-banner p {
+      color: #9a8068;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      max-width: 480px;
+    }
+    .loyalty-perks {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      flex-wrap: wrap;
+    }
+    .loyalty-perk {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: #C4A882;
+    }
+    .loyalty-perk-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #C4A882;
+      flex-shrink: 0;
+    }
+    .loyalty-banner-right {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+    .loyalty-join-btn {
+      display: inline-block;
+      padding: 0.75rem 1.75rem;
+      background: #C4A882;
+      color: #1a1208;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+    .loyalty-join-btn:hover { background: #d4b892; }
+    .loyalty-check-link {
+      font-size: 0.75rem;
+      color: #6a5040;
+      text-decoration: none;
+      text-align: center;
+      transition: color 0.15s;
+    }
+    .loyalty-check-link:hover { color: #C4A882; }
+    @media (max-width: 600px) {
+      .loyalty-banner .container { grid-template-columns: 1fr; }
+      .loyalty-banner-right { align-items: flex-start; }
+    }
   </style>
 </head>
 <body>
@@ -22,7 +105,6 @@
 <!-- ============ NAV ============ -->
 <nav>
   <a class="nav-logo" href="#" data-page="home">
-    <!-- Replace the span below with: <img src="images/logo.png" alt="Teduh"> once you have your logo file -->
     <img src="images/logo.png" alt="Teduh">
   </a>
    <ul class="nav-links">
@@ -31,6 +113,7 @@
     <li><a href="#" data-page="shop">Shop</a></li>
     <li><a href="#" data-page="community">Community</a></li>
     <li><a href="#" data-page="about">About</a></li>
+    <li><a href="/loyalty">Loyalty</a></li>
     <li><a href="/order" class="btn-nav">Order</a></li>
     <li><a href="#" data-page="contact" class="btn-nav">Find Us</a></li>
   </ul>
@@ -64,7 +147,6 @@
       </div>
     </div>
     <div class="hero-image fade-in">
-      <!-- Replace div below with: <img src="images/hero.jpg" alt="Teduh café interior" class="hero-image-main"> -->
       <img src="images/hero.jpg" alt="Teduh café interior" class="hero-image-main">
       <div class="hero-image-badge">
         <div class="badge-num">90<span style="font-size:1.4rem">kg</span></div>
@@ -99,11 +181,30 @@
     </div>
   </div>
 
+  <!-- ── Loyalty Banner ── -->
+  <div class="loyalty-banner fade-in">
+    <div class="container">
+      <div class="loyalty-banner-left">
+        <div class="loyalty-eyebrow">Teduh Loyalty</div>
+        <h2>Every cup earns<br>your next one.</h2>
+        <p>Join our loyalty programme — earn 1 point for every RM1 spent, and redeem them for free drinks. No app needed, just your phone number.</p>
+        <div class="loyalty-perks">
+          <div class="loyalty-perk"><div class="loyalty-perk-dot"></div>RM1 = 1 point</div>
+          <div class="loyalty-perk"><div class="loyalty-perk-dot"></div>Redeem for free drinks</div>
+          <div class="loyalty-perk"><div class="loyalty-perk-dot"></div>Regular · Silver · Gold · Platinum</div>
+        </div>
+      </div>
+      <div class="loyalty-banner-right">
+        <a href="/loyalty" class="loyalty-join-btn">Join Now — It's Free</a>
+        <a href="/loyalty" class="loyalty-check-link">Already a member? Check points →</a>
+      </div>
+    </div>
+  </div>
+
   <!-- Intro -->
   <section class="intro-section">
     <div class="intro-grid container">
       <div class="intro-image-wrap fade-in">
-        <!-- Replace with: <img src="images/about-thumb.jpg" alt="Coffee being brewed" class="intro-image"> -->
         <img src="images/about-thumb.jpg" alt="Coffee being brewed" class="intro-image">
         <div class="intro-image-accent"></div>
         </div>
@@ -161,7 +262,6 @@
       <div class="shop-grid">
         <div class="product-card fade-in">
           <div class="product-img-wrap">
-            <!-- Replace with: <img src="images/product-drip.jpg" alt="Drip Coffee Bags" class="product-img"> -->
             <img src="images/product-drip-house.jpg" alt="Drip Coffee Bags" class="product-img">
           </div>
           <div class="product-name">Teduh Drip Bag Pack</div>
@@ -387,7 +487,6 @@
 
   <script>
     function orderViaWhatsApp(product) {
-      // Replace 60XXXXXXXXX with your actual WhatsApp number
       const number = '60187924608';
       const message = encodeURIComponent(`Hi Teduh! I'm interested in: ${product}`);
       window.open(`https://wa.me/${number}?text=${message}`, '_blank');
@@ -405,33 +504,22 @@
     <div class="community-hero-text fade-in">
       <div class="section-label">Community</div>
       <h1 class="section-title">More than coffee — <br><em>a place to gather.</em></h1>
-      
       <br>
-
-      <p>
-        Teduh is not only a coffee shop. It is a meeting point for creatives, 
-        skaters, musicians, artists, and coffee lovers in Muar.
-      </p>
-
+      <p>Teduh is not only a coffee shop. It is a meeting point for creatives, 
+        skaters, musicians, artists, and coffee lovers in Muar.</p>
       <br>
-
-      <p>
-      Through events, collaborations, and open gatherings, 
+      <p>Through events, collaborations, and open gatherings, 
       we hope Teduh becomes a small cultural hub where people connect, 
       share stories, and build something meaningful together — 
-      whether it’s music, art, friendships, 
-      or simply moments that make the city feel more alive.
-      </p>
-
+      whether it's music, art, friendships, 
+      or simply moments that make the city feel more alive.</p>
       <br>
-
     </div>
 
     <img src="images/community-hero.jpg" alt="Teduh community" class="community-hero-image" style="display:block;width:100%">
   </section>
 
   <section class="community-journal">
-e
   <div class="container">
 
     <div class="section-label">Stories</div>
@@ -463,40 +551,28 @@ e
     </div>
 
   </div>
-
 </section>
 
   <section class="about-values">
     <div class="container">
       <div class="section-label">What Happens Here</div>
       <h2 class="section-title">Our Community</h2>
-
       <div class="values-grid">
-
         <div class="value-item fade-in">
           <div class="value-num">01</div>
           <div class="value-title">Events</div>
-          <div class="value-desc">
-            Coffee workshops, live sessions, and small gatherings that bring people together.
-          </div>
+          <div class="value-desc">Coffee workshops, live sessions, and small gatherings that bring people together.</div>
         </div>
-
         <div class="value-item fade-in">
           <div class="value-num">02</div>
           <div class="value-title">Creatives</div>
-          <div class="value-desc">
-            A space for artists, musicians, skaters, and thinkers to share their work.
-          </div>
+          <div class="value-desc">A space for artists, musicians, skaters, and thinkers to share their work.</div>
         </div>
-
         <div class="value-item fade-in">
           <div class="value-num">03</div>
           <div class="value-title">Collaboration</div>
-          <div class="value-desc">
-            We welcome collaborations with local brands, communities, and creators.
-          </div>
+          <div class="value-desc">We welcome collaborations with local brands, communities, and creators.</div>
         </div>
-
       </div>
     </div>
   </section>
@@ -515,32 +591,25 @@ e
       <p>Teduh began in 2020 as a small family effort between me, my wife, and our son. 
         What started as a simple idea slowly grew through long days, trial and error, 
         and many difficult moments along the way.
-       <br>
-       <br>
+       <br><br>
         The journey was never easy. We started small, working through the uncertainty of the 
         MCO period, facing challenges like floods that affected the shop, and learning everything step by step. 
         From setting up a small mobile coffee setup by the roadside to joining events like 
         Pesta Kopi 2023, Muar Uptown Raya 2023 and Hin On The Move 2024, every experience became part of how Teduh grew.
-       <br>
-       <br>
+       <br><br>
         Along the way we learned many things — including roasting our own coffee beans, improving our craft, 
         and slowly building something we could truly call our own.
-       <br>
-       <br>
+       <br><br>
         Today, Teduh has grown into a proper coffee shop with a small team that helps carry the journey forward. 
         What remains the same is the intention behind it all: to build something meaningful not only for our family, 
         but also for the staff who grow with us and for the community in Muar and the surrounding areas.
-       <br>
-       <br>
+       <br><br>
         We hope this journey continues — slowly, patiently — while giving the best we can to the people who support us.
-      <br>
-      <br>
-       Sincerely,
-       <br>
+      <br><br>
+       Sincerely,<br>
        Akmal
       </p>
     </div>
-    <!-- Replace with: <img src="images/about-hero.jpg" alt="Teduh founders" class="about-hero-image"> -->
     <img src="images/about-hero.jpg" alt="Teduh founders" class="about-hero-image">
   </section>
 
@@ -589,7 +658,6 @@ e
         <div class="contact-detail">
           <div class="contact-detail-label">Address</div>
           <div class="contact-detail-value">
-            <!-- Update with your actual address -->
             No 11, Jalan Sulaiman,<br>
             84000 Muar, Johor,<br>
             Malaysia.
@@ -606,7 +674,6 @@ e
         <div class="contact-detail">
           <div class="contact-detail-label">Contact</div>
           <div class="contact-detail-value">
-            <!-- Update with your details -->
             <a href="tel:+60187924608">+601 8792 4608</a><br>
             <a href="mailto:hello@teduh.com.my">hello@teduh.com.my</a>
           </div>
@@ -629,13 +696,7 @@ e
         </div>
       </div>
 
-      <!-- Map — replace src with your Google Maps embed link -->
       <div class="map-wrap fade-in">
-        <!-- To embed your location:
-             1. Go to maps.google.com
-             2. Search your address
-             3. Click Share → Embed a map → Copy HTML
-             4. Paste the <iframe ...> here and remove the placeholder div -->
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3987.2745759415025!2d102.56203247509276!3d2.0460718589422937!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31d1b9ac13f6c6bd%3A0xf164cf1bf740e2fb!2sTeduh!5e0!3m2!1sen!2smy!4v1773333612485!5m2!1sen!2smy" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </div>
@@ -719,6 +780,7 @@ function sendWhatsApp(e) {
         <li><a href="#" data-page="shop">Shop</a></li>
         <li><a href="#" data-page="community">Community</a></li>
         <li><a href="#" data-page="about">About</a></li>
+        <li><a href="/loyalty">Loyalty</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -740,7 +802,7 @@ function sendWhatsApp(e) {
   </div>
   <div class="footer-bottom">
     <span>© 2026 Teduh. All rights reserved.</span>
-    </div>
+  </div>
 </footer>
 
 <script src="js/main.js"></script>

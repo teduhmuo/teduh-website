@@ -115,7 +115,6 @@
     flex-shrink: 0;
   }
 
-  /* Fulfillment toggle */
   .fulfillment-toggle {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -132,36 +131,17 @@
     text-align: center;
   }
 
-  .fulfillment-option:hover {
-    border-color: var(--medium-brown);
-  }
+  .fulfillment-option:hover { border-color: var(--medium-brown); }
 
   .fulfillment-option.selected {
     border-color: var(--accent);
     background: var(--accent-light);
   }
 
-  .fulfillment-option .fo-icon {
-    font-size: 1.5rem;
-    display: block;
-    margin-bottom: 0.4rem;
-  }
+  .fulfillment-option .fo-icon { font-size: 1.5rem; display: block; margin-bottom: 0.4rem; }
+  .fulfillment-option .fo-label { font-size: 0.85rem; font-weight: 500; color: var(--warm-brown); display: block; }
+  .fulfillment-option .fo-sub { font-size: 0.75rem; color: var(--medium-brown); margin-top: 0.2rem; display: block; }
 
-  .fulfillment-option .fo-label {
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: var(--warm-brown);
-    display: block;
-  }
-
-  .fulfillment-option .fo-sub {
-    font-size: 0.75rem;
-    color: var(--medium-brown);
-    margin-top: 0.2rem;
-    display: block;
-  }
-
-  /* Product categories */
   .category-tabs {
     display: flex;
     gap: 0.5rem;
@@ -184,7 +164,6 @@
   .cat-tab:hover { border-color: var(--medium-brown); color: var(--warm-brown); }
   .cat-tab.active { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
 
-  /* Products grid */
   .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -201,69 +180,33 @@
   }
 
   .product-card:hover { border-color: var(--medium-brown); }
+  .product-card.in-cart { border-color: var(--accent); background: var(--accent-light); }
 
-  .product-card.in-cart {
-    border-color: var(--accent);
-    background: var(--accent-light);
-  }
+  .product-name { font-size: 0.88rem; font-weight: 500; color: var(--warm-brown); margin-bottom: 0.25rem; }
+  .product-desc { font-size: 0.75rem; color: var(--medium-brown); line-height: 1.4; margin-bottom: 0.6rem; }
+  .product-price { font-size: 0.9rem; font-weight: 500; color: var(--accent); }
 
-  .product-name {
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--warm-brown);
-    margin-bottom: 0.25rem;
-  }
-
-  .product-desc {
-    font-size: 0.75rem;
-    color: var(--medium-brown);
-    line-height: 1.4;
-    margin-bottom: 0.6rem;
-  }
-
-  .product-price {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--accent);
-  }
-
-  .qty-control {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.6rem;
-  }
+  .qty-control { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
 
   .qty-btn {
-    width: 26px;
-    height: 26px;
+    width: 26px; height: 26px;
     border: 1px solid var(--border);
     border-radius: 50%;
     background: var(--white);
     cursor: pointer;
     font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     color: var(--warm-brown);
     font-family: var(--font-body);
     transition: background 0.1s;
   }
 
   .qty-btn:hover { background: var(--cream); }
+  .qty-value { font-size: 0.9rem; font-weight: 500; min-width: 20px; text-align: center; }
 
-  .qty-value {
-    font-size: 0.9rem;
-    font-weight: 500;
-    min-width: 20px;
-    text-align: center;
-  }
-
-  /* Category sections */
   .category-section { display: none; }
   .category-section.visible { display: block; }
 
-  /* Form fields */
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -304,10 +247,7 @@
     transition: border-color 0.15s;
   }
 
-  input:focus, textarea:focus, select:focus {
-    border-color: var(--medium-brown);
-  }
-
+  input:focus, textarea:focus, select:focus { border-color: var(--medium-brown); }
   textarea { resize: vertical; min-height: 80px; }
 
   .pickup-info {
@@ -320,7 +260,141 @@
     margin-top: 0.75rem;
   }
 
-  /* Cart summary */
+  /* ── Loyalty section ── */
+  .loyalty-section {
+    border: 1.5px solid var(--light-brown);
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-top: 1rem;
+    background: #FFFDF9;
+  }
+
+  .loyalty-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .loyalty-header .loyalty-icon {
+    font-size: 1.1rem;
+  }
+
+  .loyalty-header span {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--warm-brown);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .loyalty-phone-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .loyalty-phone-row input {
+    flex: 1;
+    padding: 0.55rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    color: var(--warm-brown);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .loyalty-phone-row input:focus { border-color: var(--medium-brown); }
+
+  .loyalty-lookup-btn {
+    padding: 0.55rem 1rem;
+    background: var(--warm-brown);
+    color: var(--cream);
+    border: none;
+    border-radius: 6px;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .loyalty-lookup-btn:hover { background: #2C1E14; }
+
+  .loyalty-member-found {
+    background: var(--warm-brown);
+    border-radius: 8px;
+    padding: 1rem 1.1rem;
+    color: var(--cream);
+    display: none;
+  }
+
+  .loyalty-member-found .lm-name {
+    font-size: 0.88rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
+  .loyalty-member-found .lm-pts {
+    font-size: 1.4rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .loyalty-member-found .lm-pts-label {
+    font-size: 0.72rem;
+    opacity: 0.6;
+    margin-bottom: 0.85rem;
+  }
+
+  .redeem-toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .redeem-toggle-row label {
+    font-size: 0.8rem;
+    color: rgba(247,243,238,0.85);
+    letter-spacing: 0;
+    text-transform: none;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .redeem-select {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    color: var(--cream);
+    border-radius: 6px;
+    padding: 0.4rem 0.7rem;
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    outline: none;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .redeem-select option { background: var(--warm-brown); color: var(--cream); }
+
+  .loyalty-msg {
+    font-size: 0.78rem;
+    color: var(--medium-brown);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  .loyalty-msg.error { color: var(--error); font-style: normal; }
+
+  /* ── Cart ── */
   .cart-empty {
     text-align: center;
     color: var(--light-brown);
@@ -340,7 +414,6 @@
   }
 
   .cart-item:last-child { border-bottom: none; }
-
   .cart-item-name { color: var(--warm-brown); font-weight: 400; }
   .cart-item-qty { color: var(--medium-brown); font-size: 0.8rem; margin-top: 0.15rem; }
   .cart-item-price { color: var(--warm-brown); font-weight: 500; }
@@ -361,7 +434,25 @@
     font-style: italic;
   }
 
-  /* Payment button */
+  .redeem-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  .points-earn-note {
+    background: var(--accent-light);
+    border-radius: 6px;
+    padding: 0.6rem 0.85rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-top: 0.75rem;
+    display: none;
+  }
+
   .pay-btn {
     width: 100%;
     padding: 1rem;
@@ -399,7 +490,6 @@
     letter-spacing: 0.04em;
   }
 
-  /* Loading overlay */
   .loading-overlay {
     display: none;
     position: fixed;
@@ -420,8 +510,7 @@
   }
 
   .spinner {
-    width: 36px;
-    height: 36px;
+    width: 36px; height: 36px;
     border: 3px solid var(--border);
     border-top-color: var(--warm-brown);
     border-radius: 50%;
@@ -430,13 +519,8 @@
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-box p { font-size: 0.9rem; color: var(--medium-brown); }
 
-  .loading-box p {
-    font-size: 0.9rem;
-    color: var(--medium-brown);
-  }
-
-  /* Error message */
   .error-msg {
     background: #fdf0ef;
     border: 1px solid #f5c6c6;
@@ -484,7 +568,7 @@
       <div class="fulfillment-option selected" id="opt-delivery" onclick="selectFulfillment('delivery')">
         <span class="fo-icon">🚚</span>
         <span class="fo-label">Delivery</span>
-        <span class="fo-sub">We offer delivery through Lalamove for Muar area orders, and courier service for deliveries outside Muar</span>
+        <span class="fo-sub">Lalamove for Muar area, courier for outside Muar</span>
       </div>
       <div class="fulfillment-option" id="opt-pickup" onclick="selectFulfillment('pickup')">
         <span class="fo-icon">☕</span>
@@ -573,7 +657,7 @@
       </div>
     </div>
 
-    <!-- Café Menu (pickup only items flagged) -->
+    <!-- Café Menu -->
     <div class="category-section" id="cat-menu">
       <div class="products-grid">
         <div class="product-card" id="pc-espresso">
@@ -682,7 +766,7 @@
       </div>
       <div class="form-group">
         <label for="field-phone">Phone number</label>
-        <input type="tel" id="field-phone" placeholder="e.g. 012-3456789" />
+        <input type="tel" id="field-phone" placeholder="e.g. 012-3456789" oninput="onPhoneInput()" />
       </div>
     </div>
     <div class="form-row">
@@ -692,7 +776,6 @@
       </div>
     </div>
 
-    <!-- Delivery address (shown only when delivery selected) -->
     <div id="delivery-fields">
       <div class="form-row" style="margin-top:0.5rem;">
         <div class="form-group full">
@@ -706,6 +789,32 @@
       <div class="form-group full">
         <label for="field-notes">Special requests (optional)</label>
         <input type="text" id="field-notes" placeholder="e.g. coarse grind, call upon arrival…" />
+      </div>
+    </div>
+
+    <!-- Loyalty Points Section -->
+    <div class="loyalty-section">
+      <div class="loyalty-header">
+        <span class="loyalty-icon">⭐</span>
+        <span>Teduh Loyalty Points</span>
+      </div>
+      <div class="loyalty-phone-row">
+        <input type="tel" id="loyalty-phone-input" placeholder="Enter your phone number to check points" />
+        <button class="loyalty-lookup-btn" onclick="lookupLoyalty()">Check</button>
+      </div>
+      <div id="loyalty-msg" class="loyalty-msg"></div>
+      <div class="loyalty-member-found" id="loyalty-member-box">
+        <div class="lm-name" id="lm-name"></div>
+        <div class="lm-pts" id="lm-pts">0</div>
+        <div class="lm-pts-label">points available</div>
+        <div class="redeem-toggle-row">
+          <div style="flex:1;">
+            <label for="redeem-select">Redeem points for a free item</label>
+            <select class="redeem-select" id="redeem-select" onchange="onRedeemChange()">
+              <option value="">— Don't redeem —</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -723,6 +832,10 @@
         <span>Subtotal</span>
         <span id="subtotal-amount">RM 0.00</span>
       </div>
+      <div id="redeem-summary-line" class="redeem-line" style="display:none;">
+        <span id="redeem-summary-label">Points redeemed</span>
+        <span id="redeem-summary-amount">− RM 0.00</span>
+      </div>
       <div class="cart-total" style="border:none; padding-top:0; padding-bottom:0.25rem; font-size:0.85rem; font-weight:400;">
         <span style="color:var(--medium-brown);">Online service charge</span>
         <span style="color:var(--medium-brown);">RM 1.00</span>
@@ -732,6 +845,7 @@
         <span id="total-amount">RM 0.00</span>
       </div>
       <p class="delivery-note" id="delivery-fee-note">+ Delivery fee will be calculated by Lalamove and charged separately.</p>
+      <div class="points-earn-note" id="points-earn-note"></div>
     </div>
 
     <div id="error-msg" class="error-msg"></div>
@@ -751,41 +865,85 @@
 </main>
 
 <footer>
-  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="/cdn-cgi/l/email-protection#d9b1bcb5b5b699adbcbdacb1f7bab6b4f7b4a0"><span class="__cf_email__" data-cfemail="4129242d2d2e0135242534296f222e2c6f2c38">[email&#160;protected]</span></a></p>
+  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="mailto:hello@teduh.com.my">hello@teduh.com.my</a></p>
   <p style="margin-top:0.5rem;">© 2025 Teduh Coffee Roastery · Muar, Johor</p>
 </footer>
 
 <div class="loading-overlay" id="loading">
   <div class="loading-box">
     <div class="spinner"></div>
-    <p>Preparing your payment…</p>
+    <p id="loading-msg">Preparing your payment…</p>
   </div>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
+// ── Config ─────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
+const PORTAL_KEY   = '50423c0a44098dd31210a91e335e6192';
+const BAYARCASH_API = 'https://portal.bayarcash.com/api/v3/transaction-intents';
+
+// ── Supabase helpers ───────────────────────────────────────────────
+async function sbGet(table, match) {
+  const params = Object.entries(match).map(([k,v]) => `${k}=eq.${encodeURIComponent(v)}`).join('&');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}&limit=1`, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+  });
+  const data = await res.json();
+  return data[0] || null;
+}
+
+async function sbInsert(table, row) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(row)
+  });
+  return res.json();
+}
+
+async function sbUpdate(table, match, updates) {
+  const params = Object.entries(match).map(([k,v]) => `${k}=eq.${encodeURIComponent(v)}`).join('&');
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    method: 'PATCH',
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation'
+    },
+    body: JSON.stringify(updates)
+  });
+  return res.json();
+}
+
 // ── Product catalogue ──────────────────────────────────────────────
 const PRODUCTS = {
-  'bean-250': { name: 'House Blend 250g', price: 35 },
-  'bean-500': { name: 'House Blend 500g', price: 60 },
-  'bean-1kg': { name: 'House Blend 1kg', price: 105 },
-  'drip-5':   { name: 'Drip Bags ×5', price: 25 },
-  'drip-10':  { name: 'Drip Bags ×10', price: 45 },
-  'espresso':   { name: 'Espresso', price: 6 },
-  'latte':      { name: 'Café Latte', price: 12 },
-  'cappuccino': { name: 'Cappuccino', price: 12 },
-  'americano':  { name: 'Americano', price: 9 },
-  'signature':  { name: 'Teduh Signature', price: 15 },
-  'coldbrew':   { name: 'Cold Brew', price: 13 },
-  'mug':  { name: 'Teduh Mug', price: 35 },
-  'tote': { name: 'Teduh Tote Bag', price: 25 },
+  'bean-250':   { name: 'House Blend 250g',  price: 35 },
+  'bean-500':   { name: 'House Blend 500g',  price: 60 },
+  'bean-1kg':   { name: 'House Blend 1kg',   price: 105 },
+  'drip-5':     { name: 'Drip Bags ×5',      price: 25 },
+  'drip-10':    { name: 'Drip Bags ×10',     price: 45 },
+  'espresso':   { name: 'Espresso',          price: 6 },
+  'latte':      { name: 'Café Latte',        price: 12 },
+  'cappuccino': { name: 'Cappuccino',        price: 12 },
+  'americano':  { name: 'Americano',         price: 9 },
+  'signature':  { name: 'Teduh Signature',   price: 15 },
+  'coldbrew':   { name: 'Cold Brew',         price: 13 },
+  'mug':        { name: 'Teduh Mug',         price: 35 },
+  'tote':       { name: 'Teduh Tote Bag',    price: 25 },
 };
-
-const PORTAL_KEY = '50423c0a44098dd31210a91e335e6192';
-const BAYARCASH_API = 'https://portal.bayarcash.com/api/v3/transaction-intents';
 
 // ── State ──────────────────────────────────────────────────────────
 const cart = {};
 let fulfillment = 'delivery';
+let loyaltyMember = null;   // { phone, name, points }
+let redeemItem = null;      // { name, pts } or null
 
 // ── Fulfillment toggle ─────────────────────────────────────────────
 function selectFulfillment(type) {
@@ -814,6 +972,18 @@ function changeQty(id, delta) {
   renderCart();
 }
 
+function getSubtotal() {
+  return Object.keys(cart).reduce((sum, k) => sum + PRODUCTS[k].price * cart[k], 0);
+}
+
+function getRedeemDiscount() {
+  return redeemItem ? redeemItem.pts : 0;
+}
+
+function getTotal() {
+  return Math.max(1, getSubtotal() - getRedeemDiscount()) + 1; // min RM1 + RM1 service charge
+}
+
 function renderCart() {
   const keys = Object.keys(cart);
   const empty = document.getElementById('cart-empty');
@@ -834,78 +1004,215 @@ function renderCart() {
   totalDiv.style.display = 'block';
   payBtn.disabled = false;
 
-  let total = 0;
+  const subtotal = getSubtotal();
   items.innerHTML = keys.map(k => {
     const p = PRODUCTS[k];
-    const subtotal = p.price * cart[k];
-    total += subtotal;
+    const s = p.price * cart[k];
     return `<div class="cart-item">
       <div>
         <div class="cart-item-name">${p.name}</div>
         <div class="cart-item-qty">× ${cart[k]} @ RM ${p.price.toFixed(2)}</div>
       </div>
-      <div class="cart-item-price">RM ${subtotal.toFixed(2)}</div>
+      <div class="cart-item-price">RM ${s.toFixed(2)}</div>
     </div>`;
   }).join('');
 
-  document.getElementById('subtotal-amount').textContent = 'RM ' + total.toFixed(2);
-  document.getElementById('total-amount').textContent = 'RM ' + (total + 1).toFixed(2);
+  document.getElementById('subtotal-amount').textContent = 'RM ' + subtotal.toFixed(2);
+
+  const redeemLine = document.getElementById('redeem-summary-line');
+  if (redeemItem) {
+    redeemLine.style.display = 'flex';
+    document.getElementById('redeem-summary-label').textContent = `Points redeemed (${redeemItem.name})`;
+    document.getElementById('redeem-summary-amount').textContent = `− RM ${redeemItem.pts.toFixed(2)}`;
+  } else {
+    redeemLine.style.display = 'none';
+  }
+
+  document.getElementById('total-amount').textContent = 'RM ' + getTotal().toFixed(2);
+
+  // Points earn preview (only if member loaded and not fully redeeming)
+  const earnNote = document.getElementById('points-earn-note');
+  if (loyaltyMember) {
+    const earnPts = Math.floor(subtotal - getRedeemDiscount());
+    earnNote.style.display = earnPts > 0 ? 'block' : 'none';
+    earnNote.textContent = `⭐ You'll earn ${earnPts} loyalty points from this order.`;
+  } else {
+    earnNote.style.display = 'none';
+  }
+}
+
+// ── Phone sync (copy phone to loyalty field) ───────────────────────
+function onPhoneInput() {
+  const ph = document.getElementById('field-phone').value.trim();
+  const lp = document.getElementById('loyalty-phone-input');
+  if (!lp.dataset.manualEntry) lp.value = ph;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('loyalty-phone-input').addEventListener('input', function() {
+    this.dataset.manualEntry = '1';
+  });
+});
+
+// ── Loyalty lookup (auto-registers new customers) ─────────────────
+async function lookupLoyalty() {
+  const rawPhone = document.getElementById('loyalty-phone-input').value.trim();
+  const phone = rawPhone.replace(/[\s\-]/g, '');
+  const msgEl = document.getElementById('loyalty-msg');
+  const memberBox = document.getElementById('loyalty-member-box');
+
+  if (!phone) { msgEl.textContent = 'Please enter a phone number.'; msgEl.className = 'loyalty-msg error'; return; }
+
+  msgEl.textContent = 'Looking up…'; msgEl.className = 'loyalty-msg';
+  memberBox.style.display = 'none';
+  loyaltyMember = null;
+  redeemItem = null;
+
+  try {
+    let member = await sbGet('loyalty_members', { phone });
+
+    if (!member) {
+      // Auto-register using name from Step 3 if filled, else use phone as placeholder
+      const nameField = document.getElementById('field-name').value.trim();
+      const memberName = nameField || 'Teduh Customer';
+
+      const newMember = await sbInsert('loyalty_members', {
+        phone,
+        name: memberName,
+        points: 0
+      });
+
+      member = Array.isArray(newMember) ? newMember[0] : newMember;
+      msgEl.textContent = '🎉 Welcome to Teduh Loyalty! You\'ll earn points on this order.';
+      msgEl.className = 'loyalty-msg';
+    } else {
+      msgEl.textContent = '';
+    }
+
+    loyaltyMember = member;
+    memberBox.style.display = 'block';
+    document.getElementById('lm-name').textContent = member.name;
+    document.getElementById('lm-pts').textContent = member.points;
+
+    buildRedeemOptions(member.points);
+    renderCart();
+  } catch(e) {
+    msgEl.textContent = 'Could not connect. Please try again.';
+    msgEl.className = 'loyalty-msg error';
+  }
+}
+
+function buildRedeemOptions(pts) {
+  const REDEEMABLE = [
+    { name: 'Espresso',        pts: 6 },
+    { name: 'Americano',       pts: 9 },
+    { name: 'Café Latte',      pts: 12 },
+    { name: 'Cappuccino',      pts: 12 },
+    { name: 'Cold Brew',       pts: 13 },
+    { name: 'Teduh Signature', pts: 15 },
+    { name: 'House Blend 250g', pts: 35 },
+  ];
+  const sel = document.getElementById('redeem-select');
+  sel.innerHTML = '<option value="">— Don\'t redeem —</option>';
+  REDEEMABLE.forEach((item, i) => {
+    if (pts >= item.pts) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${item.name} (${item.pts} pts)`;
+      opt.dataset.name = item.name;
+      opt.dataset.pts = item.pts;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+function onRedeemChange() {
+  const sel = document.getElementById('redeem-select');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt.value) {
+    redeemItem = null;
+  } else {
+    redeemItem = { name: opt.dataset.name, pts: parseInt(opt.dataset.pts) };
+  }
+  renderCart();
 }
 
 // ── Validation ─────────────────────────────────────────────────────
 function showError(msg) {
   const el = document.getElementById('error-msg');
-  el.textContent = msg;
-  el.classList.add('visible');
+  el.textContent = msg; el.classList.add('visible');
 }
-
-function clearError() {
-  document.getElementById('error-msg').classList.remove('visible');
-}
+function clearError() { document.getElementById('error-msg').classList.remove('visible'); }
 
 function validate() {
-  const name = document.getElementById('field-name').value.trim();
-  const phone = document.getElementById('field-phone').value.trim();
-  const email = document.getElementById('field-email').value.trim();
+  const name    = document.getElementById('field-name').value.trim();
+  const phone   = document.getElementById('field-phone').value.trim();
+  const email   = document.getElementById('field-email').value.trim();
   const address = document.getElementById('field-address').value.trim();
 
   if (Object.keys(cart).length === 0) { showError('Please add at least one item to your order.'); return false; }
-  if (!name) { showError('Please enter your name.'); return false; }
+  if (!name)  { showError('Please enter your name.'); return false; }
   if (!phone) { showError('Please enter your phone number.'); return false; }
   if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return false; }
   if (fulfillment === 'delivery' && !address) { showError('Please enter your delivery address.'); return false; }
   return true;
 }
 
-// ── Build order description ────────────────────────────────────────
 function buildOrderDesc() {
   const lines = Object.keys(cart).map(k => `${PRODUCTS[k].name} ×${cart[k]}`);
+  if (redeemItem) lines.push(`[REDEEM: ${redeemItem.name}]`);
   return lines.join(', ');
 }
 
-function getTotal() {
-  return Object.keys(cart).reduce((sum, k) => sum + PRODUCTS[k].price * cart[k], 0) + 1;
-}
-
-// ── Submit to Bayarcash ────────────────────────────────────────────
+// ── Submit order ───────────────────────────────────────────────────
 async function submitOrder() {
   clearError();
   if (!validate()) return;
 
+  const loadingMsg = document.getElementById('loading-msg');
   document.getElementById('loading').classList.add('active');
+  loadingMsg.textContent = 'Preparing your payment…';
 
-  const name = document.getElementById('field-name').value.trim();
-  const phone = document.getElementById('field-phone').value.trim();
-  const email = document.getElementById('field-email').value.trim();
-  const notes = document.getElementById('field-notes').value.trim();
+  const name    = document.getElementById('field-name').value.trim();
+  const phone   = document.getElementById('field-phone').value.trim().replace(/[\s\-]/g,'');
+  const email   = document.getElementById('field-email').value.trim();
+  const notes   = document.getElementById('field-notes').value.trim();
   const address = document.getElementById('field-address').value.trim();
-  const total = getTotal();
+  const subtotal = getSubtotal();
+  const total    = getTotal();
   const orderRef = 'TEDUH-' + Date.now();
 
-  const fulfillmentNote = fulfillment === 'delivery'
-    ? `[DELIVERY] ${address}`
-    : '[PICKUP at Teduh]';
+  // ── Handle loyalty: deduct redeem points immediately ──
+  if (loyaltyMember && redeemItem) {
+    try {
+      loadingMsg.textContent = 'Updating loyalty points…';
+      const newPts = loyaltyMember.points - redeemItem.pts;
+      await sbUpdate('loyalty_members', { phone: loyaltyMember.phone }, {
+        points: newPts,
+        updated_at: new Date().toISOString()
+      });
+      await sbInsert('loyalty_transactions', {
+        phone: loyaltyMember.phone,
+        description: `Redeemed: ${redeemItem.name} · Order ${orderRef}`,
+        points: -redeemItem.pts,
+        order_ref: orderRef
+      });
+    } catch(e) {
+      console.error('Loyalty redeem error:', e);
+    }
+  }
 
+  // ── Store pending earn in sessionStorage (credited on thank-you page) ──
+  const earnPts = loyaltyMember ? Math.floor(subtotal - getRedeemDiscount()) : 0;
+  if (loyaltyMember && earnPts > 0) {
+    sessionStorage.setItem('teduh_pending_loyalty', JSON.stringify({
+      phone: loyaltyMember.phone,
+      points: earnPts,
+      orderRef
+    }));
+  }
+
+  const fulfillmentNote = fulfillment === 'delivery' ? `[DELIVERY] ${address}` : '[PICKUP at Teduh]';
   const description = `${buildOrderDesc()} | ${fulfillmentNote}${notes ? ' | Note: ' + notes : ''}`;
 
   const payload = {
@@ -921,16 +1228,24 @@ async function submitOrder() {
   };
 
   try {
-    const res = await fetch(BAYARCASH_API, {
+    loadingMsg.textContent = 'Redirecting to payment…';
+    const res  = await fetch(BAYARCASH_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload),
     });
-
     const data = await res.json();
-
     if (data && data.payment_url) {
       window.location.href = data.payment_url;
     } else {
       document.getElementById('loading').classList.remove('active');
-      const msg = (data && data.message) ? data.message : 'Payment could not be initiated. Please try again
+      showError((data && data.message) ? data.message : 'Payment could not be initiated. Please try again.');
+    }
+  } catch(e) {
+    document.getElementById('loading').classList.remove('active');
+    showError('Network error. Please check your connection and try again.');
+  }
+}
+</script>
+</body>
+</html>

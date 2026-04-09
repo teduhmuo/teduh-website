@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staff — Teduh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --cream: #F7F3EE;
+    --warm-brown: #3D2B1F;
+    --medium-brown: #7A5C46;
+    --light-brown: #C4A882;
+    --accent: #5B7E5A;
+    --accent-light: #EAF0E9;
+    --border: #E2D9CE;
+    --white: #FFFFFF;
+    --error: #C0392B;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--warm-brown);
+    min-height: 100vh;
+  }
+
+  /* ── PIN screen ── */
+  .pin-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--warm-brown);
+  }
+
+  .pin-logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    color: var(--cream);
+    margin-bottom: 0.25rem;
+  }
+
+  .pin-sub {
+    font-size: 0.78rem;
+    color: var(--light-brown);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+
+  .pin-dots {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 2rem;
+  }
+
+  .pin-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--light-brown);
+    background: transparent;
+    transition: background 0.15s;
+  }
+
+  .pin-dot.filled { background: var(--light-brown); }
+  .pin-dot.error { border-color: #e88; background: #e88; }
+
+  .pin-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    width: 240px;
+  }
+
+  .pin-key {
+    height: 60px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 10px;
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 1.3rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pin-key:hover { background: rgba(255,255,255,0.15); }
+  .pin-key:active { background: rgba(255,255,255,0.25); }
+  .pin-key.empty { background: transparent; border: none; cursor: default; }
+  .pin-key.del { font-size: 1rem; }
+
+  .pin-error {
+    color: #e88;
+    font-size: 0.8rem;
+    margin-top: 1.25rem;
+    min-height: 1.2rem;
+    text-align: center;
+  }
+
+  /* ── Dashboard ── */
+  .dashboard { display: none; }
+
+  header {
+    background: var(--warm-brown);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  header .logo {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    color: var(--cream);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .staff-badge {
+    font-size: 0.7rem;
+    background: rgba(255,255,255,0.15);
+    color: var(--light-brown);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .logout-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: var(--light-brown);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .logout-btn:hover { background: rgba(255,255,255,0.1); }
+
+  main {
+    max-width: 560px;
+    margin: 1.5rem auto 3rem;
+    padding: 0 1.25rem;
+  }
+
+  /* Tab row */
+  .tab-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--white);
+    border-radius: 12px 12px 0 0;
+    border: 1px solid var(--border);
+    border-bottom: none;
+    overflow: hidden;
+  }
+
+  .tab-btn {
+    padding: 0.85rem 0.5rem;
+    background: transparent;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--medium-brown);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-bottom: 2px solid transparent;
+    text-align: center;
+  }
+
+  .tab-btn.active {
+    color: var(--warm-brown);
+    border-bottom-color: var(--warm-brown);
+    background: var(--cream);
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 0 0 12px 12px;
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 0.85rem;
+  }
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--medium-brown);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"] {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--warm-brown);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+
+  input:focus { border-color: var(--medium-brown); }
+
+  /* Member preview box */
+  .member-preview {
+    background: var(--cream);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.85rem;
+    display: none;
+  }
+
+  .mp-name { font-size: 0.9rem; font-weight: 500; color: var(--warm-brown); }
+  .mp-pts { font-size: 0.8rem; color: var(--medium-brown); margin-top: 2px; }
+
+  .pts-preview {
+    background: var(--accent-light);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--accent);
+    margin-bottom: 0.85rem;
+    display: none;
+  }
+
+  .pts-preview span { font-size: 1rem; font-weight: 500; }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: var(--warm-brown);
+    color: var(--cream);
+    border: none;
+    border-radius: 8px;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .submit-btn:hover { background: #2C1E14; }
+  .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .msg {
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    font-size: 0.83rem;
+    margin-top: 0.75rem;
+    display: none;
+  }
+
+  .msg.success { background: var(--accent-light); color: var(--accent); border: 1px solid #b6d4b5; display: block; }
+  .msg.error   { background: #fdf0ef; color: var(--error); border: 1px solid #f5c6c6; display: block; }
+  .msg.info    { background: var(--cream); color: var(--medium-brown); border: 1px solid var(--border); display: block; }
+
+  /* Member full card */
+  .member-card {
+    background: var(--warm-brown);
+    border-radius: 10px;
+    padding: 1.25rem;
+    color: var(--cream);
+    margin-top: 1rem;
+    display: none;
+  }
+
+  .mc-name  { font-size: 1rem; font-weight: 500; opacity: 0.85; }
+  .mc-phone { font-size: 0.75rem; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 0.85rem; }
+  .mc-pts-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 0.2rem; }
+  .mc-pts { font-size: 2rem; font-weight: 500; line-height: 1; }
+  .mc-pts-label { font-size: 0.75rem; opacity: 0.6; }
+  .mc-tier {
+    display: inline-block;
+    background: var(--light-brown);
+    color: var(--warm-brown);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-top: 0.6rem;
+  }
+
+  /* History */
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.82rem;
+  }
+
+  .history-item:last-child { border-bottom: none; }
+  .h-desc { color: var(--cream); }
+  .h-date { font-size: 0.7rem; opacity: 0.5; margin-top: 2px; }
+  .h-pts.earn   { color: #a8d5a7; font-weight: 500; }
+  .h-pts.redeem { color: #e88; font-weight: 500; }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-num { font-size: 1.6rem; font-weight: 500; color: var(--warm-brown); line-height: 1; }
+  .stat-label { font-size: 0.7rem; color: var(--medium-brown); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
+
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 0.75rem;
+    color: var(--light-brown);
+  }
+</style>
+</head>
+<body>
+
+<!-- PIN Screen -->
+<div class="pin-screen" id="pin-screen">
+  <div class="pin-logo">Teduh</div>
+  <div class="pin-sub">Staff Access</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+  </div>
+  <div class="pin-pad">
+    <button class="pin-key" onclick="pinPress('1')">1</button>
+    <button class="pin-key" onclick="pinPress('2')">2</button>
+    <button class="pin-key" onclick="pinPress('3')">3</button>
+    <button class="pin-key" onclick="pinPress('4')">4</button>
+    <button class="pin-key" onclick="pinPress('5')">5</button>
+    <button class="pin-key" onclick="pinPress('6')">6</button>
+    <button class="pin-key" onclick="pinPress('7')">7</button>
+    <button class="pin-key" onclick="pinPress('8')">8</button>
+    <button class="pin-key" onclick="pinPress('9')">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" onclick="pinPress('0')">0</button>
+    <button class="pin-key del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-error" id="pin-error"></div>
+</div>
+
+<!-- Dashboard -->
+<div class="dashboard" id="dashboard">
+
+  <header>
+    <div class="logo">Teduh</div>
+    <div class="header-right">
+      <span class="staff-badge">Staff</span>
+      <button class="logout-btn" onclick="logout()">Lock</button>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-members">—</div>
+        <div class="stat-label">Members</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-tx">—</div>
+        <div class="stat-label">Transactions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-pts">—</div>
+        <div class="stat-label">Points issued</div>
+      </div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn active" id="tab-add" onclick="switchTab('add')">Add Points</button>
+      <button class="tab-btn" id="tab-lookup" onclick="switchTab('lookup')">Lookup</button>
+      <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <div class="card">
+
+      <!-- ADD POINTS -->
+      <div class="panel active" id="panel-add">
+        <div class="form-group">
+          <label for="add-phone">Customer phone</label>
+          <input type="tel" id="add-phone" placeholder="e.g. 0123456789"
+            oninput="onAddPhoneInput()" onkeydown="if(event.key==='Enter')document.getElementById('add-amount').focus()" />
+        </div>
+
+        <div class="member-preview" id="add-member-preview">
+          <div class="mp-name" id="add-mp-name"></div>
+          <div class="mp-pts" id="add-mp-pts"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="add-amount">Bill amount (RM)</label>
+          <input type="number" id="add-amount" placeholder="0" min="1" step="1"
+            oninput="updateAddPreview()" onkeydown="if(event.key==='Enter')submitAddPoints()" />
+        </div>
+
+        <div class="pts-preview" id="add-pts-preview">
+          Points to add <span id="add-pts-val">0 pts</span>
+        </div>
+
+        <button class="submit-btn" id="add-submit-btn" onclick="submitAddPoints()">Add Points</button>
+        <div class="msg" id="add-msg"></div>
+      </div>
+
+      <!-- LOOKUP -->
+      <div class="panel" id="panel-lookup">
+        <div class="form-group">
+          <label for="lookup-phone">Customer phone</label>
+          <input type="tel" id="lookup-phone" placeholder="e.g. 0123456789"
+            onkeydown="if(event.key==='Enter')lookupMember()" />
+        </div>
+        <button class="submit-btn" onclick="lookupMember()">Look Up</button>
+        <div class="msg" id="lookup-msg"></div>
+
+        <div class="member-card" id="lookup-card">
+          <div class="mc-name" id="lc-name"></div>
+          <div class="mc-phone" id="lc-phone"></div>
+          <div class="mc-pts-row">
+            <span class="mc-pts" id="lc-pts">0</span>
+            <span class="mc-pts-label">points</span>
+          </div>
+          <div class="mc-tier" id="lc-tier"></div>
+          <div style="margin-top:1rem; padding-top:0.85rem; border-top:1px solid rgba(255,255,255,0.12);">
+            <div style="font-size:0.68rem; opacity:0.5; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:0.6rem;">Recent transactions</div>
+            <div id="lc-history"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REGISTER -->
+      <div class="panel" id="panel-register">
+        <div class="form-group">
+          <label for="reg-name">Customer name</label>
+          <input type="text" id="reg-name" placeholder="Full name" />
+        </div>
+        <div class="form-group">
+          <label for="reg-phone">Phone number</label>
+          <input type="tel" id="reg-phone" placeholder="e.g. 0123456789" />
+        </div>
+        <button class="submit-btn" onclick="registerMember()">Register Member</button>
+        <div class="msg" id="reg-msg"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>Teduh Staff Dashboard · Private access only</footer>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
+const STAFF_PIN    = '6868';
+
+const TIERS = [
+  { name: 'Regular', min: 0,    max: 199  },
+  { name: 'Silver',  min: 200,  max: 499  },
+  { name: 'Gold',    min: 500,  max: 999  },
+  { name: 'Platinum',min: 1000, max: Infinity },
+];
+
+function getTier(pts) { return TIERS.find(t => pts >= t.min && pts <= t.max) || TIERS[0]; }
+function fmtDate(ts) {
+  return new Date(ts).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+// ── PIN logic ──────────────────────────────────────────────────────
+let pinEntry = '';
+
+function pinPress(digit) {
+  if (pinEntry.length >= 4) return;
+  pinEntry += digit;
+  updatePinDots();
+  if (pinEntry.length === 4) checkPin();
+}
+
+function pinDel() {
+  pinEntry = pinEntry.slice(0, -1);
+  updatePinDots(false);
+  document.getElementById('pin-error').textContent = '';
+}
+
+function updatePinDots(shake) {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById('d' + i);
+    d.classList.toggle('filled', i < pinEntry.length);
+    d.classList.remove('error');
+  }
+}
+
+function checkPin() {
+  if (pinEntry === STAFF_PIN) {
+    sessionStorage.setItem('teduh_staff', '1');
+    document.getElementById('pin-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadStats();
+  } else {
+    for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.add('error');
+    document.getElementById('pin-error').textContent = 'Incorrect PIN. Try again.';
+    setTimeout(() => { pinEntry = ''; updatePinDots(); }, 800);
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('teduh_staff');
+  pinEntry = '';
+  updatePinDots();
+  document.getElementById('pin-error').textContent = '';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pin-screen').style.display = 'flex';
+}
+
+// Check if already authenticated this session
+if (sessionStorage.getItem('teduh_staff') === '1') {
+  document.getElementById('pin-screen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+}
+
+// ── Supabase helpers ───────────────────────────────────────────────
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  return res.json();
+}
+
+// ── Stats ──────────────────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const [members, txData] = await Promise.all([
+      sbFetch('loyalty_members?select=points'),
+      sbFetch('loyalty_transactions?select=points&points=gt.0')
+    ]);
+    document.getElementById('stat-members').textContent = members.length || 0;
+    document.getElementById('stat-tx').textContent = txData.length || 0;
+    const totalPts = txData.reduce((s, t) => s + t.points, 0);
+    document.getElementById('stat-pts').textContent = totalPts || 0;
+  } catch(e) { console.error(e); }
+}
+
+// ── Tab switch ─────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+// ── Add Points ─────────────────────────────────────────────────────
+let addTarget = null;
+let addPhoneTimer = null;
+
+function onAddPhoneInput() {
+  clearTimeout(addPhoneTimer);
+  addTarget = null;
+  document.getElementById('add-member-preview').style.display = 'none';
+  document.getElementById('add-pts-preview').style.display = 'none';
+  document.getElementById('add-msg').className = 'msg';
+
+  const phone = document.getElementById('add-phone').value.trim().replace(/[\s\-]/g,'');
+  if (phone.length < 9) return;
+
+  addPhoneTimer = setTimeout(() => autoLookupAdd(phone), 600);
+}
+
+async function autoLookupAdd(phone) {
+  try {
+    const data = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
+    const m = data[0];
+    if (m) {
+      addTarget = m;
+      document.getElementById('add-mp-name').textContent = m.name;
+      document.getElementById('add-mp-pts').textContent = `Current balance: ${m.points} pts`;
+      document.getElementById('add-member-preview').style.display = 'block';
+      updateAddPreview();
+    } else {
+      showMsg('add-msg', 'Phone not registered. Register them first in the Register tab.', 'info');
+    }
+  } catch(e) {}
+}
+
+function updateAddPreview() {
+  const amt = parseInt(document.getElementById('add-amount').value) || 0;
+  const prev = document.getElementById('add-pts-preview');
+  if (amt > 0 && addTarget) {
+    prev.style.display = 'flex';
+    document.getElementById('add-pts-val').textContent = amt + ' pts';
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
+async function submitAddPoints() {
+  const phone = document.getElementById('add-phone').value.trim().replace(/[\s\-]/g,'');
+  const amt   = parseInt(document.getElementById('add-amount').value) || 0;
+
+  if (!phone) { showMsg('add-msg', 'Enter customer phone number.', 'error'); return; }
+  if (!addTarget) { showMsg('add-msg', 'Customer not found. Check the phone number.', 'error'); return; }
+  if (amt <= 0)  { showMsg('add-msg', 'Enter a valid bill amount.', 'error'); return; }
+
+  const btn = document.getElementById('add-submit-btn');
+  btn.disabled = true; btn.textContent = 'Adding…';
+
+  try {
+    const newPts = addTarget.points + amt;
+    const orderRef = 'WALKIN-' + Date.now();
+
+    await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(addTarget.phone)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ points: newPts, updated_at: new Date().toISOString() })
+    });
+
+    await sbFetch('loyalty_transactions', {
+      method: 'POST',
+      body: JSON.stringify({
+        phone: addTarget.phone,
+        description: `Walk-in purchase RM ${amt}`,
+        points: amt,
+        order_ref: orderRef
+      })
+    });
+
+    showMsg('add-msg', `✓ ${amt} pts added to ${addTarget.name}. New balance: ${newPts} pts.`, 'success');
+
+    // Reset form
+    document.getElementById('add-phone').value = '';
+    document.getElementById('add-amount').value = '';
+    document.getElementById('add-member-preview').style.display = 'none';
+    document.getElementById('add-pts-preview').style.display = 'none';
+    addTarget = null;
+    loadStats();
+
+  } catch(e) {
+    showMsg('add-msg', 'Error adding points. Please try again.', 'error');
+  }
+
+  btn.disabled = false; btn.textContent = 'Add Points';
+}
+
+// ── Lookup ─────────────────────────────────────────────────────────
+async function lookupMember() {
+  const phone = document.getElementById('lookup-phone').value.trim().replace(/[\s\-]/g,'');
+  const card  = document.getElementById('lookup-card');
+  if (!phone) { showMsg('lookup-msg', 'Enter a phone number.', 'error'); return; }
+
+  card.style.display = 'none';
+  document.getElementById('lookup-msg').className = 'msg';
+
+  try {
+    const data = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
+    const m = data[0];
+    if (!m) { showMsg('lookup-msg', 'No member found for this number.', 'info'); return; }
+
+    document.getElementById('lc-name').textContent  = m.name;
+    document.getElementById('lc-phone').textContent = m.phone;
+    document.getElementById('lc-pts').textContent   = m.points;
+    document.getElementById('lc-tier').textContent  = getTier(m.points).name + ' Member';
+
+    const txData = await sbFetch(`loyalty_transactions?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc&limit=8`);
+    const histEl = document.getElementById('lc-history');
+    if (!txData || txData.length === 0) {
+      histEl.innerHTML = '<div style="font-size:0.78rem; opacity:0.4; padding:0.25rem 0;">No transactions yet.</div>';
+    } else {
+      histEl.innerHTML = txData.map(t => `
+        <div class="history-item">
+          <div>
+            <div class="h-desc">${t.description}</div>
+            <div class="h-date">${fmtDate(t.created_at)}</div>
+          </div>
+          <div class="h-pts ${t.points > 0 ? 'earn' : 'redeem'}">${t.points > 0 ? '+' : ''}${t.points} pts</div>
+        </div>
+      `).join('');
+    }
+
+    card.style.display = 'block';
+  } catch(e) {
+    showMsg('lookup-msg', 'Connection error. Try again.', 'error');
+  }
+}
+
+// ── Register ───────────────────────────────────────────────────────
+async function registerMember() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const phone = document.getElementById('reg-phone').value.trim().replace(/[\s\-]/g,'');
+
+  if (!name)  { showMsg('reg-msg', 'Enter customer name.', 'error'); return; }
+  if (!phone) { showMsg('reg-msg', 'Enter phone number.', 'error'); return; }
+
+  const btn = document.querySelector('#panel-register .submit-btn');
+  btn.disabled = true; btn.textContent = 'Registering…';
+
+  try {
+    const existing = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
+    if (existing && existing[0]) {
+      showMsg('reg-msg', `Already registered — ${existing[0].name}, ${existing[0].points} pts.`, 'info');
+      btn.disabled = false; btn.textContent = 'Register Member';
+      return;
+    }
+
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation'
+      },
+      body: JSON.stringify({ name, phone, points: 0 })
+    });
+
+    if (res.ok) {
+      showMsg('reg-msg', `${name} registered successfully!`, 'success');
+      document.getElementById('reg-name').value  = '';
+      document.getElementById('reg-phone').value = '';
+      loadStats();
+    } else {
+      showMsg('reg-msg', 'Registration failed. Try again.', 'error');
+    }
+  } catch(e) {
+    showMsg('reg-msg', 'Connection error. Try again.', 'error');
+  }
+
+  btn.disabled = false; btn.textContent = 'Register Member';
+}
+
+// Load stats if already authenticated
+if (sessionStorage.getItem('teduh_staff') === '1') loadStats();
+</script>
+</body>
+</html>
