@@ -484,8 +484,7 @@
       <div class="fulfillment-option selected" id="opt-delivery" onclick="selectFulfillment('delivery')">
         <span class="fo-icon">🚚</span>
         <span class="fo-label">Delivery</span>
-        <span class="fo-sub">We offer delivery through Lalamove for Muar area orders, 
-          and courier service for deliveries outside Muar</span>
+        <span class="fo-sub">We offer delivery through Lalamove for Muar area orders, and courier service for deliveries outside Muar</span>
       </div>
       <div class="fulfillment-option" id="opt-pickup" onclick="selectFulfillment('pickup')">
         <span class="fo-icon">☕</span>
@@ -720,8 +719,16 @@
     <div id="cart-empty" class="cart-empty">Your cart is empty — add items above</div>
     <div id="cart-items" class="cart-items" style="display:none;"></div>
     <div id="cart-total" style="display:none;">
-      <div class="cart-total">
+      <div class="cart-total" style="border:none; padding-bottom:0.25rem;">
         <span>Subtotal</span>
+        <span id="subtotal-amount">RM 0.00</span>
+      </div>
+      <div class="cart-total" style="border:none; padding-top:0; padding-bottom:0.25rem; font-size:0.85rem; font-weight:400;">
+        <span style="color:var(--medium-brown);">Online service charge</span>
+        <span style="color:var(--medium-brown);">RM 1.00</span>
+      </div>
+      <div class="cart-total">
+        <span>Total</span>
         <span id="total-amount">RM 0.00</span>
       </div>
       <p class="delivery-note" id="delivery-fee-note">+ Delivery fee will be calculated by Lalamove and charged separately.</p>
@@ -744,7 +751,7 @@
 </main>
 
 <footer>
-  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="mailto:hello@teduh.com.my">hello@teduh.com.my</a></p>
+  <p>Questions? WhatsApp us at <a href="https://wa.me/60XXXXXXXXXX">+60X-XXXXXXXX</a> or email <a href="/cdn-cgi/l/email-protection#d9b1bcb5b5b699adbcbdacb1f7bab6b4f7b4a0"><span class="__cf_email__" data-cfemail="4129242d2d2e0135242534296f222e2c6f2c38">[email&#160;protected]</span></a></p>
   <p style="margin-top:0.5rem;">© 2025 Teduh Coffee Roastery · Muar, Johor</p>
 </footer>
 
@@ -755,7 +762,7 @@
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ── Product catalogue ──────────────────────────────────────────────
 const PRODUCTS = {
   'bean-250': { name: 'House Blend 250g', price: 35 },
@@ -841,7 +848,8 @@ function renderCart() {
     </div>`;
   }).join('');
 
-  document.getElementById('total-amount').textContent = 'RM ' + total.toFixed(2);
+  document.getElementById('subtotal-amount').textContent = 'RM ' + total.toFixed(2);
+  document.getElementById('total-amount').textContent = 'RM ' + (total + 1).toFixed(2);
 }
 
 // ── Validation ─────────────────────────────────────────────────────
@@ -876,7 +884,7 @@ function buildOrderDesc() {
 }
 
 function getTotal() {
-  return Object.keys(cart).reduce((sum, k) => sum + PRODUCTS[k].price * cart[k], 0);
+  return Object.keys(cart).reduce((sum, k) => sum + PRODUCTS[k].price * cart[k], 0) + 1;
 }
 
 // ── Submit to Bayarcash ────────────────────────────────────────────
@@ -925,14 +933,4 @@ async function submitOrder() {
       window.location.href = data.payment_url;
     } else {
       document.getElementById('loading').classList.remove('active');
-      const msg = (data && data.message) ? data.message : 'Payment could not be initiated. Please try again or WhatsApp us.';
-      showError(msg);
-    }
-  } catch (err) {
-    document.getElementById('loading').classList.remove('active');
-    showError('Network error. Please check your connection and try again.');
-  }
-}
-</script>
-</body>
-</html>
+      const msg = (data && data.message) ? data.message : 'Payment could not be initiated. Please try again
