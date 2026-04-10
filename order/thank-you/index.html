@@ -19,34 +19,78 @@
   header { background: var(--warm-brown); padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
   header .logo { font-family: var(--font-display); font-size: 1.6rem; color: var(--cream); text-decoration: none; }
   header .tagline { font-size: 0.75rem; color: var(--light-brown); letter-spacing: 0.08em; text-transform: uppercase; }
-  main { max-width: 520px; margin: 3rem auto; padding: 0 1.25rem; text-align: center; }
+  main { max-width: 480px; margin: 2.5rem auto; padding: 0 1.25rem; text-align: center; }
+
   .check-circle {
-    width: 72px; height: 72px; background: var(--accent); border-radius: 50%;
+    width: 64px; height: 64px; background: var(--accent); border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1.5rem; font-size: 2rem; color: white;
+    margin: 0 auto 1.25rem; font-size: 1.8rem; color: white;
   }
-  h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; }
-  .sub { color: var(--medium-brown); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
+  h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin-bottom: 0.4rem; }
+  .sub { color: var(--medium-brown); font-size: 0.88rem; margin-bottom: 1.75rem; line-height: 1.6; }
+
+  /* Queue ticket */
+  .queue-ticket {
+    background: var(--warm-brown); border-radius: 16px;
+    padding: 0; overflow: hidden; margin-bottom: 1.25rem;
+    display: none;
+  }
+  .ticket-top {
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 2px dashed rgba(255,255,255,0.15);
+  }
+  .ticket-label {
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--light-brown); opacity: 0.7; margin-bottom: 0.5rem;
+  }
+  .ticket-number {
+    font-family: var(--font-display); font-size: 3.5rem; font-weight: 500;
+    color: var(--cream); line-height: 1; letter-spacing: 0.04em;
+  }
+  .ticket-type {
+    display: inline-block; margin-top: 0.5rem;
+    background: var(--light-brown); color: var(--warm-brown);
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 3px 12px; border-radius: 20px;
+  }
+  .ticket-bottom { padding: 1rem 1.5rem; }
+  .ticket-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 0.3rem 0; font-size: 0.82rem;
+  }
+  .ticket-row .tl { color: rgba(247,243,238,0.5); flex-shrink: 0; }
+  .ticket-row .tv { color: var(--cream); text-align: right; margin-left: 0.75rem; font-weight: 500; }
+  .ticket-items {
+    margin-top: 0.5rem; padding-top: 0.5rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: left;
+  }
+  .ticket-items .ti-label { font-size: 0.68rem; color: rgba(247,243,238,0.45); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+  .ticket-items .ti-item { font-size: 0.82rem; color: var(--cream); padding: 0.2rem 0; }
+
+  /* Loyalty card */
   .loyalty-card {
-    background: var(--warm-brown); border-radius: 12px;
-    padding: 1.5rem; color: var(--cream); margin-bottom: 1.5rem; display: none;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.1rem 1.25rem;
+    margin-bottom: 1.25rem; display: none;
+    display: none; text-align: left;
   }
-  .lc-label { font-size: 0.78rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
-  .lc-pts { font-size: 2.2rem; font-weight: 500; line-height: 1; }
-  .lc-sub { font-size: 0.8rem; opacity: 0.65; margin-top: 0.25rem; }
-  .order-ref {
-    background: var(--white); border: 1px solid var(--border); border-radius: 8px;
-    padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--medium-brown);
-    margin-bottom: 1.5rem; display: none;
-  }
-  .order-ref span { font-weight: 500; color: var(--warm-brown); }
+  .lc-label { font-size: 0.72rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem; color: var(--medium-brown); }
+  .lc-row { display: flex; align-items: baseline; gap: 6px; }
+  .lc-pts { font-size: 1.8rem; font-weight: 500; color: var(--accent); line-height: 1; }
+  .lc-pts-label { font-size: 0.78rem; color: var(--medium-brown); }
+  .lc-sub { font-size: 0.78rem; color: var(--medium-brown); margin-top: 0.2rem; }
+
   .btn-home {
-    display: inline-block; padding: 0.85rem 2rem;
+    display: inline-block; padding: 0.85rem 2.5rem;
     background: var(--warm-brown); color: var(--cream);
     border-radius: 8px; font-family: var(--font-display);
     font-size: 1rem; text-decoration: none; transition: background 0.15s;
   }
   .btn-home:hover { background: #2C1E14; }
+
+  .processing-msg { color: var(--medium-brown); font-size: 0.82rem; margin-bottom: 1rem; }
+
   footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--light-brown); }
 </style>
 </head>
@@ -60,16 +104,41 @@
 <main>
   <div class="check-circle">✓</div>
   <h1>Order confirmed!</h1>
-  <p class="sub">Thank you for your order. We'll WhatsApp you with updates shortly.<br>Check your email for the receipt.</p>
+  <p class="sub">Thank you for your order. We'll WhatsApp you with updates shortly.</p>
 
-  <div class="order-ref" id="order-ref-box">
-    Order reference: <span id="order-ref-num"></span>
+  <p class="processing-msg" id="processing-msg">Setting up your order…</p>
+
+  <!-- Queue Ticket -->
+  <div class="queue-ticket" id="queue-ticket">
+    <div class="ticket-top">
+      <div class="ticket-label">Your queue number</div>
+      <div class="ticket-number" id="ticket-number">#PU0001</div>
+      <div class="ticket-type" id="ticket-type">Pickup</div>
+    </div>
+    <div class="ticket-bottom">
+      <div class="ticket-row">
+        <span class="tl">Name</span>
+        <span class="tv" id="ticket-name"></span>
+      </div>
+      <div class="ticket-row">
+        <span class="tl">Total</span>
+        <span class="tv" id="ticket-total"></span>
+      </div>
+      <div class="ticket-items">
+        <div class="ti-label">Items ordered</div>
+        <div id="ticket-items-list"></div>
+      </div>
+    </div>
   </div>
 
+  <!-- Loyalty -->
   <div class="loyalty-card" id="loyalty-card">
     <div class="lc-label">Loyalty points earned</div>
-    <div class="lc-pts" id="lc-pts">+0</div>
-    <div class="lc-sub" id="lc-sub">New balance: 0 pts</div>
+    <div class="lc-row">
+      <span class="lc-pts" id="lc-pts">+0</span>
+      <span class="lc-pts-label">points</span>
+    </div>
+    <div class="lc-sub" id="lc-sub"></div>
   </div>
 
   <a href="/" class="btn-home">Back to Teduh</a>
@@ -84,66 +153,96 @@ const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
 const NOTIFY_WA    = '601170264828';
 
-function notifyWhatsApp(order) {
+async function sbFetch(path, options = {}) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    ...options,
+    headers: {
+      'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json', 'Prefer': 'return=representation',
+      ...(options.headers || {})
+    }
+  });
+  return res.json();
+}
+
+// ── Generate queue number ─────────────────────────────────────────────
+async function generateQueueNumber(type) {
+  const prefix = type === 'pickup' ? 'PU' : 'DO';
+
+  // Get first day of current month
+  const now   = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+  // Count existing orders this month with same prefix
+  const existing = await sbFetch(
+    `queue_orders?queue_number=like.%23${prefix}%&created_at=gte.${start}&select=queue_number`
+  );
+
+  const count  = Array.isArray(existing) ? existing.length + 1 : 1;
+  const padded = String(count).padStart(4, '0');
+  return `#${prefix}${padded}`;
+}
+
+// ── WhatsApp notification ─────────────────────────────────────────────
+function notifyWhatsApp(order, queueNum) {
   if (!order) return;
-  const redeemed = order.redeemItem   ? '\n🎁 Redeemed: ' + order.redeemItem : '';
-  const loyalty  = order.loyaltyPhone ? '\n⭐ Loyalty: '  + order.loyaltyPhone : '';
+  const redeemed = order.redeemItem   ? '\n🎁 Redeemed: '  + order.redeemItem   : '';
+  const loyalty  = order.loyaltyPhone ? '\n⭐ Loyalty: '   + order.loyaltyPhone : '';
   const msg = [
-    '🛍️ *NEW ORDER — Teduh*',
+    `🛍️ *NEW ORDER — Teduh*`,
     '',
-    '📋 Ref: ' + order.orderRef,
-    '👤 Name: ' + order.name,
-    '📱 Phone: ' + order.phone,
-    '📧 Email: ' + order.email,
+    `🔢 Queue: *${queueNum}*`,
+    `📋 Ref: ${order.orderRef}`,
+    `👤 Name: ${order.name}`,
+    `📱 Phone: ${order.phone}`,
+    `📧 Email: ${order.email}`,
     '',
-    '🧾 *Items:*',
+    `🧾 *Items:*`,
     order.items,
     '',
-    '📦 ' + order.fulfillment + redeemed + loyalty,
+    `📦 ${order.fulfillment}${redeemed}${loyalty}`,
     '',
-    '💰 *Total: RM ' + order.total + '*',
+    `💰 *Total: RM ${order.total}*`,
     '',
     '─────────────────',
-    'Go to teduh.com.my/staff to add loyalty points after fulfillment.',
+    'Check queue at teduh.com.my/staff',
   ].join('\n');
-
-  // Open WhatsApp — staff must tap Send
   window.open('https://wa.me/' + NOTIFY_WA + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
+// ── Credit loyalty points ─────────────────────────────────────────────
 async function creditPoints(pending) {
   try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/loyalty_members?phone=eq.' + encodeURIComponent(pending.phone) + '&limit=1', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    const res  = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}&limit=1`, {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
     });
     const data = await res.json();
-    if (!data[0]) return;
+    if (!data[0]) return null;
 
     const newTotal = data[0].points + pending.points;
 
-    await fetch(SUPABASE_URL + '/rest/v1/loyalty_members?phone=eq.' + encodeURIComponent(pending.phone), {
+    await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}`, {
       method: 'PATCH',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ points: newTotal, updated_at: new Date().toISOString() })
     });
 
-    await fetch(SUPABASE_URL + '/rest/v1/loyalty_transactions', {
+    await fetch(`${SUPABASE_URL}/rest/v1/loyalty_transactions`, {
       method: 'POST',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: pending.phone,
-        description: 'Online purchase · Order ' + pending.orderRef,
+        description: `Online purchase · Order ${pending.orderRef}`,
         points: pending.points,
         order_ref: pending.orderRef
       })
     });
 
-    document.getElementById('loyalty-card').style.display = 'block';
-    document.getElementById('lc-pts').textContent  = '+' + pending.points;
-    document.getElementById('lc-sub').textContent  = 'New balance: ' + newTotal + ' pts';
-  } catch(e) { console.error('Points credit error:', e); }
+    return newTotal;
+  } catch(e) { console.error('Points credit error:', e); return null; }
 }
 
+// ── Main ─────────────────────────────────────────────────────────────
 async function onLoad() {
   const loyaltyRaw = sessionStorage.getItem('teduh_pending_loyalty');
   const orderRaw   = sessionStorage.getItem('teduh_pending_order');
@@ -151,17 +250,58 @@ async function onLoad() {
   sessionStorage.removeItem('teduh_pending_loyalty');
   sessionStorage.removeItem('teduh_pending_order');
 
-  // Show order ref
+  let order = null;
   if (orderRaw) {
-    try {
-      const order = JSON.parse(orderRaw);
-      if (order.orderRef) {
-        document.getElementById('order-ref-num').textContent = order.orderRef;
-        document.getElementById('order-ref-box').style.display = 'block';
-      }
-      // Send WhatsApp notification
-      notifyWhatsApp(order);
-    } catch(e) {}
+    try { order = JSON.parse(orderRaw); } catch(e) {}
+  }
+
+  if (!order) {
+    document.getElementById('processing-msg').textContent = 'Thank you for your order!';
+    return;
+  }
+
+  document.getElementById('processing-msg').textContent = 'Generating your queue number…';
+
+  try {
+    // Generate queue number
+    const queueNum = await generateQueueNumber(order.fulfillmentType || 'pickup');
+
+    // Save to queue_orders table
+    await sbFetch('queue_orders', {
+      method: 'POST',
+      body: JSON.stringify({
+        queue_number:    queueNum,
+        order_ref:       order.orderRef,
+        customer_name:   order.name,
+        phone:           order.phone,
+        items:           order.itemsSimple || order.items,
+        fulfillment_type: order.fulfillmentType || 'pickup',
+        address:         order.address  || '',
+        notes:           order.notes    || '',
+        status:          'pending'
+      })
+    });
+
+    // Show ticket
+    document.getElementById('processing-msg').style.display = 'none';
+    const ticket = document.getElementById('queue-ticket');
+    ticket.style.display = 'block';
+    document.getElementById('ticket-number').textContent = queueNum;
+    document.getElementById('ticket-type').textContent   = order.fulfillmentType === 'delivery' ? 'Delivery' : 'Pickup';
+    document.getElementById('ticket-name').textContent   = order.name;
+    document.getElementById('ticket-total').textContent  = `RM ${order.total}`;
+
+    // Items list
+    const itemsList = document.getElementById('ticket-items-list');
+    const items = (order.itemsSimple || '').split(', ');
+    itemsList.innerHTML = items.map(i => `<div class="ti-item">· ${i}</div>`).join('');
+
+    // WhatsApp notification
+    notifyWhatsApp(order, queueNum);
+
+  } catch(e) {
+    console.error('Queue error:', e);
+    document.getElementById('processing-msg').textContent = 'Order confirmed! Thank you.';
   }
 
   // Credit loyalty points
@@ -169,7 +309,13 @@ async function onLoad() {
     try {
       const pending = JSON.parse(loyaltyRaw);
       if (pending && pending.phone && pending.points) {
-        await creditPoints(pending);
+        const newTotal = await creditPoints(pending);
+        if (newTotal !== null) {
+          const lc = document.getElementById('loyalty-card');
+          lc.style.display = 'block';
+          document.getElementById('lc-pts').textContent = '+' + pending.points;
+          document.getElementById('lc-sub').textContent = 'New balance: ' + newTotal + ' pts';
+        }
       }
     } catch(e) {}
   }
