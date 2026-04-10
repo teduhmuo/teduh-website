@@ -1213,6 +1213,20 @@ async function submitOrder() {
   }
 
   const fulfillmentNote = fulfillment === 'delivery' ? `[DELIVERY] ${address}` : '[PICKUP at Teduh]';
+
+  // ── Store order details for WhatsApp notification on thank-you page ──
+  const itemLines = Object.keys(cart).map(k => `  - ${PRODUCTS[k].name} x${cart[k]} (RM ${(PRODUCTS[k].price * cart[k]).toFixed(2)})`).join('\n');
+  sessionStorage.setItem('teduh_pending_order', JSON.stringify({
+    orderRef,
+    name,
+    phone,
+    email,
+    items: itemLines,
+    fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
+    redeemItem: redeemItem ? redeemItem.name : null,
+    loyaltyPhone: loyaltyMember ? loyaltyMember.phone : null,
+    total: total.toFixed(2)
+  }));
   const description = `${buildOrderDesc()} | ${fulfillmentNote}${notes ? ' | Note: ' + notes : ''}`;
 
   const payload = {

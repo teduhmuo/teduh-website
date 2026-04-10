@@ -23,28 +23,31 @@
   .check-circle {
     width: 72px; height: 72px; background: var(--accent); border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 1.5rem; font-size: 2rem;
+    margin: 0 auto 1.5rem; font-size: 2rem; color: white;
   }
   h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; }
   .sub { color: var(--medium-brown); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
   .loyalty-card {
     background: var(--warm-brown); border-radius: 12px;
-    padding: 1.5rem; color: var(--cream); margin-bottom: 1.5rem;
-    display: none;
+    padding: 1.5rem; color: var(--cream); margin-bottom: 1.5rem; display: none;
   }
-  .loyalty-card .lc-label { font-size: 0.78rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
-  .loyalty-card .lc-pts { font-size: 2.2rem; font-weight: 500; line-height: 1; }
-  .loyalty-card .lc-sub { font-size: 0.8rem; opacity: 0.65; margin-top: 0.25rem; }
+  .lc-label { font-size: 0.78rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
+  .lc-pts { font-size: 2.2rem; font-weight: 500; line-height: 1; }
+  .lc-sub { font-size: 0.8rem; opacity: 0.65; margin-top: 0.25rem; }
+  .order-ref {
+    background: var(--white); border: 1px solid var(--border); border-radius: 8px;
+    padding: 0.75rem 1rem; font-size: 0.82rem; color: var(--medium-brown);
+    margin-bottom: 1.5rem; display: none;
+  }
+  .order-ref span { font-weight: 500; color: var(--warm-brown); }
   .btn-home {
     display: inline-block; padding: 0.85rem 2rem;
     background: var(--warm-brown); color: var(--cream);
     border-radius: 8px; font-family: var(--font-display);
-    font-size: 1rem; text-decoration: none;
-    transition: background 0.15s;
+    font-size: 1rem; text-decoration: none; transition: background 0.15s;
   }
   .btn-home:hover { background: #2C1E14; }
   footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--light-brown); }
-  footer a { color: var(--medium-brown); text-decoration: none; }
 </style>
 </head>
 <body>
@@ -59,82 +62,120 @@
   <h1>Order confirmed!</h1>
   <p class="sub">Thank you for your order. We'll WhatsApp you with updates shortly.<br>Check your email for the receipt.</p>
 
+  <div class="order-ref" id="order-ref-box">
+    Order reference: <span id="order-ref-num"></span>
+  </div>
+
   <div class="loyalty-card" id="loyalty-card">
     <div class="lc-label">Loyalty points earned</div>
     <div class="lc-pts" id="lc-pts">+0</div>
-    <div class="lc-sub" id="lc-sub">Total balance: 0 pts</div>
+    <div class="lc-sub" id="lc-sub">New balance: 0 pts</div>
   </div>
 
   <a href="/" class="btn-home">Back to Teduh</a>
 </main>
 
 <footer>
-  <p>© 2025 Teduh Coffee Roastery · Muar, Johor</p>
+  <p>© 2026 Teduh Coffee Roastery · Muar, Johor</p>
 </footer>
 
 <script>
 const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
+const NOTIFY_WA    = '601170264828';
 
-async function creditPoints() {
-  const raw = sessionStorage.getItem('teduh_pending_loyalty');
-  if (!raw) return;
-  sessionStorage.removeItem('teduh_pending_loyalty');
+function notifyWhatsApp(order) {
+  if (!order) return;
+  const redeemed = order.redeemItem   ? '\n🎁 Redeemed: ' + order.redeemItem : '';
+  const loyalty  = order.loyaltyPhone ? '\n⭐ Loyalty: '  + order.loyaltyPhone : '';
+  const msg = [
+    '🛍️ *NEW ORDER — Teduh*',
+    '',
+    '📋 Ref: ' + order.orderRef,
+    '👤 Name: ' + order.name,
+    '📱 Phone: ' + order.phone,
+    '📧 Email: ' + order.email,
+    '',
+    '🧾 *Items:*',
+    order.items,
+    '',
+    '📦 ' + order.fulfillment + redeemed + loyalty,
+    '',
+    '💰 *Total: RM ' + order.total + '*',
+    '',
+    '─────────────────',
+    'Go to teduh.com.my/staff to add loyalty points after fulfillment.',
+  ].join('\n');
 
-  let pending;
-  try { pending = JSON.parse(raw); } catch { return; }
-  if (!pending || !pending.phone || !pending.points) return;
+  // Open WhatsApp — staff must tap Send
+  window.open('https://wa.me/' + NOTIFY_WA + '?text=' + encodeURIComponent(msg), '_blank');
+}
 
+async function creditPoints(pending) {
   try {
-    // Get current points
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}&limit=1`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    const res = await fetch(SUPABASE_URL + '/rest/v1/loyalty_members?phone=eq.' + encodeURIComponent(pending.phone) + '&limit=1', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
     });
     const data = await res.json();
     if (!data[0]) return;
 
-    const current = data[0].points;
-    const newTotal = current + pending.points;
+    const newTotal = data[0].points + pending.points;
 
-    // Update points
-    await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}`, {
+    await fetch(SUPABASE_URL + '/rest/v1/loyalty_members?phone=eq.' + encodeURIComponent(pending.phone), {
       method: 'PATCH',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({ points: newTotal, updated_at: new Date().toISOString() })
     });
 
-    // Log transaction
-    await fetch(`${SUPABASE_URL}/rest/v1/loyalty_transactions`, {
+    await fetch(SUPABASE_URL + '/rest/v1/loyalty_transactions', {
       method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json'
-      },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         phone: pending.phone,
-        description: `Purchase · Order ${pending.orderRef}`,
+        description: 'Online purchase · Order ' + pending.orderRef,
         points: pending.points,
         order_ref: pending.orderRef
       })
     });
 
-    // Show loyalty card
-    const card = document.getElementById('loyalty-card');
-    card.style.display = 'block';
-    document.getElementById('lc-pts').textContent = '+' + pending.points;
-    document.getElementById('lc-sub').textContent = 'New balance: ' + newTotal + ' pts';
+    document.getElementById('loyalty-card').style.display = 'block';
+    document.getElementById('lc-pts').textContent  = '+' + pending.points;
+    document.getElementById('lc-sub').textContent  = 'New balance: ' + newTotal + ' pts';
+  } catch(e) { console.error('Points credit error:', e); }
+}
 
-  } catch(e) {
-    console.error('Points credit error:', e);
+async function onLoad() {
+  const loyaltyRaw = sessionStorage.getItem('teduh_pending_loyalty');
+  const orderRaw   = sessionStorage.getItem('teduh_pending_order');
+
+  sessionStorage.removeItem('teduh_pending_loyalty');
+  sessionStorage.removeItem('teduh_pending_order');
+
+  // Show order ref
+  if (orderRaw) {
+    try {
+      const order = JSON.parse(orderRaw);
+      if (order.orderRef) {
+        document.getElementById('order-ref-num').textContent = order.orderRef;
+        document.getElementById('order-ref-box').style.display = 'block';
+      }
+      // Send WhatsApp notification
+      notifyWhatsApp(order);
+    } catch(e) {}
+  }
+
+  // Credit loyalty points
+  if (loyaltyRaw) {
+    try {
+      const pending = JSON.parse(loyaltyRaw);
+      if (pending && pending.phone && pending.points) {
+        await creditPoints(pending);
+      }
+    } catch(e) {}
   }
 }
 
-creditPoints();
+onLoad();
 </script>
 </body>
 </html>
