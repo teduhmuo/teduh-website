@@ -852,7 +852,7 @@
         <span>Teduh Loyalty Points</span>
       </div>
       <div class="loyalty-phone-row">
-        <input type="tel" id="loyalty-phone-input" placeholder="Enter your phone number to check points" />
+        <input type="tel" id="loyalty-phone-input" placeholder="Fill in your phone number above first" readonly tabindex="-1" style="background:var(--cream);color:var(--medium-brown);cursor:not-allowed;opacity:0.8;pointer-events:none;" />
         <button class="loyalty-lookup-btn" onclick="lookupLoyalty()">Check</button>
       </div>
       <div id="loyalty-msg" class="loyalty-msg"></div>
@@ -1132,15 +1132,17 @@ function renderCart() {
 // ── Phone sync (copy phone to loyalty field) ───────────────────────
 function onPhoneInput() {
   const ph = document.getElementById('field-phone').value.trim();
-  const lp = document.getElementById('loyalty-phone-input');
-  if (!lp.dataset.manualEntry) lp.value = ph;
+  document.getElementById('loyalty-phone-input').value = ph;
+  // Reset loyalty if phone changes
+  if (loyaltyMember && loyaltyMember.phone !== ph.replace(/[\s\-]/g,'')) {
+    loyaltyMember = null;
+    redeemItem = null;
+    document.getElementById('loyalty-member-box').style.display = 'none';
+    document.getElementById('loyalty-msg').textContent = '';
+  }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('loyalty-phone-input').addEventListener('input', function() {
-    this.dataset.manualEntry = '1';
-  });
-});
+
 
 // ── Loyalty lookup (auto-registers new customers) ─────────────────
 async function lookupLoyalty() {
@@ -1544,6 +1546,24 @@ function waOutsideDelivery() {
   ].join('\n');
 
   window.open('https://wa.me/601170264828?text=' + encodeURIComponent(msg), '_blank');
+}
+
+function syncLoyaltyPhone() {
+  const phone = document.getElementById('field-phone').value.trim();
+  const loyInput = document.getElementById('loyalty-phone-input');
+  loyInput.value = phone;
+  // Auto-lookup when phone number looks complete (10-11 digits)
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length >= 10) {
+    lookupLoyalty();
+  } else {
+    // Reset loyalty state if phone cleared
+    loyaltyMember = null;
+    redeemItem = null;
+    document.getElementById('loyalty-member-found').style.display = 'none';
+    document.getElementById('loyalty-msg').textContent = '';
+    renderCart();
+  }
 }
 
 </script>
