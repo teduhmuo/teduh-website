@@ -260,6 +260,20 @@
     margin-top: 0.75rem;
   }
 
+  .delivery-fee-box {
+    margin-top: 0.75rem;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    display: none;
+    border: 1px solid var(--border);
+  }
+  .delivery-fee-box.success { background: var(--accent-light); color: var(--accent); border-color: #b6d4b5; }
+  .delivery-fee-box.error   { background: #fdf0ef; color: var(--error); border-color: #f5c6c6; }
+  .delivery-fee-box.loading { background: var(--cream); color: var(--medium-brown); }
+  .fee-amount { font-size: 1.1rem; font-weight: 500; margin-top: 0.25rem; }
+
   /* ── Loyalty section ── */
   .loyalty-section {
     border: 1.5px solid var(--light-brown);
@@ -780,7 +794,11 @@
       <div class="form-row" style="margin-top:0.5rem;">
         <div class="form-group full">
           <label for="field-address">Delivery address</label>
-          <textarea id="field-address" placeholder="Full address including postcode, Muar, Johor"></textarea>
+          <textarea id="field-address" placeholder="Full address including postcode, Muar, Johor" oninput="onAddressInput()"></textarea>
+          <div class="delivery-fee-box" id="delivery-fee-box">
+            <div id="delivery-fee-text"></div>
+            <div class="fee-amount" id="delivery-fee-amount"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -1283,6 +1301,84 @@ async function submitOrder() {
     showError('Network error. Please check your connection and try again.');
   }
 }
+// ── Delivery fee estimator (OpenStreetMap Nominatim) ──────────────────
+const TEDUH_LAT = 2.0461;
+const TEDUH_LNG = 102.5621;
+const MAX_KM    = 10;
+
+let addressTimer = null;
+
+function onAddressInput() {
+  clearTimeout(addressTimer);
+  const addr = document.getElementById('field-address').value.trim();
+  const box  = document.getElementById('delivery-fee-box');
+  if (addr.length < 8) { box.style.display = 'none'; return; }
+  // Wait 1.5s after typing stops
+  addressTimer = setTimeout(() => estimateDelivery(addr), 1500);
+}
+
+async function estimateDelivery(addr) {
+  const box    = document.getElementById('delivery-fee-box');
+  const text   = document.getElementById('delivery-fee-text');
+  const amount = document.getElementById('delivery-fee-amount');
+
+  box.className = 'delivery-fee-box loading';
+  box.style.display = 'block';
+  text.textContent = 'Calculating delivery fee...';
+  amount.textContent = '';
+
+  try {
+    // Append Muar, Johor if not already there for better results
+    const query = addr.toLowerCase().includes('muar') ? addr : addr + ', Muar, Johor, Malaysia';
+    const url   = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&limit=1&countrycodes=my';
+
+    const res  = await fetch(url, { headers: { 'Accept-Language': 'en', 'User-Agent': 'TeduhCoffee/1.0' } });
+    const data = await res.json();
+
+    if (!data || data.length === 0) {
+      box.className = 'delivery-fee-box error';
+      text.textContent = 'Address not found. Please check and try again.';
+      return;
+    }
+
+    const custLat = parseFloat(data[0].lat);
+    const custLng = parseFloat(data[0].lon);
+    const km      = haversineKm(TEDUH_LAT, TEDUH_LNG, custLat, custLng);
+
+    if (km > MAX_KM) {
+      box.className = 'delivery-fee-box error';
+      text.textContent = 'Sorry, your address is ' + km.toFixed(1) + 'km from Teduh — outside our ' + MAX_KM + 'km delivery area. Please choose self-pickup or use courier (J&T / Pos Laju).';
+      amount.textContent = '';
+    } else {
+      const fee = calcFee(km);
+      box.className = 'delivery-fee-box success';
+      text.textContent = 'Distance from Teduh: ' + km.toFixed(1) + 'km · Estimated Lalamove fee:';
+      amount.textContent = fee;
+    }
+  } catch(e) {
+    box.className = 'delivery-fee-box error';
+    text.textContent = 'Could not estimate. Please check connection and try again.';
+  }
+}
+
+function haversineKm(lat1, lng1, lat2, lng2) {
+  const R    = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a    = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function calcFee(km) {
+  // Lalamove Muar estimated rates within 10km
+  if (km <= 2)  return 'RM 6.50';
+  if (km <= 4)  return 'RM 7.50';
+  if (km <= 6)  return 'RM 8.50';
+  if (km <= 8)  return 'RM 9.50';
+  return 'RM 11.00';
+}
+
+
 </script>
 </body>
 </html>
