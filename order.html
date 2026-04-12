@@ -889,6 +889,10 @@
         <span id="redeem-summary-label">Points redeemed</span>
         <span id="redeem-summary-amount">− RM 0.00</span>
       </div>
+      <div id="delivery-fee-summary-line" class="cart-total" style="border:none; padding-top:0; padding-bottom:0.25rem; font-size:0.85rem; font-weight:400; display:none;">
+        <span style="color:var(--medium-brown);">Estimated delivery fee</span>
+        <span style="color:var(--medium-brown);" id="delivery-fee-summary-amt">RM 0.00</span>
+      </div>
       <div class="cart-total" style="border:none; padding-top:0; padding-bottom:0.25rem; font-size:0.85rem; font-weight:400;">
         <span style="color:var(--medium-brown);">Online service charge</span>
         <span style="color:var(--medium-brown);">RM 1.00</span>
@@ -995,17 +999,20 @@ const PRODUCTS = {
 // ── State ──────────────────────────────────────────────────────────
 const cart = {};
 let fulfillment = 'delivery';
+let deliveryFee = 0;
 let loyaltyMember = null;   // { phone, name, points }
 let redeemItem = null;      // { name, pts } or null
 
 // ── Fulfillment toggle ─────────────────────────────────────────────
 function selectFulfillment(type) {
   fulfillment = type;
+  if (type === 'pickup') { deliveryFee = 0; }
   document.getElementById('opt-delivery').classList.toggle('selected', type === 'delivery');
   document.getElementById('opt-pickup').classList.toggle('selected', type === 'pickup');
   document.getElementById('delivery-fields').style.display = type === 'delivery' ? 'block' : 'none';
   document.getElementById('pickup-note').style.display = type === 'pickup' ? 'block' : 'none';
   document.getElementById('delivery-fee-note').style.display = type === 'delivery' ? 'block' : 'none';
+  renderCart();
 }
 
 // ── Category tabs ──────────────────────────────────────────────────
@@ -1035,7 +1042,9 @@ function getRedeemDiscount() {
 
 function getTotal() {
   const afterRedeem = getSubtotal() - getRedeemDiscount();
-  return (afterRedeem > 0 ? afterRedeem : 0) + 1; // RM1 service charge, total min RM1
+  const items = afterRedeem > 0 ? afterRedeem : 0;
+  const delivery = fulfillment === 'delivery' ? deliveryFee : 0;
+  return items + delivery + 1; // +RM1 service charge
 }
 
 function renderCart() {
@@ -1072,6 +1081,15 @@ function renderCart() {
   }).join('');
 
   document.getElementById('subtotal-amount').textContent = 'RM ' + subtotal.toFixed(2);
+
+  // Show delivery fee in summary if delivery selected and fee calculated
+  const deliveryLine = document.getElementById('delivery-fee-summary-line');
+  if (fulfillment === 'delivery' && deliveryFee > 0) {
+    deliveryLine.style.display = 'flex';
+    document.getElementById('delivery-fee-summary-amt').textContent = 'RM ' + deliveryFee.toFixed(2);
+  } else {
+    deliveryLine.style.display = 'none';
+  }
 
   const redeemLine = document.getElementById('redeem-summary-line');
   if (redeemItem) {
@@ -1280,7 +1298,7 @@ async function submitOrder() {
 
   // ── Store pending loyalty in sessionStorage ──
   // Both earn AND redeem processed on thank-you page AFTER payment confirmed
-  const earnPts = loyaltyMember ? Math.floor(subtotal - getRedeemDiscount()) : 0;
+  const earnPts = loyaltyMember ? Math.floor(subtotal - getRedeemDiscount()) : 0; // items only, excludes delivery & service charge
   if (loyaltyMember) {
     sessionStorage.setItem('teduh_pending_loyalty', JSON.stringify({
       phone:      loyaltyMember.phone,
@@ -1450,15 +1468,19 @@ async function estimateDelivery(addr) {
     const km = haversineKm(TEDUH_LAT, TEDUH_LNG, custLat, custLng);
 
     if (km > MAX_KM) {
+      deliveryFee = 0;
+      renderCart();
       box.className = 'delivery-fee-box error';
       const distLabel = (areaName ? areaName : 'Your area') + ' (~' + km.toFixed(1) + 'km)';
       text.innerHTML = distLabel + ' is outside our 10km delivery zone.<br><button onclick="waOutsideDelivery()" style="margin-top:0.5rem;padding:0.5rem 1rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:6px;font-family:var(--font-body);font-size:0.82rem;cursor:pointer;">WhatsApp us to arrange →</button>';
       amount.textContent = '';
     } else {
       const fee = calcFee(km);
+      deliveryFee = fee;
       box.className = 'delivery-fee-box success';
       text.textContent = (areaName || 'Your area') + ' · approx. ' + km.toFixed(1) + 'km from Teduh · Estimated Lalamove fee:';
-      amount.textContent = fee;
+      amount.textContent = 'RM ' + fee.toFixed(2);
+      renderCart();
     }
   } catch(e) {
     box.className = 'delivery-fee-box error';
@@ -1475,9 +1497,9 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 function calcFee(km) {
-  if (km < 3)  return 'RM 6.50';
-  if (km < 7)  return 'RM 8.50';
-  return 'RM 11.00';
+  if (km < 3)  return 6.50;
+  if (km < 7)  return 8.50;
+  return 11.00;
 }
 
 
