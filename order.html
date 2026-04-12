@@ -1373,6 +1373,13 @@ function onPostcodeInput() {
   const postcode = document.getElementById('field-postcode').value.trim();
   const box = document.getElementById('delivery-fee-box');
   if (postcode.length < 5) { box.style.display = 'none'; return; }
+
+  // Auto-fill city if postcode is in our lookup table
+  if (MY_POSTCODES[postcode]) {
+    const known = MY_POSTCODES[postcode];
+    document.getElementById('field-city').value = known.area;
+  }
+
   addressTimer = setTimeout(() => {
     const city  = document.getElementById('field-city').value.trim();
     const state = document.getElementById('field-state').value;
@@ -1391,17 +1398,23 @@ function getFullAddress() {
 
 // Muar & surrounding postcodes with coordinates
 const MY_POSTCODES = {
-  '84000': { lat: 2.0461, lng: 102.5689, area: 'Muar Town' },
-  '84010': { lat: 2.0350, lng: 102.5750, area: 'Muar' },
-  '84020': { lat: 2.0300, lng: 102.6000, area: 'Jalan Bakri' },
-  '84030': { lat: 2.0200, lng: 102.6200, area: 'Bukit Bakri' },
-  '84050': { lat: 2.1200, lng: 102.6000, area: 'Parit Jawa' },
-  '84090': { lat: 2.0800, lng: 102.5500, area: 'Sg Raya' },
-  '84100': { lat: 2.1200, lng: 102.5600, area: 'Sungai Mati' },
-  '84150': { lat: 2.1500, lng: 102.6200, area: 'Parit Bakar' },
-  '84200': { lat: 2.2700, lng: 102.5500, area: 'Tangkak' },
-  '84300': { lat: 2.1833, lng: 102.7667, area: 'Pagoh' },
-  '84400': { lat: 2.3600, lng: 102.6200, area: 'Ledang' },
+  // All within Muar city — coordinates based on geographic centre of each area
+  '84000': { lat: 2.0461, lng: 102.5680, area: 'Muar Town' },          // ~0.3km
+  '84007': { lat: 2.0400, lng: 102.5700, area: 'Muar' },               // ~1km
+  '84010': { lat: 2.0300, lng: 102.5750, area: 'Muar' },               // ~2km
+  '84020': { lat: 2.0250, lng: 102.5900, area: 'Jalan Bakri' },        // ~4km
+  '84030': { lat: 2.0150, lng: 102.6100, area: 'Bakri' },              // ~6km
+  '84040': { lat: 2.0500, lng: 102.5600, area: 'Muar' },               // ~1.5km
+  '84050': { lat: 2.0600, lng: 102.5500, area: 'Muar' },               // ~2km
+  '84100': { lat: 2.0700, lng: 102.5400, area: 'Muar' },               // ~3km
+  '84150': { lat: 2.1200, lng: 102.6100, area: 'Parit Jawa' },         // ~12km — outside
+  '84200': { lat: 2.0050, lng: 102.6300, area: 'Bakri / Parit Bakri' },// ~8km
+  '84300': { lat: 2.0800, lng: 102.6800, area: 'Sg Raya / Parit' },    // ~14km — outside
+  '84400': { lat: 2.1000, lng: 102.5200, area: 'Muar' },               // ~5km
+  '84500': { lat: 2.1500, lng: 102.5000, area: 'Panchor' },            // ~14km — outside
+  '84600': { lat: 2.1833, lng: 102.7667, area: 'Pagoh' },              // ~25km — outside
+  '84900': { lat: 2.2700, lng: 102.5500, area: 'Tangkak' },            // ~26km — outside
+  // Outside Muar
   '83000': { lat: 1.8500, lng: 102.9300, area: 'Batu Pahat' },
   '85000': { lat: 2.5200, lng: 102.8200, area: 'Segamat' },
   '75000': { lat: 2.1900, lng: 102.2500, area: 'Melaka' },
