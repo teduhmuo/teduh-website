@@ -222,8 +222,8 @@ async function creditPoints(pending) {
     let balance = data[0].points;
 
     // 1. Deduct redeem first (if any)
-    if (pending.redeemItem && pending.redeemItem.pts > 0) {
-      balance = Math.max(0, balance - pending.redeemItem.pts);
+    if (pending.redeemItem && pending.redeemItem.price > 0) {
+      balance = Math.max(0, balance - pending.redeemItem.price);
       await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}`, {
         method: 'PATCH',
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
@@ -235,7 +235,7 @@ async function creditPoints(pending) {
         body: JSON.stringify({
           phone: pending.phone,
           description: `Redeemed: ${pending.redeemItem.name} · Order ${pending.orderRef}`,
-          points: -pending.redeemItem.pts,
+          points: -pending.redeemItem.price,
           order_ref: pending.orderRef
         })
       });
