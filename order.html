@@ -1182,32 +1182,14 @@ async function submitOrder() {
   const total    = getTotal();
   const orderRef = 'TEDUH-' + Date.now();
 
-  // ── Handle loyalty: deduct redeem points immediately ──
-  if (loyaltyMember && redeemItem) {
-    try {
-      loadingMsg.textContent = 'Updating loyalty points…';
-      const newPts = loyaltyMember.points - redeemItem.pts;
-      await sbUpdate('loyalty_members', { phone: loyaltyMember.phone }, {
-        points: newPts,
-        updated_at: new Date().toISOString()
-      });
-      await sbInsert('loyalty_transactions', {
-        phone: loyaltyMember.phone,
-        description: `Redeemed: ${redeemItem.name} · Order ${orderRef}`,
-        points: -redeemItem.pts,
-        order_ref: orderRef
-      });
-    } catch(e) {
-      console.error('Loyalty redeem error:', e);
-    }
-  }
-
-  // ── Store pending earn in sessionStorage (credited on thank-you page) ──
+  // ── Store pending loyalty in sessionStorage ──
+  // Both earn AND redeem processed on thank-you page AFTER payment confirmed
   const earnPts = loyaltyMember ? Math.floor(subtotal - getRedeemDiscount()) : 0;
-  if (loyaltyMember && earnPts > 0) {
+  if (loyaltyMember) {
     sessionStorage.setItem('teduh_pending_loyalty', JSON.stringify({
-      phone: loyaltyMember.phone,
-      points: earnPts,
+      phone:      loyaltyMember.phone,
+      points:     earnPts,
+      redeemItem: redeemItem ? { name: redeemItem.name, pts: redeemItem.pts } : null,
       orderRef
     }));
   }
