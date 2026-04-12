@@ -793,9 +793,44 @@
     <div id="delivery-fields">
       <div class="form-row" style="margin-top:0.5rem;">
         <div class="form-group full">
-          <label for="field-address">Delivery address</label>
-          <textarea id="field-address" placeholder="Full address including postcode, Muar, Johor" oninput="onAddressInput()"></textarea>
-          <div class="delivery-fee-box" id="delivery-fee-box">
+          <label for="field-address-line">No. unit / No. rumah / Jalan</label>
+          <input type="text" id="field-address-line" placeholder="e.g. No. 12, Jalan Bakri Batu 5, Taman Sri Muar" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="field-postcode">Poskod</label>
+          <input type="text" id="field-postcode" placeholder="e.g. 84000" maxlength="5" oninput="onPostcodeInput()" />
+        </div>
+        <div class="form-group">
+          <label for="field-city">Bandar / Kawasan</label>
+          <input type="text" id="field-city" placeholder="e.g. Muar" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="field-state">Negeri</label>
+          <select id="field-state">
+            <option value="">Pilih negeri…</option>
+            <option value="Johor" selected>Johor</option>
+            <option value="Melaka">Melaka</option>
+            <option value="Negeri Sembilan">Negeri Sembilan</option>
+            <option value="Selangor">Selangor</option>
+            <option value="Kuala Lumpur">Kuala Lumpur</option>
+            <option value="Perak">Perak</option>
+            <option value="Pahang">Pahang</option>
+            <option value="Kelantan">Kelantan</option>
+            <option value="Terengganu">Terengganu</option>
+            <option value="Kedah">Kedah</option>
+            <option value="Pulau Pinang">Pulau Pinang</option>
+            <option value="Perlis">Perlis</option>
+            <option value="Sabah">Sabah</option>
+            <option value="Sarawak">Sarawak</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>&nbsp;</label>
+          <div class="delivery-fee-box" id="delivery-fee-box" style="display:none;margin-top:0;">
             <div id="delivery-fee-text"></div>
             <div class="fee-amount" id="delivery-fee-amount"></div>
           </div>
@@ -1202,13 +1237,20 @@ function validate() {
   const name    = document.getElementById('field-name').value.trim();
   const phone   = document.getElementById('field-phone').value.trim();
   const email   = document.getElementById('field-email').value.trim();
-  const address = document.getElementById('field-address').value.trim();
+  const address = fulfillment === 'delivery' ? getFullAddress() : '';
 
   if (Object.keys(cart).length === 0) { showError('Please add at least one item to your order.'); return false; }
   if (!name)  { showError('Please enter your name.'); return false; }
   if (!phone) { showError('Please enter your phone number.'); return false; }
   if (!email || !email.includes('@')) { showError('Please enter a valid email address.'); return false; }
-  if (fulfillment === 'delivery' && !address) { showError('Please enter your delivery address.'); return false; }
+  if (fulfillment === 'delivery') {
+    const line     = document.getElementById('field-address-line').value.trim();
+    const postcode = document.getElementById('field-postcode').value.trim();
+    const city     = document.getElementById('field-city').value.trim();
+    if (!line)     { showError('Please enter your street address.'); return false; }
+    if (!postcode) { showError('Please enter your postcode.'); return false; }
+    if (!city)     { showError('Please enter your city / area.'); return false; }
+  }
   return true;
 }
 
@@ -1231,7 +1273,7 @@ async function submitOrder() {
   const phone   = document.getElementById('field-phone').value.trim().replace(/[\s\-]/g,'');
   const email   = document.getElementById('field-email').value.trim();
   const notes   = document.getElementById('field-notes').value.trim();
-  const address = document.getElementById('field-address').value.trim();
+  const address = fulfillment === 'delivery' ? getFullAddress() : '';
   const subtotal = getSubtotal();
   const total    = getTotal();
   const orderRef = 'TEDUH-' + Date.now();
@@ -1308,33 +1350,49 @@ const MAX_KM    = 10;
 
 let addressTimer = null;
 
-function onAddressInput() {
+function onPostcodeInput() {
   clearTimeout(addressTimer);
-  const addr = document.getElementById('field-address').value.trim();
-  const box  = document.getElementById('delivery-fee-box');
-  if (addr.length < 8) { box.style.display = 'none'; return; }
-  // Wait 1.5s after typing stops
-  addressTimer = setTimeout(() => estimateDelivery(addr), 1500);
+  const postcode = document.getElementById('field-postcode').value.trim();
+  const box = document.getElementById('delivery-fee-box');
+  if (postcode.length < 5) { box.style.display = 'none'; return; }
+  addressTimer = setTimeout(() => {
+    const city  = document.getElementById('field-city').value.trim();
+    const state = document.getElementById('field-state').value;
+    const addr  = postcode + ' ' + city + ' ' + state;
+    estimateDelivery(addr);
+  }, 800);
 }
 
-function extractSearchQuery(addr) {
-  // Strip lot/unit numbers, keep meaningful location keywords
-  // Remove: Lot, No, PT, Unit, Blok, Jalan prefix numbers, postcodes
-  let q = addr
-    .replace(/\b(lot|no\.?|pt|unit|blok|block|\d{5})\b/gi, ' ')
-    .replace(/,?\s*\d+\s*,/g, ',')
-    .trim();
+function getFullAddress() {
+  const line     = document.getElementById('field-address-line').value.trim();
+  const postcode = document.getElementById('field-postcode').value.trim();
+  const city     = document.getElementById('field-city').value.trim();
+  const state    = document.getElementById('field-state').value;
+  return [line, postcode, city, state].filter(Boolean).join(', ');
+}
 
-  // Try to extract road/area name - look for Jalan, Lorong, Taman, Kg, etc.
-  const areaMatch = q.match(/(jalan\s+\w+|lorong\s+\w+|taman\s+[\w\s]+|kampung\s+\w+|kg\.?\s+\w+|[\w\s]+,\s*muar|[\w\s]+,\s*johor)/i);
-  if (areaMatch) q = areaMatch[0];
+// Muar & surrounding postcodes with coordinates
+const MY_POSTCODES = {
+  '84000': { lat: 2.0461, lng: 102.5689, area: 'Muar Town' },
+  '84010': { lat: 2.0350, lng: 102.5750, area: 'Muar' },
+  '84020': { lat: 2.0300, lng: 102.6000, area: 'Jalan Bakri' },
+  '84030': { lat: 2.0200, lng: 102.6200, area: 'Bukit Bakri' },
+  '84050': { lat: 2.1200, lng: 102.6000, area: 'Parit Jawa' },
+  '84090': { lat: 2.0800, lng: 102.5500, area: 'Sg Raya' },
+  '84100': { lat: 2.1200, lng: 102.5600, area: 'Sungai Mati' },
+  '84150': { lat: 2.1500, lng: 102.6200, area: 'Parit Bakar' },
+  '84200': { lat: 2.2700, lng: 102.5500, area: 'Tangkak' },
+  '84300': { lat: 2.1833, lng: 102.7667, area: 'Pagoh' },
+  '84400': { lat: 2.3600, lng: 102.6200, area: 'Ledang' },
+  '83000': { lat: 1.8500, lng: 102.9300, area: 'Batu Pahat' },
+  '85000': { lat: 2.5200, lng: 102.8200, area: 'Segamat' },
+  '75000': { lat: 2.1900, lng: 102.2500, area: 'Melaka' },
+  '81300': { lat: 1.4900, lng: 103.7400, area: 'Johor Bahru' },
+}
 
-  // Always append Muar, Johor, Malaysia for better geocoding
-  if (!q.toLowerCase().includes('muar')) q += ', Muar';
-  if (!q.toLowerCase().includes('johor')) q += ', Johor';
-  q += ', Malaysia';
-
-  return q.trim();
+function extractPostcode(addr) {
+  const match = addr.match(/\b(8[34]\d{3})\b/);
+  return match ? match[1] : null;
 }
 
 async function estimateDelivery(addr) {
@@ -1347,46 +1405,64 @@ async function estimateDelivery(addr) {
   text.textContent = 'Calculating delivery fee...';
   amount.textContent = '';
 
-  // Try multiple query variations for best match
-  const queries = [
-    extractSearchQuery(addr),
-    addr + ', Muar, Johor, Malaysia',
-    'Muar, Johor, Malaysia' // fallback — at least within Muar
-  ];
-
   try {
-    let data = null;
-    for (const query of queries) {
-      const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&limit=1&countrycodes=my';
-      const res = await fetch(url, { headers: { 'Accept-Language': 'en', 'User-Agent': 'TeduhCoffee/1.0' } });
-      const result = await res.json();
-      if (result && result.length > 0) { data = result; break; }
-      await new Promise(r => setTimeout(r, 300)); // rate limit
+    let custLat = null, custLng = null, areaName = '';
+
+    // 1. Try postcode lookup first (most reliable for Malaysia)
+    const postcode = extractPostcode(addr);
+    if (postcode && MY_POSTCODES[postcode]) {
+      const pc = MY_POSTCODES[postcode];
+      custLat  = pc.lat;
+      custLng  = pc.lng;
+      areaName = pc.area;
     }
 
-    if (!data || data.length === 0) {
+    // 2. If no postcode, try Nominatim with postcode query
+    if (!custLat) {
+      // Build smart query — try postcode first via Nominatim
+      const queries = [];
+      if (postcode) queries.push(postcode + ', Malaysia');
+      // Extract area keywords
+      const areaKw = addr.match(/(taman [\w\s]+|kg\.?\s+[\w]+|kampung [\w]+|parit [\w]+|jalan [\w]+|bakri|muar town|pagoh|ledang|tangkak)/i);
+      if (areaKw) queries.push(areaKw[0] + ', Muar, Johor, Malaysia');
+      queries.push('Muar, Johor, Malaysia'); // final fallback
+
+      for (const q of queries) {
+        const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=my';
+        const res = await fetch(url, { headers: { 'Accept-Language': 'en', 'User-Agent': 'TeduhCoffee/1.0' } });
+        const data = await res.json();
+        if (data && data.length > 0) {
+          custLat  = parseFloat(data[0].lat);
+          custLng  = parseFloat(data[0].lon);
+          areaName = data[0].display_name.split(',')[0];
+          break;
+        }
+        await new Promise(r => setTimeout(r, 300));
+      }
+    }
+
+    if (!custLat) {
       box.className = 'delivery-fee-box error';
-      text.textContent = 'Could not find location. Please include your area name (e.g. Bakri, Taman Sri Muar).';
+      text.textContent = 'Could not find your location. Please include your postcode (e.g. 84000) in the address.';
       return;
     }
 
-    const custLat = parseFloat(data[0].lat);
-    const custLng = parseFloat(data[0].lon);
-    const km      = haversineKm(TEDUH_LAT, TEDUH_LNG, custLat, custLng);
+    const km = haversineKm(TEDUH_LAT, TEDUH_LNG, custLat, custLng);
 
     if (km > MAX_KM) {
       box.className = 'delivery-fee-box error';
-      text.textContent = 'Your area is approximately ' + km.toFixed(1) + 'km from Teduh — outside our ' + MAX_KM + 'km delivery zone. Please use self-pickup or courier (J&T / Pos Laju).';
+      const distLabel = (areaName ? areaName : 'Your area') + ' (~' + km.toFixed(1) + 'km)';
+      text.innerHTML = distLabel + ' is outside our 10km delivery zone.<br><button onclick="waOutsideDelivery()" style="margin-top:0.5rem;padding:0.5rem 1rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:6px;font-family:var(--font-body);font-size:0.82rem;cursor:pointer;">WhatsApp us to arrange →</button>';
       amount.textContent = '';
     } else {
       const fee = calcFee(km);
       box.className = 'delivery-fee-box success';
-      text.textContent = 'Approx. ' + km.toFixed(1) + 'km from Teduh · Estimated Lalamove fee:';
+      text.textContent = (areaName || 'Your area') + ' · approx. ' + km.toFixed(1) + 'km from Teduh · Estimated Lalamove fee:';
       amount.textContent = fee;
     }
   } catch(e) {
     box.className = 'delivery-fee-box error';
-    text.textContent = 'Could not estimate. Please check connection and try again.';
+    text.textContent = 'Could not estimate. Please check your connection and try again.';
   }
 }
 
@@ -1399,14 +1475,41 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 function calcFee(km) {
-  // Lalamove Muar estimated rates within 10km
-  if (km <= 2)  return 'RM 6.50';
-  if (km <= 4)  return 'RM 7.50';
-  if (km <= 6)  return 'RM 8.50';
-  if (km <= 8)  return 'RM 9.50';
+  if (km < 3)  return 'RM 6.50';
+  if (km < 7)  return 'RM 8.50';
   return 'RM 11.00';
 }
 
+
+function waOutsideDelivery() {
+  const name     = document.getElementById('field-name').value.trim() || '—';
+  const phone    = document.getElementById('field-phone').value.trim() || '—';
+  const line     = document.getElementById('field-address-line') ? document.getElementById('field-address-line').value.trim() : '';
+  const postcode = document.getElementById('field-postcode') ? document.getElementById('field-postcode').value.trim() : '';
+  const city     = document.getElementById('field-city') ? document.getElementById('field-city').value.trim() : '';
+  const state    = document.getElementById('field-state') ? document.getElementById('field-state').value : '';
+  const fullAddr = [line, postcode, city, state].filter(Boolean).join(', ') || '—';
+
+  const cartItems = Object.keys(cart).map(k => '  - ' + PRODUCTS[k].name + ' x' + cart[k] + ' (RM ' + (PRODUCTS[k].price * cart[k]).toFixed(2) + ')').join('\n') || '  (no items selected yet)';
+  const subtotal  = getSubtotal();
+
+  const msg = [
+    '⚠️ *Saya berada di luar kawasan penghantaran Teduh (>10km)*',
+    '',
+    'Boleh saya tanya kos penghantaran ke alamat saya?',
+    '',
+    '👤 Nama: ' + name,
+    '📱 No. telefon: ' + phone,
+    '📍 Alamat: ' + fullAddr,
+    '',
+    '🧾 *Pesanan saya:*',
+    cartItems,
+    '',
+    '💰 Subtotal: RM ' + subtotal.toFixed(2),
+  ].join('\n');
+
+  window.open('https://wa.me/601170264828?text=' + encodeURIComponent(msg), '_blank');
+}
 
 </script>
 </body>
