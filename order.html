@@ -981,7 +981,8 @@ function getRedeemDiscount() {
 }
 
 function getTotal() {
-  return Math.max(1, getSubtotal() - getRedeemDiscount()) + 1; // min RM1 + RM1 service charge
+  const afterRedeem = getSubtotal() - getRedeemDiscount();
+  return (afterRedeem > 0 ? afterRedeem : 0) + 1; // RM1 service charge, total min RM1
 }
 
 function renderCart() {
