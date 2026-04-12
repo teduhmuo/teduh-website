@@ -1030,6 +1030,22 @@ function renderCart() {
 
   document.getElementById('total-amount').textContent = 'RM ' + getTotal().toFixed(2);
 
+  // Refresh redeem dropdown when cart changes (so it reflects current cart items)
+  if (loyaltyMember) {
+    const currentRedeem = redeemItem ? redeemItem.name : null;
+    buildRedeemOptions(loyaltyMember.points);
+    // Re-select previously chosen item if still in cart
+    if (currentRedeem) {
+      const sel = document.getElementById('redeem-select');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].dataset && sel.options[i].dataset.name === currentRedeem) {
+          sel.selectedIndex = i;
+          break;
+        }
+      }
+    }
+  }
+
   // Points earn preview (only if member loaded and not fully redeeming)
   const earnNote = document.getElementById('points-earn-note');
   if (loyaltyMember) {
@@ -1103,52 +1119,40 @@ async function lookupLoyalty() {
 }
 
 function buildRedeemOptions(pts) {
-  const REDEEMABLE = [
-    { name: 'Americano',        price: 9 },
-    { name: 'Café Latte',       price: 12 },
-    { name: 'Cappuccino',       price: 12 },
-    { name: 'Cold Brew',        price: 13 },
-    { name: 'Teduh Signature',  price: 15 },
-    { name: 'House Blend 250g', price: 35 },
-    { name: 'House Blend 500g', price: 60 },
-    { name: 'House Blend 1kg',  price: 105 },
-    { name: 'Drip Bags x5',     price: 25 },
-    { name: 'Drip Bags x10',    price: 45 },
-    { name: 'Teduh Mug',        price: 35 },
-    { name: 'Teduh Tote Bag',   price: 25 },
-  ];
-
   const sel = document.getElementById('redeem-select');
   sel.innerHTML = '<option value="">— Do not redeem —</option>';
 
+  // Must have at least 150 points
   if (pts < 150) {
     const inf = document.createElement('option');
     inf.disabled = true;
-    inf.textContent = 'Need 150 pts minimum to redeem (you have ' + pts + ')';
+    inf.textContent = 'Need 150 pts minimum (you have ' + pts + ')';
     sel.appendChild(inf);
     return;
   }
 
+  // Only show items that are in the cart AND price >= RM8
   let added = 0;
-  REDEEMABLE.forEach((item, i) => {
-    const ptsCost = Math.round(item.price / 0.065);
+  Object.keys(cart).forEach(k => {
+    const product = PRODUCTS[k];
+    if (product.price < 8) return; // skip items under RM8
+    const ptsCost = Math.round(product.price / 0.065);
     if (pts >= ptsCost) {
       const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = item.name + ' — free! (' + ptsCost + ' pts · RM' + item.price + ' value)';
-      opt.dataset.name  = item.name;
+      opt.value = k;
+      opt.textContent = product.name + ' — free! (' + ptsCost + ' pts · RM' + product.price.toFixed(2) + ' value)';
+      opt.dataset.name  = product.name;
       opt.dataset.pts   = ptsCost;
-      opt.dataset.price = item.price;
+      opt.dataset.price = product.price;
       sel.appendChild(opt);
       added++;
     }
   });
 
-  if (added === 0) {
-    const cheapest = Math.round(9 / 0.065);
+  if (added === 0 && pts >= 150) {
     const inf = document.createElement('option');
     inf.disabled = true;
-    inf.textContent = 'Need ' + cheapest + ' pts for cheapest item (Americano RM9)';
+    inf.textContent = 'No items in cart qualify (need more pts or add eligible items)';
     sel.appendChild(inf);
   }
 }
