@@ -1317,6 +1317,26 @@ function onAddressInput() {
   addressTimer = setTimeout(() => estimateDelivery(addr), 1500);
 }
 
+function extractSearchQuery(addr) {
+  // Strip lot/unit numbers, keep meaningful location keywords
+  // Remove: Lot, No, PT, Unit, Blok, Jalan prefix numbers, postcodes
+  let q = addr
+    .replace(/\b(lot|no\.?|pt|unit|blok|block|\d{5})\b/gi, ' ')
+    .replace(/,?\s*\d+\s*,/g, ',')
+    .trim();
+
+  // Try to extract road/area name - look for Jalan, Lorong, Taman, Kg, etc.
+  const areaMatch = q.match(/(jalan\s+\w+|lorong\s+\w+|taman\s+[\w\s]+|kampung\s+\w+|kg\.?\s+\w+|[\w\s]+,\s*muar|[\w\s]+,\s*johor)/i);
+  if (areaMatch) q = areaMatch[0];
+
+  // Always append Muar, Johor, Malaysia for better geocoding
+  if (!q.toLowerCase().includes('muar')) q += ', Muar';
+  if (!q.toLowerCase().includes('johor')) q += ', Johor';
+  q += ', Malaysia';
+
+  return q.trim();
+}
+
 async function estimateDelivery(addr) {
   const box    = document.getElementById('delivery-fee-box');
   const text   = document.getElementById('delivery-fee-text');
@@ -1327,17 +1347,26 @@ async function estimateDelivery(addr) {
   text.textContent = 'Calculating delivery fee...';
   amount.textContent = '';
 
-  try {
-    // Append Muar, Johor if not already there for better results
-    const query = addr.toLowerCase().includes('muar') ? addr : addr + ', Muar, Johor, Malaysia';
-    const url   = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&limit=1&countrycodes=my';
+  // Try multiple query variations for best match
+  const queries = [
+    extractSearchQuery(addr),
+    addr + ', Muar, Johor, Malaysia',
+    'Muar, Johor, Malaysia' // fallback — at least within Muar
+  ];
 
-    const res  = await fetch(url, { headers: { 'Accept-Language': 'en', 'User-Agent': 'TeduhCoffee/1.0' } });
-    const data = await res.json();
+  try {
+    let data = null;
+    for (const query of queries) {
+      const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(query) + '&limit=1&countrycodes=my';
+      const res = await fetch(url, { headers: { 'Accept-Language': 'en', 'User-Agent': 'TeduhCoffee/1.0' } });
+      const result = await res.json();
+      if (result && result.length > 0) { data = result; break; }
+      await new Promise(r => setTimeout(r, 300)); // rate limit
+    }
 
     if (!data || data.length === 0) {
       box.className = 'delivery-fee-box error';
-      text.textContent = 'Address not found. Please check and try again.';
+      text.textContent = 'Could not find location. Please include your area name (e.g. Bakri, Taman Sri Muar).';
       return;
     }
 
@@ -1347,12 +1376,12 @@ async function estimateDelivery(addr) {
 
     if (km > MAX_KM) {
       box.className = 'delivery-fee-box error';
-      text.textContent = 'Sorry, your address is ' + km.toFixed(1) + 'km from Teduh — outside our ' + MAX_KM + 'km delivery area. Please choose self-pickup or use courier (J&T / Pos Laju).';
+      text.textContent = 'Your area is approximately ' + km.toFixed(1) + 'km from Teduh — outside our ' + MAX_KM + 'km delivery zone. Please use self-pickup or courier (J&T / Pos Laju).';
       amount.textContent = '';
     } else {
       const fee = calcFee(km);
       box.className = 'delivery-fee-box success';
-      text.textContent = 'Distance from Teduh: ' + km.toFixed(1) + 'km · Estimated Lalamove fee:';
+      text.textContent = 'Approx. ' + km.toFixed(1) + 'km from Teduh · Estimated Lalamove fee:';
       amount.textContent = fee;
     }
   } catch(e) {
