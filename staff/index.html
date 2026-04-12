@@ -366,6 +366,20 @@
         <div id="staff-breakdown"></div>
       </div>
 
+      <!-- QUEUE -->
+      <div class="panel" id="panel-queue">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div style="font-size:0.75rem;color:var(--medium-brown);">Live queue — auto-refreshes every 30s</div>
+          <button onclick="loadQueue()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.75rem;color:var(--medium-brown);cursor:pointer;font-family:var(--font-body);">↻ Refresh</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;">
+          <button class="q-filter-btn active" onclick="filterQueue('all', this)">All</button>
+          <button class="q-filter-btn" onclick="filterQueue('pending', this)">Pending</button>
+          <button class="q-filter-btn" onclick="filterQueue('ready', this)">Ready</button>
+          <button class="q-filter-btn" onclick="filterQueue('done', this)">Done</button>
+        </div>
+        <div id="queue-list"><div class="loading-state">Loading queue…</div></div>
+      </div>
 
     </div>
   </main>
@@ -542,6 +556,12 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
   document.getElementById('tab-'   + tab).classList.add('active');
+  if (tab === 'queue') {
+    loadQueue();
+    if (!queueInterval) queueInterval = setInterval(loadQueue, 30000);
+  } else {
+    if (queueInterval) { clearInterval(queueInterval); queueInterval = null; }
+  }
 }
 
 function showMsg(id, text, type) {
@@ -961,18 +981,6 @@ async function updateQueueStatus(id, status) {
     if (idx > -1) allQueue[idx].status = status;
     renderQueue();
   } catch(e) { alert('Could not update status. Try again.'); }
-}
-
-// Auto-refresh queue every 30 seconds when queue tab is active
-const origSwitchTab = switchTab;
-function switchTab(tab) {
-  origSwitchTab(tab);
-  if (tab === 'queue') {
-    loadQueue();
-    if (!queueInterval) queueInterval = setInterval(loadQueue, 30000);
-  } else {
-    if (queueInterval) { clearInterval(queueInterval); queueInterval = null; }
-  }
 }
 
 </script>
