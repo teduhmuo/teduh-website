@@ -207,6 +207,32 @@
   .category-section { display: none; }
   .category-section.visible { display: block; }
 
+  /* Sub-tabs inside Café Menu */
+  .sub-tab-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .sub-tab-btn {
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--medium-brown);
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .sub-tab-btn:hover { border-color: var(--medium-brown); color: var(--warm-brown); }
+  .sub-tab-btn.active { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
+  .sub-section { display: none; }
+  .sub-section.visible { display: block; }
+
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -249,6 +275,75 @@
 
   input:focus, textarea:focus, select:focus { border-color: var(--medium-brown); }
   textarea { resize: vertical; min-height: 80px; }
+
+  /* Menu grid */
+  .menu-sub-header {
+    font-size: 0.72rem; font-weight: 500; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--medium-brown);
+    padding: 0.75rem 0 0.4rem; margin-top: 0.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .menu-sub-header:first-child { border-top: none; margin-top: 0; }
+  .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .menu-item-card {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 0.65rem 0.75rem; background: var(--white);
+  }
+  .menu-sub-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+  }
+  .menu-sub-tab {
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    background: transparent;
+    color: var(--medium-brown);
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .menu-sub-tab.active {
+    background: var(--warm-brown);
+    color: var(--cream);
+    border-color: var(--warm-brown);
+  }
+
+  .menu-item-desc {
+    font-size: 0.72rem;
+    color: var(--medium-brown);
+    opacity: 0.75;
+    margin-top: 2px;
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+
+  .menu-item-name { font-size: 0.82rem; font-weight: 500; color: var(--warm-brown); margin-bottom: 4px; }
+  .menu-item-temp { display: flex; gap: 4px; margin-bottom: 6px; }
+  .temp-btn {
+    flex: 1; font-size: 0.72rem; padding: 3px 0;
+    border: 1px solid var(--border); border-radius: 4px;
+    background: transparent; color: var(--medium-brown);
+    cursor: pointer; font-family: var(--font-body);
+    transition: all 0.12s;
+  }
+  .temp-btn.selected { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
+  .menu-item-price { font-size: 0.78rem; color: var(--medium-brown); }
+  .menu-item-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .menu-qty-row { display: flex; align-items: center; gap: 6px; }
+  .menu-qty-btn {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--warm-brown); font-size: 1rem; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-body); transition: all 0.12s;
+  }
+  .menu-qty-btn:hover { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
+  .menu-qty-num { font-size: 0.85rem; font-weight: 500; color: var(--warm-brown); min-width: 16px; text-align: center; }
 
   .pickup-info {
     background: var(--cream);
@@ -603,14 +698,14 @@
     </div>
 
     <div class="category-tabs">
-      <button class="cat-tab active" onclick="showCategory('beans', this)">Coffee Beans</button>
+      <button class="cat-tab active" onclick="showCategory('menu', this)">Café Menu</button>
+      <button class="cat-tab" onclick="showCategory('beans', this)">Coffee Beans</button>
       <button class="cat-tab" onclick="showCategory('drip', this)">Drip Bags</button>
-      <button class="cat-tab" onclick="showCategory('menu', this)">Café Menu</button>
       <button class="cat-tab" onclick="showCategory('merch', this)">Merchandise</button>
     </div>
 
     <!-- Coffee Beans -->
-    <div class="category-section visible" id="cat-beans">
+    <div class="category-section" id="cat-beans">
       <div class="products-grid">
         <div class="product-card" id="pc-bean-250">
           <div class="product-name">House Blend · 250g</div>
@@ -672,76 +767,11 @@
     </div>
 
     <!-- Café Menu -->
-    <div class="category-section" id="cat-menu">
-      <div class="products-grid">
-        <div class="product-card" id="pc-espresso">
-          <div class="product-name">Espresso</div>
-          <div class="product-desc">Double shot, house blend.</div>
-          <div class="product-price">RM 6.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('espresso', -1)">−</button>
-            <span class="qty-value" id="qty-espresso">0</span>
-            <button class="qty-btn" onclick="changeQty('espresso', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-latte">
-          <div class="product-name">Café Latte</div>
-          <div class="product-desc">Espresso and steamed milk.</div>
-          <div class="product-price">RM 12.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('latte', -1)">−</button>
-            <span class="qty-value" id="qty-latte">0</span>
-            <button class="qty-btn" onclick="changeQty('latte', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-cappuccino">
-          <div class="product-name">Cappuccino</div>
-          <div class="product-desc">Equal parts espresso, milk, foam.</div>
-          <div class="product-price">RM 12.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('cappuccino', -1)">−</button>
-            <span class="qty-value" id="qty-cappuccino">0</span>
-            <button class="qty-btn" onclick="changeQty('cappuccino', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-americano">
-          <div class="product-name">Americano</div>
-          <div class="product-desc">Espresso with hot water.</div>
-          <div class="product-price">RM 9.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('americano', -1)">−</button>
-            <span class="qty-value" id="qty-americano">0</span>
-            <button class="qty-btn" onclick="changeQty('americano', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-signature">
-          <div class="product-name">Teduh Signature</div>
-          <div class="product-desc">House blend, coconut milk, gula melaka.</div>
-          <div class="product-price">RM 15.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('signature', -1)">−</button>
-            <span class="qty-value" id="qty-signature">0</span>
-            <button class="qty-btn" onclick="changeQty('signature', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-coldbrew">
-          <div class="product-name">Cold Brew</div>
-          <div class="product-desc">12-hour steep, smooth and low-acid.</div>
-          <div class="product-price">RM 13.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('coldbrew', -1)">−</button>
-            <span class="qty-value" id="qty-coldbrew">0</span>
-            <button class="qty-btn" onclick="changeQty('coldbrew', 1)">+</button>
-          </div>
-        </div>
-      </div>
-      <p style="font-size:0.78rem; color: var(--medium-brown); margin-top: 0.75rem; font-style:italic;">
-        * Café menu items are for pre-ordering pickup only. We'll prepare them upon your arrival.
-      </p>
-    </div>
-
-    <!-- Merchandise -->
-    <div class="category-section" id="cat-merch">
+    <div class="category-section visible" id="cat-menu">
+    <div class="menu-sub-tabs" id="menu-sub-tabs"></div>
+    <div id="menu-grid"></div>
+  </div>
+  <div class="category-section" id="cat-merch">
       <div class="products-grid">
         <div class="product-card" id="pc-mug">
           <div class="product-name">Teduh Mug</div>
@@ -981,20 +1011,79 @@ async function sbUpdate(table, match, updates) {
 
 // ── Product catalogue ──────────────────────────────────────────────
 const PRODUCTS = {
-  'bean-250':   { name: 'House Blend 250g',  price: 35 },
-  'bean-500':   { name: 'House Blend 500g',  price: 60 },
-  'bean-1kg':   { name: 'House Blend 1kg',   price: 105 },
-  'drip-5':     { name: 'Drip Bags ×5',      price: 25 },
-  'drip-10':    { name: 'Drip Bags ×10',     price: 45 },
-  'espresso':   { name: 'Espresso',          price: 6 },
-  'latte':      { name: 'Café Latte',        price: 12 },
-  'cappuccino': { name: 'Cappuccino',        price: 12 },
-  'americano':  { name: 'Americano',         price: 9 },
-  'signature':  { name: 'Teduh Signature',   price: 15 },
-  'coldbrew':   { name: 'Cold Brew',         price: 13 },
-  'mug':        { name: 'Teduh Mug',         price: 35 },
-  'tote':       { name: 'Teduh Tote Bag',    price: 25 },
-};
+  // ── Café Menu ──────────────────────────────────────────────────────
+  // Coffee Essential
+  'esp':        { name: 'Espresso',                    price: 9,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Bold & concentrated single shot' },
+  'lb':         { name: 'Long Black',                  price: 9,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso over hot water, clean & strong' },
+  'latte':      { name: 'Café Latte',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso with velvety steamed milk' },
+  'cap':        { name: 'Cappuccino',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso, steamed milk & thick foam' },
+  // Flavoured Coffee
+  'lb-lem':     { name: 'Long Black Lemon',            price: 10, hotPrice: 9,  cat: 'menu', sub: 'Flavoured Coffee', desc: 'Bright espresso with a citrus twist' },
+  'latte-gm':   { name: 'Café Latte Gula Melaka',     price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte sweetened with palm sugar' },
+  'latte-van':  { name: 'Café Latte Vanilla',          price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Smooth latte with vanilla sweetness' },
+  'latte-car':  { name: 'Café Latte Caramel',          price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with rich buttery caramel' },
+  'latte-nut':  { name: 'Café Latte Nutty',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with toasted hazelnut flavour' },
+  'latte-str':  { name: 'Café Latte Strawberry',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Fruity latte with strawberry syrup' },
+  'latte-asi':  { name: 'Café Latte Asian',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with a local Asian-inspired blend' },
+  'latte-mac':  { name: 'Café Latte Caramel Machiato', price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Layered latte with caramel drizzle' },
+  'latte-moc':  { name: 'Café Latte Mocha',            price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte blended with dark chocolate' },
+  // Chocolate
+  'choc':       { name: 'Chocolate',                   price: 11, hotPrice: 10, cat: 'menu', sub: 'Chocolate',        desc: 'Rich & creamy Belgian chocolate drink' },
+  'choc-mint':  { name: 'Chocolate Mint',              price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with a cool mint finish' },
+  'choc-gm':    { name: 'Chocolate Gula Melaka',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with palm sugar depth' },
+  // Matcha
+  'mat':        { name: 'Matcha Latte',                price: 11, hotPrice: 10, cat: 'menu', sub: 'Matcha',           desc: 'Japanese ceremonial matcha with milk' },
+  'mat-str':    { name: 'Matcha Latte Strawberry',     price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with strawberry swirl' },
+  'mat-man':    { name: 'Matcha Latte Mango',          price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with tropical mango' },
+  'mat-lem':    { name: 'Matcha Lemonade',             price: 11, hotPrice: null, cat: 'menu', sub: 'Matcha',         desc: 'Refreshing matcha with zesty lemonade' },
+  // Refresher
+  'ref-vm':     { name: 'Sparkling Vanilla Mint',      price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Fizzy vanilla with cool mint' },
+  'ref-vp':     { name: 'Sparkling Vanilla Peach',     price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Sparkling vanilla with juicy peach' },
+  'ref-lem':    { name: 'Sparkling Lemonade',          price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Crisp fizzy lemonade, perfectly tart' },
+  'ref-sem':    { name: 'Semangka Laici',              price: 13, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Watermelon & lychee sparkling blend' },
+  // Frappe
+  'frp-str':    { name: 'Strawberry Frappe',           price: 13, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Blended strawberry cream frappe' },
+  'frp-car':    { name: 'Caramel Café Frappe',         price: 16, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Coffee frappe with caramel drizzle' },
+  'frp-moc':    { name: 'Mocha Choco Chip Frappe',     price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Mocha frappe loaded with choco chips' },
+  'frp-dbl':    { name: 'Double Choco Chip Frappe',    price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Extra chocolatey chip frappe' },
+  // Neapolitan Pizza
+  'piz-mar':    { name: 'Margherita Pizza',            price: 25, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Classic tomato, mozzarella & basil' },
+  'piz-pep':    { name: 'Beef Pepperoni Pizza',        price: 32, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Loaded with savoury beef pepperoni' },
+  'piz-bsf':    { name: 'Sliced Beef Pizza',           price: 35, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Tender sliced beef on tomato base' },
+  'piz-chk':    { name: 'Spicy Garlic Chicken Pizza',  price: 32, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Spicy garlic chicken with chilli kick' },
+  'piz-smk':    { name: 'Teduh Smoked Pizza',          price: 37, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Signature smoked meat Teduh special' },
+  'piz-trf':    { name: 'Creamy Truffle Beef Pizza',   price: 45, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Luxurious truffle cream with beef' },
+  'piz-wbp':    { name: 'White Beef Pepperoni Pizza',  price: 35, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'White sauce base with beef pepperoni' },
+  // Half-Half Pizza
+  'hpiz-bpgc':  { name: 'Beef Pepperoni & Garlic Chicken', price: 32, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'Two flavours, one pizza' },
+  'hpiz-bstf':  { name: 'Beef Sliced & Creamy Truffle',    price: 41, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'Best of beef & truffle combined' },
+  'hpiz-wpgc':  { name: 'White Pepperoni & Garlic Chicken',price: 34, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'White sauce meets garlic chicken' },
+  'hpiz-wptf':  { name: 'White Pepperoni & Truffle Beef',  price: 40, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'White pepperoni with truffle indulgence' },
+  // Pasta
+  'pas-ao':     { name: 'Aglio e Oglio',               price: 13, hotPrice: null, cat: 'menu', sub: 'Pasta',           desc: 'Classic garlic & olive oil pasta' },
+  'pas-aogc':   { name: 'Aglio e Oglio Garlic Chicken',price: 16, hotPrice: null, cat: 'menu', sub: 'Pasta',           desc: 'Aglio pasta with juicy garlic chicken' },
+  'pas-aosd':   { name: 'Aglio e Oglio Smoked Duck',   price: 18, hotPrice: null, cat: 'menu', sub: 'Pasta',           desc: 'Aglio pasta with premium smoked duck' },
+  // Snack/Pastry
+  'snk-cro':    { name: 'Plain Croissant',             price: 6.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Buttery flaky croissant, baked fresh' },
+  'snk-chcro':  { name: 'Chocolate Roll',              price: 8.9, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Soft roll filled with chocolate cream' },
+  'snk-tart':   { name: 'Mini Egg Tart',               price: 4,   hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Silky egg custard in buttery pastry' },
+  'snk-ban':    { name: 'Banana Bar',                  price: 8.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Moist banana cake bar, homestyle' },
+  'snk-egg':    { name: 'Egg Mayo Croissant',          price: 9.2, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Creamy egg mayo in flaky croissant' },
+  'snk-tuna':   { name: 'Tuna Mayo Croissant',         price: 9.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Tuna mayo filling in buttery croissant' },
+
+  // ── Coffee Beans ───────────────────────────────────────────────────
+  'bean-250':   { name: 'House Blend 250g',  price: 35,  hotPrice: null, cat: 'beans', sub: 'Retail Beans' },
+  'bean-500':   { name: 'House Blend 500g',  price: 60,  hotPrice: null, cat: 'beans', sub: 'Retail Beans' },
+  'bean-1kg':   { name: 'House Blend 1kg',   price: 105, hotPrice: null, cat: 'beans', sub: 'Retail Beans' },
+
+  // ── Drip Bags ──────────────────────────────────────────────────────
+  'drip-5':     { name: 'Drip Bags ×5',      price: 25,  hotPrice: null, cat: 'drip', sub: 'Drip Bags' },
+  'drip-10':    { name: 'Drip Bags ×10',     price: 45,  hotPrice: null, cat: 'drip', sub: 'Drip Bags' },
+
+  // ── Merchandise ────────────────────────────────────────────────────
+  'mug':        { name: 'Teduh Mug',         price: 35,  hotPrice: null, cat: 'merch', sub: 'Merchandise' },
+  'tote':       { name: 'Teduh Tote Bag',    price: 25,  hotPrice: null, cat: 'merch', sub: 'Merchandise' },
+}
 
 // ── State ──────────────────────────────────────────────────────────
 const cart = {};
@@ -1016,6 +1105,100 @@ function selectFulfillment(type) {
 }
 
 // ── Category tabs ──────────────────────────────────────────────────
+function showSubCat(sub, btn) {
+  document.querySelectorAll('.sub-section').forEach(el => el.classList.remove('visible'));
+  document.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sub-' + sub).classList.add('visible');
+  btn.classList.add('active');
+}
+
+
+// ── Build dynamic menu grid ─────────────────────────────────────────
+const MENU_SUBS = [
+  'Coffee Essential', 'Flavoured Coffee', 'Chocolate', 'Matcha',
+  'Refresher', 'Frappe', 'Neapolitan Pizza', 'Half-Half Pizza',
+  'Pasta', 'Snack & Pastry'
+];
+
+// Track selected temperature per product
+const tempSelection = {};
+let activeMenuSub = 'Coffee Essential';
+
+function buildSubTabs() {
+  const tabsEl = document.getElementById('menu-sub-tabs');
+  if (!tabsEl) return;
+  tabsEl.innerHTML = MENU_SUBS.map(sub =>
+    '<button class="menu-sub-tab' + (sub === activeMenuSub ? ' active' : '') + '" onclick="switchMenuSub(\'' + sub + '\')">' + sub + '</button>'
+  ).join('');
+}
+
+function switchMenuSub(sub) {
+  activeMenuSub = sub;
+  buildSubTabs();
+  buildMenuGrid();
+}
+
+function buildMenuGrid() {
+  const grid = document.getElementById('menu-grid');
+  if (!grid) return;
+  buildSubTabs();
+
+  const items = Object.entries(PRODUCTS).filter(([k, v]) => v.cat === 'menu' && v.sub === activeMenuSub);
+  if (!items.length) { grid.innerHTML = '<div style="color:var(--medium-brown);font-size:0.85rem;padding:1rem 0;">No items in this category.</div>'; return; }
+
+  let note = '';
+  if (activeMenuSub === 'Refresher' || activeMenuSub === 'Frappe Series') {
+    note = '<div style="font-size:0.75rem;color:var(--medium-brown);opacity:0.7;margin-bottom:0.75rem;">Served cold only</div>';
+  }
+
+  let html = note + '<div class="menu-grid">';
+  items.forEach(([key, p]) => {
+    const hasTemp = p.hotPrice !== null;
+    if (!tempSelection[key]) tempSelection[key] = hasTemp ? 'ice' : null;
+
+    html += '<div class="menu-item-card" id="card-' + key + '">';
+    html += '<div class="menu-item-name">' + p.name + '</div>';
+    if (p.desc) html += '<div class="menu-item-desc">' + p.desc + '</div>';
+
+    if (hasTemp) {
+      html += '<div class="menu-item-temp">' +
+        '<button class="temp-btn ' + (tempSelection[key] === 'hot' ? 'selected' : '') + '" onclick="setTemp(\'' + key + '\',\'hot\')">Hot RM ' + p.hotPrice + '</button>' +
+        '<button class="temp-btn ' + (tempSelection[key] === 'ice' ? 'selected' : '') + '" onclick="setTemp(\'' + key + '\',\'ice\')">Ice RM ' + p.price + '</button>' +
+        '</div>';
+    }
+
+    html += '<div class="menu-item-bottom">';
+    if (!hasTemp) html += '<span class="menu-item-price">RM ' + p.price.toFixed(2) + '</span>';
+    else html += '<span></span>';
+    html += '<div class="menu-qty-row">' +
+      '<button class="menu-qty-btn" onclick="menuChangeQty(\'' + key + '\',-1)">−</button>' +
+      '<span class="menu-qty-num" id="mqty-' + key + '">' + (cart[key] || 0) + '</span>' +
+      '<button class="menu-qty-btn" onclick="menuChangeQty(\'' + key + '\',1)">+</button>' +
+      '</div></div></div>';
+  });
+
+  html += '</div>';
+  grid.innerHTML = html;
+}
+
+function setTemp(key, temp) {
+  tempSelection[key] = temp;
+  // Update price in PRODUCTS so cart uses correct price
+  const p = PRODUCTS[key];
+  if (temp === 'hot') p._activePrice = p.hotPrice;
+  else p._activePrice = p.price;
+  buildMenuGrid();
+  renderCart();
+}
+
+function menuChangeQty(key, delta) {
+  cart[key] = Math.max(0, (cart[key] || 0) + delta);
+  if (cart[key] === 0) delete cart[key];
+  document.getElementById('mqty-' + key).textContent = cart[key] || 0;
+  renderCart();
+  if (loyaltyMember) buildRedeemOptions(loyaltyMember.points);
+}
+
 function showCategory(cat, btn) {
   document.querySelectorAll('.category-section').forEach(el => el.classList.remove('visible'));
   document.querySelectorAll('.cat-tab').forEach(el => el.classList.remove('active'));
@@ -1033,7 +1216,10 @@ function changeQty(id, delta) {
 }
 
 function getSubtotal() {
-  return Object.keys(cart).reduce((sum, k) => sum + PRODUCTS[k].price * cart[k], 0);
+  return Object.keys(cart).reduce((sum, k) => {
+    const p = PRODUCTS[k];
+    return sum + (p._activePrice !== undefined ? p._activePrice : p.price) * cart[k];
+  }, 0);
 }
 
 function getRedeemDiscount() {
@@ -1070,7 +1256,7 @@ function renderCart() {
   const subtotal = getSubtotal();
   items.innerHTML = keys.map(k => {
     const p = PRODUCTS[k];
-    const s = p.price * cart[k];
+    const s = (p._activePrice !== undefined ? p._activePrice : p.price) * cart[k];
     return `<div class="cart-item">
       <div>
         <div class="cart-item-name">${p.name}</div>
@@ -1566,6 +1752,7 @@ function syncLoyaltyPhone() {
   }
 }
 
+document.addEventListener('DOMContentLoaded', () => { buildMenuGrid(); });
 </script>
 </body>
 </html>
