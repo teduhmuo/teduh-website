@@ -1158,7 +1158,7 @@ function buildMenuGrid() {
     const hasTemp = p.hotPrice !== null;
     if (!tempSelection[key]) tempSelection[key] = hasTemp ? 'ice' : null;
 
-    const soldOut = itemAvailability[p.name] === false;
+    const soldOut = itemAvailability[key] === false;
     html += '<div class="menu-item-card' + (soldOut ? ' sold-out' : '') + '" id="card-' + key + '">';
     html += '<div class="menu-item-name">' + p.name + (soldOut ? ' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· Sold out</span>' : '') + '</div>';
     if (p.desc) html += '<div class="menu-item-desc">' + p.desc + '</div>';
@@ -1796,18 +1796,18 @@ async function checkShopStatus() {
 // Apply availability to static product cards (beans, drip, merch)
 function applyStaticAvailability() {
   const staticMap = {
-    'pc-drip-5':   'Drip Bags ×5',
-    'pc-drip-10':  'Drip Bags ×10',
-    'pc-bean-250': 'House Blend 250g',
-    'pc-bean-500': 'House Blend 500g',
-    'pc-bean-1kg': 'House Blend 1kg',
-    'pc-mug':      'Teduh Mug',
-    'pc-tote':     'Teduh Tote Bag',
+    'pc-drip-5':   'drip-5',
+    'pc-drip-10':  'drip-10',
+    'pc-bean-250': 'bean-250',
+    'pc-bean-500': 'bean-500',
+    'pc-bean-1kg': 'bean-1kg',
+    'pc-mug':      'mug',
+    'pc-tote':     'tote',
   };
-  Object.entries(staticMap).forEach(([cardId, itemName]) => {
+  Object.entries(staticMap).forEach(([cardId, itemKey]) => {
     const card = document.getElementById(cardId);
     if (!card) return;
-    const soldOut = itemAvailability[itemName] === false;
+    const soldOut = itemAvailability[itemKey] === false;
     if (soldOut) {
       card.style.opacity = '0.45';
       card.style.pointerEvents = 'none';

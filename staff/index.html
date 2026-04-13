@@ -1221,19 +1221,41 @@ async function createLoyverseRedeemReceipt(item, member) {
 
 // ── AVAILABILITY ──────────────────────────────────────────────────────
 const MENU_CATEGORIES = {
-  'Coffee Essential':  ['Espresso','Long Black','Café Latte','Cappuccino'],
-  'Flavoured Coffee':  ['Long Black Lemon','Café Latte Gula Melaka','Café Latte Vanilla','Café Latte Caramel','Café Latte Nutty','Café Latte Strawberry','Café Latte Asian','Café Latte Caramel Machiato','Café Latte Mocha','Espressoda','Espressoda Lemon'],
-  'Chocolate':         ['Chocolate','Chocolate Mint','Chocolate Gula Melaka'],
-  'Matcha':            ['Matcha Latte','Matcha Latte Strawberry','Matcha Latte Mango','Matcha Lemonade'],
-  'Refresher':         ['Sparkling Vanilla Mint','Sparkling Vanilla Peach','Sparkling Lemonade','Semangka Laici'],
-  'Frappe Series':     ['Strawberry Frappe','Caramel Café Frappe','Mocha Choco Chip Frappe','Double Choco Chip Frappe'],
-  'Neapolitan Pizza':  ['Margherita Pizza','Beef Pepperoni Pizza','Sliced Beef Pizza','Spicy Garlic Chicken Pizza','Teduh Smoked Pizza','Creamy Truffle Beef Pizza','White Beef Pepperoni Pizza'],
-  'Half-Half Pizza':   ['Beef Pepperoni & Garlic Chicken','Beef Sliced & Creamy Truffle Beef','White Pepperoni & Garlic Chicken Pizza','White Pepperoni & Truffle Beef Pizza'],
-  'Pasta':             ['Aglio e Oglio','Aglio e Oglio Garlic Chicken','Aglio e Oglio Smoked Duck'],
-  'Snack & Pastry':    ['Plain Croissant','Chocolate Roll','Mini Egg Tart','Banana Bar','Egg Mayo Croissant','Tuna Mayo Croissant'],
-  'Coffee Beans':      ['House Blend 250g','House Blend 500g','House Blend 1kg'],
-  'Drip Bags':         ['Drip Bags ×5','Drip Bags ×10'],
-  'Merchandise':       ['Teduh Mug','Teduh Tote Bag'],
+  'Coffee Essential':  ['esp','lb','latte','cap'],
+  'Flavoured Coffee':  ['lb-lem','latte-gm','latte-van','latte-car','latte-nut','latte-str','latte-asi','latte-mac','latte-moc'],
+  'Chocolate':         ['choc','choc-mint','choc-gm'],
+  'Matcha':            ['mat','mat-str','mat-man','mat-lem'],
+  'Refresher':         ['ref-vm','ref-vp','ref-lem','ref-sem'],
+  'Frappe Series':     ['frp-str','frp-car','frp-moc','frp-dbl'],
+  'Neapolitan Pizza':  ['piz-mar','piz-pep','piz-bsf','piz-chk','piz-smk','piz-trf','piz-wbp'],
+  'Half-Half Pizza':   ['hpiz-bpgc','hpiz-bstf','hpiz-wpgc','hpiz-wptf'],
+  'Pasta':             ['pas-ao','pas-aogc','pas-aosd'],
+  'Snack & Pastry':    ['snk-cro','snk-chcro','snk-tart','snk-ban','snk-egg','snk-tuna'],
+  'Coffee Beans':      ['bean-250','bean-500','bean-1kg'],
+  'Drip Bags':         ['drip-5','drip-10'],
+  'Merchandise':       ['mug','tote'],
+};
+
+// Product key to display name map for the availability panel
+const PROD_NAMES = {
+  'esp':'Espresso','lb':'Long Black','latte':'Café Latte','cap':'Cappuccino',
+  'lb-lem':'Long Black Lemon','latte-gm':'Café Latte Gula Melaka','latte-van':'Café Latte Vanilla',
+  'latte-car':'Café Latte Caramel','latte-nut':'Café Latte Nutty','latte-str':'Café Latte Strawberry',
+  'latte-asi':'Café Latte Asian','latte-mac':'Café Latte Caramel Machiato','latte-moc':'Café Latte Mocha',
+  'choc':'Chocolate','choc-mint':'Chocolate Mint','choc-gm':'Chocolate Gula Melaka',
+  'mat':'Matcha Latte','mat-str':'Matcha Latte Strawberry','mat-man':'Matcha Latte Mango','mat-lem':'Matcha Lemonade',
+  'ref-vm':'Sparkling Vanilla Mint','ref-vp':'Sparkling Vanilla Peach','ref-lem':'Sparkling Lemonade','ref-sem':'Semangka Laici',
+  'frp-str':'Strawberry Frappe','frp-car':'Caramel Café Frappe','frp-moc':'Mocha Choco Chip Frappe','frp-dbl':'Double Choco Chip Frappe',
+  'piz-mar':'Margherita Pizza','piz-pep':'Beef Pepperoni Pizza','piz-bsf':'Sliced Beef Pizza',
+  'piz-chk':'Spicy Garlic Chicken Pizza','piz-smk':'Teduh Smoked Pizza','piz-trf':'Creamy Truffle Beef Pizza','piz-wbp':'White Beef Pepperoni Pizza',
+  'hpiz-bpgc':'Beef Pepperoni & Garlic Chicken','hpiz-bstf':'Beef Sliced & Creamy Truffle Beef',
+  'hpiz-wpgc':'White Pepperoni & Garlic Chicken','hpiz-wptf':'White Pepperoni & Truffle Beef',
+  'pas-ao':'Aglio e Oglio','pas-aogc':'Aglio e Oglio Garlic Chicken','pas-aosd':'Aglio e Oglio Smoked Duck',
+  'snk-cro':'Plain Croissant','snk-chcro':'Chocolate Roll','snk-tart':'Mini Egg Tart',
+  'snk-ban':'Banana Bar','snk-egg':'Egg Mayo Croissant','snk-tuna':'Tuna Mayo Croissant',
+  'bean-250':'House Blend 250g','bean-500':'House Blend 500g','bean-1kg':'House Blend 1kg',
+  'drip-5':'Drip Bags x5','drip-10':'Drip Bags x10',
+  'mug':'Teduh Mug','tote':'Teduh Tote Bag',
 };
 
 // Local availability state: { 'item_name': true/false }
@@ -1286,8 +1308,8 @@ function renderAvailCategories() {
 
   let html = '';
   Object.entries(MENU_CATEGORIES).forEach(([cat, items]) => {
-    const allOn  = items.every(i => availState[i] !== false);
-    const countOn = items.filter(i => availState[i] !== false).length;
+    const allOn  = items.every(k => availState[k] !== false);
+    const countOn = items.filter(k => availState[k] !== false).length;
     const catId  = cat.replace(/[^a-z0-9]/gi, '-');
     const makeAvail = !allOn;
 
@@ -1301,12 +1323,12 @@ function renderAvailCategories() {
     html += '</div>';
 
     html += '<div class="avail-items-grid">';
-    items.forEach(item => {
-      const avail   = availState[item] !== false;
-      const safeItem = item.replace(/`/g, "'");
+    items.forEach(key => {
+      const avail   = availState[key] !== false;
+      const label   = PROD_NAMES[key] || key;
       html += '<label class="avail-item' + (avail ? '' : ' unavailable') + '">' +
-        '<span>' + item + '</span>' +
-        '<input type="checkbox" ' + (avail ? 'checked' : '') + ' onchange="toggleItem(\`' + safeItem + '\`,this.checked)">' +
+        '<span>' + label + '</span>' +
+        '<input type="checkbox" ' + (avail ? 'checked' : '') + ' onchange="toggleItem(\`' + key + '\`,this.checked)">' +
         '</label>';
     });
     html += '</div></div>';
