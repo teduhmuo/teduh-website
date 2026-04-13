@@ -1158,9 +1158,10 @@ function buildMenuGrid() {
     const hasTemp = p.hotPrice !== null;
     if (!tempSelection[key]) tempSelection[key] = hasTemp ? 'ice' : null;
 
-    const soldOut = itemAvailability[key] === false;
+    const soldOut = !shopIsOpen || itemAvailability[key] === false;
     html += '<div class="menu-item-card' + (soldOut ? ' sold-out' : '') + '" id="card-' + key + '">';
-    html += '<div class="menu-item-name">' + p.name + (soldOut ? ' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· Sold out</span>' : '') + '</div>';
+    const itemLabel = (!shopIsOpen || soldOut) ? (' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· ' + getItemLabel() + '</span>') : '';
+    html += '<div class="menu-item-name">' + p.name + itemLabel + '</div>';
     if (p.desc) html += '<div class="menu-item-desc">' + p.desc + '</div>';
 
     if (hasTemp) {
@@ -1791,6 +1792,10 @@ async function checkShopStatus() {
     buildMenuGrid();
     applyStaticAvailability();
   } catch(e) { console.warn('Availability check error:', e); }
+}
+
+function getItemLabel() {
+  return shopIsOpen ? 'Sold out' : 'Shop closed';
 }
 
 // Apply availability to static product cards (beans, drip, merch)
