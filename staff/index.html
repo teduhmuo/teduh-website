@@ -191,6 +191,39 @@
   .avail-item { display:flex; align-items:center; justify-content:space-between; background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:var(--warm-brown); cursor:pointer; }
   .avail-item.unavailable { opacity:0.45; text-decoration:line-through; }
   .avail-item input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; }
+
+  .q-filter-btn { padding:0.35rem 0.85rem; border:1px solid var(--border); border-radius:20px; font-size:0.78rem; background:transparent; color:var(--medium-brown); cursor:pointer; font-family:var(--font-body); transition:all 0.15s; }
+  .q-filter-btn.active { background:var(--warm-brown); color:var(--cream); border-color:var(--warm-brown); }
+  .queue-card { border:1px solid var(--border); border-radius:12px; padding:1rem; margin-bottom:0.75rem; transition:border-color 0.15s; }
+  .queue-card.status-pending   { border-left:3px solid #FAC775; border-radius:0 12px 12px 0; }
+  .queue-card.status-preparing { border-left:3px solid #85B7EB; border-radius:0 12px 12px 0; }
+  .queue-card.status-ready     { border-left:3px solid var(--accent); background:var(--accent-light); border-radius:0 12px 12px 0; }
+  .queue-card.status-delivering{ border-left:3px solid #7F77DD; background:#EEEDFE; border-radius:0 12px 12px 0; }
+  .queue-card.status-done      { border-left:3px solid var(--border); opacity:0.5; border-radius:0 12px 12px 0; }
+  .qc-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem; }
+  .qc-number { font-family:var(--font-display); font-size:1.3rem; font-weight:500; color:var(--warm-brown); line-height:1; }
+  .qc-type { font-size:0.68rem; font-weight:500; letter-spacing:0.05em; text-transform:uppercase; padding:3px 10px; border-radius:20px; }
+  .qc-type.pickup { background:#EAF3DE; color:#3B6D11; }
+  .qc-type.delivery { background:#EEEDFE; color:#534AB7; }
+  .qc-customer { font-size:0.85rem; font-weight:500; color:var(--warm-brown); margin-bottom:0.35rem; }
+  .qc-items { margin:0.5rem 0; padding:0.5rem; background:rgba(0,0,0,0.03); border-radius:6px; }
+  .qc-item-row { font-size:0.78rem; color:var(--medium-brown); padding:2px 0; }
+  .qc-meta { font-size:0.72rem; color:var(--light-brown); margin-top:0.35rem; }
+  .qc-actions { display:flex; gap:6px; margin-top:0.75rem; flex-wrap:wrap; }
+  .qc-btn { flex:1; min-width:80px; padding:0.45rem 0.5rem; border:1px solid var(--border); border-radius:6px; font-size:0.75rem; font-weight:500; cursor:pointer; font-family:var(--font-body); transition:all 0.15s; background:transparent; color:var(--medium-brown); }
+  .qc-btn.prepare-btn  { background:#EAF3DE; color:#3B6D11; border-color:#C0DD97; }
+  .qc-btn.ready-btn    { background:var(--accent); color:white; border-color:var(--accent); }
+  .qc-btn.deliver-btn  { background:#534AB7; color:white; border-color:#534AB7; }
+  .qc-btn.done-btn     { background:var(--warm-brown); color:var(--cream); border-color:var(--warm-brown); }
+  .qc-btn.wa-btn       { background:#25D366; color:white; border-color:#25D366; }
+  .qc-btn.revert-btn   { color:var(--medium-brown); font-size:0.72rem; flex:0; min-width:60px; }
+  .qc-status-badge { font-size:0.68rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; padding:2px 8px; border-radius:20px; }
+  .badge-pending   { background:#FAEEDA; color:#633806; }
+  .badge-preparing { background:#E6F1FB; color:#0C447C; }
+  .badge-ready     { background:var(--accent-light); color:var(--accent); }
+  .badge-delivering{ background:#EEEDFE; color:#534AB7; }
+  .badge-done      { background:var(--border); color:var(--medium-brown); }
+
 </style>
 </head>
 <body>
@@ -366,6 +399,24 @@
 
         <div class="section-label-sm">Points added by staff</div>
         <div id="staff-breakdown"></div>
+      </div>
+
+
+      <!-- QUEUE -->
+      <div class="panel" id="panel-queue">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div style="font-size:0.75rem;color:var(--medium-brown);">Live queue — auto-refreshes every 30s</div>
+          <button onclick="loadQueue()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.75rem;color:var(--medium-brown);cursor:pointer;font-family:var(--font-body);">↻ Refresh</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;">
+          <button class="q-filter-btn active" onclick="filterQueue('all',this)">All</button>
+          <button class="q-filter-btn" onclick="filterQueue('pending',this)">Pending</button>
+          <button class="q-filter-btn" onclick="filterQueue('preparing',this)">Preparing</button>
+          <button class="q-filter-btn" onclick="filterQueue('ready',this)">Ready</button>
+          <button class="q-filter-btn" onclick="filterQueue('delivering',this)">Delivering</button>
+          <button class="q-filter-btn" onclick="filterQueue('done',this)">Done</button>
+        </div>
+        <div id="queue-list"><div class="loading-state">Loading queue…</div></div>
       </div>
 
       <!-- REDEEM -->
@@ -1247,6 +1298,127 @@ function toggleAvailLogDetail(id) {
   if (arrow && (arrow.innerHTML === '&#9658;' || arrow.innerHTML === '&#9660;')) {
     arrow.innerHTML = isOpen ? '&#9658;' : '&#9660;';
   }
+}
+
+
+
+// ── QUEUE ─────────────────────────────────────────────────────────────
+let allQueue = [];
+let queueFilter = 'all';
+
+async function loadQueue() {
+  try {
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const data = await sbFetch('queue_orders?select=*&order=created_at.asc&created_at=gte.' + today.toISOString());
+    allQueue = Array.isArray(data) ? data : [];
+    renderQueue();
+  } catch(e) {
+    const el = document.getElementById('queue-list');
+    if (el) el.innerHTML = '<div class="empty-state">Could not load queue.</div>';
+  }
+}
+
+function filterQueue(status, btn) {
+  queueFilter = status;
+  document.querySelectorAll('.q-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderQueue();
+}
+
+function renderQueue() {
+  const list = document.getElementById('queue-list');
+  if (!list) return;
+  var filtered = queueFilter === 'all' ? allQueue : allQueue.filter(function(o) { return o.status === queueFilter; });
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-state">No orders' + (queueFilter !== 'all' ? ' · ' + queueFilter : ' today') + '.</div>';
+    return;
+  }
+  list.innerHTML = filtered.map(function(o) {
+    var isPU = o.queue_number && o.queue_number.startsWith('#PU');
+    var typeLabel = isPU ? 'Pickup' : 'Delivery';
+    var typeClass = isPU ? 'pickup' : 'delivery';
+    var timeStr = new Date(o.created_at).toLocaleTimeString('en-MY', { hour:'2-digit', minute:'2-digit' });
+    var status = o.status || 'pending';
+
+    // Parse items
+    var itemsHtml = '';
+    if (o.items) {
+      var itemList = o.items.split(',').map(function(i) { return i.trim(); });
+      itemsHtml = '<div class="qc-items">' + itemList.map(function(i) {
+        return '<div class="qc-item-row">· ' + i + '</div>';
+      }).join('') + '</div>';
+    }
+
+    // Status badge
+    var badgeClass = 'badge-' + status;
+    var badgeLabel = status === 'delivering' ? 'Out for delivery' : status.charAt(0).toUpperCase() + status.slice(1);
+
+    // Action buttons
+    var actions = '';
+    if (status === 'pending') {
+      actions = '<button class="qc-btn prepare-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">Start preparing</button>';
+    } else if (status === 'preparing') {
+      actions = '<button class="qc-btn ready-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">' + (isPU ? 'Mark ready' : 'Packed') + '</button>' +
+        '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'pending\')">↩</button>';
+    } else if (status === 'ready') {
+      if (isPU) {
+        actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'pickup\')">WA customer</button>' +
+          '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Done</button>' +
+          '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
+      } else {
+        actions = '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider picked up</button>' +
+          '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
+      }
+    } else if (status === 'delivering') {
+      actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'delivery\')">WA customer</button>' +
+        '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Done</button>' +
+        '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩</button>';
+    } else if (status === 'done') {
+      actions = '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩ Reopen</button>';
+    }
+
+    // Address line for delivery
+    var metaLine = typeLabel + ' · ' + timeStr;
+    if (!isPU && o.address) metaLine += ' · ' + o.address.substring(0, 40);
+    if (o.notes) metaLine += ' · Note: ' + o.notes;
+
+    return '<div class="queue-card status-' + status + '">' +
+      '<div class="qc-header">' +
+        '<div>' +
+          '<div class="qc-number">' + (o.queue_number || '—') + '</div>' +
+          '<span class="qc-type ' + typeClass + '">' + typeLabel + '</span>' +
+        '</div>' +
+        '<span class="qc-status-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
+      '</div>' +
+      '<div class="qc-customer">' + o.customer_name + ' · ' + o.phone + '</div>' +
+      itemsHtml +
+      '<div class="qc-meta">' + metaLine + '</div>' +
+      '<div class="qc-actions">' + actions + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+async function updateQueueStatus(id, status) {
+  try {
+    await sbFetch('queue_orders?id=eq.' + id, {
+      method: 'PATCH',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ status: status })
+    });
+    var idx = allQueue.findIndex(function(o) { return o.id === id; });
+    if (idx > -1) allQueue[idx].status = status;
+    renderQueue();
+  } catch(e) { alert('Could not update status. Try again.'); }
+}
+
+function waOrderReady(queueNum, phone, name, type) {
+  var cleanPhone = phone.replace(/[^0-9]/g, '');
+  if (cleanPhone.startsWith('0')) cleanPhone = '6' + cleanPhone;
+  var msg = type === 'pickup'
+    ? 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sudah sedia untuk diambil di Teduh, No 11 Jalan Sulaiman, Muar. Sila tunjukkan nombor giliran anda kepada staff. Terima kasih!'
+    : 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sedang dalam perjalanan ke alamat anda. Rider kami akan tiba tidak lama lagi. Terima kasih kerana memesan di Teduh!';
+  window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
 
