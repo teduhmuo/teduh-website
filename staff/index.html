@@ -168,52 +168,6 @@
   .table-footer { font-size: 0.72rem; color: var(--light-brown); margin-top: 0.6rem; text-align: right; }
 
   footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; color: var(--light-brown); }
-
-  /* Availability */
-  .avail-shop-toggle { display:flex; align-items:center; justify-content:space-between; background:var(--white); border:1px solid var(--border); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.25rem; }
-  .avail-shop-label { font-size:0.95rem; font-weight:500; color:var(--warm-brown); }
-  .avail-shop-sub { font-size:0.75rem; color:var(--medium-brown); margin-top:2px; }
-  .toggle-switch { position:relative; width:48px; height:26px; }
-  .toggle-switch input { opacity:0; width:0; height:0; }
-  .toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--border); border-radius:26px; transition:.3s; }
-  .toggle-slider:before { content:""; position:absolute; width:20px; height:20px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s; }
-  .toggle-switch input:checked + .toggle-slider { background:var(--accent); }
-  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(22px); }
-  .avail-status-badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:0.72rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; }
-  .avail-status-badge.open { background:var(--accent-light); color:var(--accent); }
-  .avail-status-badge.closed { background:#fdf0ef; color:var(--error); }
-  .avail-cat-header { display:flex; align-items:center; justify-content:space-between; padding:0.65rem 0; border-bottom:1px solid var(--border); margin-bottom:0.5rem; cursor:pointer; }
-  .avail-cat-name { font-size:0.88rem; font-weight:500; color:var(--warm-brown); }
-  .avail-cat-count { font-size:0.72rem; color:var(--medium-brown); }
-  .avail-cat-toggle { font-size:0.72rem; color:var(--accent); cursor:pointer; padding:2px 8px; border:1px solid var(--accent); border-radius:20px; background:transparent; font-family:var(--font-body); }
-  .avail-items-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:1rem; }
-  .avail-item { display:flex; align-items:center; justify-content:space-between; background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:var(--warm-brown); }
-  .avail-item.unavailable { opacity:0.45; text-decoration:line-through; }
-  .avail-item input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; }
-
-  /* Queue */
-  .q-filter-btn { padding: 0.35rem 0.85rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.78rem; background: transparent; color: var(--medium-brown); cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
-  .q-filter-btn.active { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
-  .queue-card { border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.15s; }
-  .queue-card:hover { border-color: var(--medium-brown); }
-  .queue-card.status-pending { border-left: 3px solid var(--light-brown); }
-  .queue-card.status-ready   { border-left: 3px solid var(--accent); background: var(--accent-light); }
-  .queue-card.status-done    { border-left: 3px solid var(--border); opacity: 0.55; }
-  .qc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-  .qc-number { font-family: var(--font-display); font-size: 1.4rem; font-weight: 500; color: var(--warm-brown); line-height: 1; }
-  .qc-status { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
-  .qc-status.pending { background: #FAC775; color: #633806; }
-  .qc-status.ready   { background: var(--accent-light); color: var(--accent); }
-  .qc-status.done    { background: var(--border); color: var(--medium-brown); }
-  .qc-name { font-size: 0.88rem; font-weight: 500; color: var(--warm-brown); margin-bottom: 0.2rem; }
-  .qc-items { font-size: 0.78rem; color: var(--medium-brown); margin-bottom: 0.5rem; line-height: 1.4; }
-  .qc-meta { font-size: 0.72rem; color: var(--light-brown); }
-  .qc-actions { display: flex; gap: 6px; margin-top: 0.65rem; }
-  .qc-btn { flex: 1; padding: 0.45rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; background: transparent; color: var(--medium-brown); }
-  .qc-btn.ready-btn  { background: var(--accent); color: white; border-color: var(--accent); }
-  .qc-btn.done-btn   { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
-  .qc-btn.revert-btn { color: var(--medium-brown); }
-
 </style>
 </head>
 <body>
@@ -395,18 +349,15 @@
       <div class="panel" id="panel-redeem">
         <div class="form-group">
           <label for="redeem-phone">Customer phone</label>
-          <input type="tel" id="redeem-phone" placeholder="e.g. 0123456789"
-            oninput="onRedeemPhoneInput()"
-            onkeydown="if(event.key==='Enter')lookupRedeemMember()" />
+          <input type="tel" id="redeem-phone" placeholder="e.g. 0123456789" oninput="onRedeemPhoneInput()" onkeydown="if(event.key==='Enter')lookupRedeemMember()" />
         </div>
         <div class="member-card" id="redeem-member-card" style="display:none;">
           <div class="mc-name" id="rm-name"></div>
           <div class="mc-phone" id="rm-phone"></div>
           <div class="mc-pts-row"><span class="mc-pts" id="rm-pts">0</span><span class="mc-pts-label">points</span></div>
           <div class="mc-tier" id="rm-tier"></div>
-
           <div style="margin-top:1rem;padding-top:0.85rem;border-top:1px solid rgba(255,255,255,0.12);">
-            <div style="font-size:0.68rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Select item to redeem</div>
+            <div style="font-size:0.68rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Select item to redeem (min 150 pts)</div>
             <div id="redeem-items-list"></div>
             <div id="redeem-msg" class="msg" style="margin-top:0.75rem;"></div>
           </div>
@@ -414,12 +365,8 @@
         <div class="msg" id="redeem-lookup-msg"></div>
       </div>
 
-
-
       <!-- AVAILABILITY -->
       <div class="panel" id="panel-avail">
-
-        <!-- Shop open/closed toggle -->
         <div class="avail-shop-toggle">
           <div>
             <div class="avail-shop-label">Online ordering</div>
@@ -433,21 +380,13 @@
             </label>
           </div>
         </div>
-
-        <div style="font-size:0.72rem;color:var(--medium-brown);margin-bottom:1rem;opacity:0.7;">
-          Toggle categories or individual items. Unchecked = sold out today.
-        </div>
-
+        <div style="font-size:0.72rem;color:var(--medium-brown);margin-bottom:1rem;opacity:0.7;">Toggle categories or individual items. Unchecked = sold out today.</div>
         <div id="avail-categories"></div>
-
-        <button onclick="saveAvailability()" style="width:100%;margin-top:0.5rem;padding:0.85rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:8px;font-family:var(--font-display);font-size:0.95rem;cursor:pointer;">
-          Save availability
-        </button>
+        <button onclick="saveAvailability()" style="width:100%;margin-top:0.5rem;padding:0.85rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:8px;font-family:var(--font-display);font-size:0.95rem;cursor:pointer;">Save availability</button>
         <div class="msg" id="avail-save-msg" style="margin-top:0.75rem;text-align:center;"></div>
       </div>
 
-
-      <!-- AVAILABILITY LOG -->
+      <!-- AVAIL LOG -->
       <div class="panel" id="panel-avail-log">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
           <div style="font-size:0.75rem;color:var(--medium-brown);">Availability changes by staff</div>
@@ -456,20 +395,6 @@
         <div id="avail-log-list"><div class="loading-state">Loading…</div></div>
       </div>
 
-      <!-- QUEUE -->
-      <div class="panel" id="panel-queue">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-          <div style="font-size:0.75rem;color:var(--medium-brown);">Live queue — auto-refreshes every 30s</div>
-          <button onclick="loadQueue()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.75rem;color:var(--medium-brown);cursor:pointer;font-family:var(--font-body);">↻ Refresh</button>
-        </div>
-        <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;">
-          <button class="q-filter-btn active" onclick="filterQueue('all', this)">All</button>
-          <button class="q-filter-btn" onclick="filterQueue('pending', this)">Pending</button>
-          <button class="q-filter-btn" onclick="filterQueue('ready', this)">Ready</button>
-          <button class="q-filter-btn" onclick="filterQueue('done', this)">Done</button>
-        </div>
-        <div id="queue-list"><div class="loading-state">Loading queue…</div></div>
-      </div>
 
     </div>
   </main>
@@ -588,7 +513,6 @@ function unlockDashboard(role) {
     loadOverview();
   }
   loadStats();
-  loadQueue();
 }
 
 function logout() {
@@ -646,14 +570,6 @@ function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('panel-' + tab).classList.add('active');
   document.getElementById('tab-'   + tab).classList.add('active');
-  if (tab === 'queue') {
-    loadQueue();
-    if (!queueInterval) queueInterval = setInterval(loadQueue, 30000);
-  } else {
-    if (queueInterval) { clearInterval(queueInterval); queueInterval = null; }
-  }
-  if (tab === 'avail') loadAvailability();
-  if (tab === 'avail-log') loadAvailLog();
 }
 
 function showMsg(id, text, type) {
@@ -1004,82 +920,12 @@ async function loadOverview() {
 
   } catch(e) { console.error(e); }
 }
-// ── QUEUE ─────────────────────────────────────────────────────────────
-let allQueue = [];
-let queueFilter = 'all';
-let queueInterval = null;
 
-async function loadQueue() {
-  try {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const data = await sbFetch('queue_orders?select=*&order=created_at.asc&created_at=gte.' + today.toISOString());
-    allQueue = Array.isArray(data) ? data : [];
-    renderQueue();
-  } catch(e) {
-    document.getElementById('queue-list').innerHTML = '<div class="empty-state">Could not load queue.</div>';
-  }
-}
-
-function filterQueue(status, btn) {
-  queueFilter = status;
-  document.querySelectorAll('.q-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderQueue();
-}
-
-function renderQueue() {
-  const list = document.getElementById('queue-list');
-  let filtered = queueFilter === 'all' ? allQueue : allQueue.filter(o => o.status === queueFilter);
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty-state">No orders' + (queueFilter !== 'all' ? ' with status: ' + queueFilter : ' today') + '.</div>';
-    return;
-  }
-  list.innerHTML = filtered.map(o => {
-    const isPU   = o.queue_number.startsWith('#PU');
-    const typeLabel = isPU ? 'Pickup' : 'Delivery';
-    const timeStr = new Date(o.created_at).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
-    return `<div class="queue-card status-${o.status}" id="qc-${o.id}">
-      <div class="qc-top">
-        <div class="qc-number">${o.queue_number}</div>
-        <span class="qc-status ${o.status}">${o.status}</span>
-      </div>
-      <div class="qc-name">${o.customer_name} · ${o.phone}</div>
-      <div class="qc-items">${o.items}</div>
-      <div class="qc-meta">${typeLabel}${o.address ? ' · ' + o.address.substring(0,40) + '…' : ''} · ${timeStr}${o.notes ? ' · Note: ' + o.notes : ''}</div>
-      <div class="qc-actions">
-        ${o.status === 'pending' ? `
-          <button class="qc-btn ready-btn" onclick="updateQueueStatus('${o.id}', 'ready')">Mark Ready</button>
-        ` : ''}
-        ${o.status === 'ready' ? `
-          <button class="qc-btn done-btn"  onclick="updateQueueStatus('${o.id}', 'done')">Mark Done</button>
-          <button class="qc-btn revert-btn" onclick="updateQueueStatus('${o.id}', 'pending')">← Pending</button>
-        ` : ''}
-        ${o.status === 'done' ? `
-          <button class="qc-btn revert-btn" onclick="updateQueueStatus('${o.id}', 'ready')">← Reopen</button>
-        ` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function updateQueueStatus(id, status) {
-  try {
-    await sbFetch('queue_orders?id=eq.' + id, {
-      method: 'PATCH',
-      body: JSON.stringify({ status })
-    });
-    const idx = allQueue.findIndex(o => o.id === id);
-    if (idx > -1) allQueue[idx].status = status;
-    renderQueue();
-  } catch(e) { alert('Could not update status. Try again.'); }
-}
-
-// ── REDEEM TAB ─────────────────────────────────────────────────────────
+// ── LOYVERSE ──────────────────────────────────────────────────────────
 const LOYVERSE_TOKEN = '5f56ff3b1e7c4d2ab0376499be53a744';
 const LOYVERSE_API   = 'https://api.loyverse.com/v1.0';
 
-// Fixed café menu items for walk-in redeem (price >= RM8)
+// ── WALK-IN REDEEM ────────────────────────────────────────────────────
 const WALKIN_ITEMS = [
   { name: 'Americano',        price: 9   },
   { name: 'Café Latte',       price: 12  },
@@ -1092,7 +938,6 @@ const WALKIN_ITEMS = [
   { name: 'Drip Bags x5',     price: 25  },
   { name: 'Drip Bags x10',    price: 45  },
 ];
-
 let redeemMember = null;
 
 function onRedeemPhoneInput() {
@@ -1104,131 +949,65 @@ async function lookupRedeemMember() {
   const phone  = document.getElementById('redeem-phone').value.trim().replace(/[\s\-]/g,'');
   const msgEl  = document.getElementById('redeem-lookup-msg');
   const card   = document.getElementById('redeem-member-card');
-  msgEl.textContent = '';
-  card.style.display = 'none';
-  redeemMember = null;
-
+  msgEl.textContent = ''; card.style.display = 'none'; redeemMember = null;
   if (!phone) return;
-  msgEl.textContent = 'Looking up…';
-  msgEl.className = 'msg';
-
+  msgEl.textContent = 'Looking up…'; msgEl.className = 'msg';
   try {
     const data = await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(phone) + '&limit=1');
-    if (!data[0]) {
-      msgEl.textContent = 'Customer not found.';
-      msgEl.className = 'msg error';
-      return;
-    }
+    if (!data[0]) { msgEl.textContent = 'Customer not found.'; msgEl.className = 'msg error'; return; }
     redeemMember = data[0];
     msgEl.textContent = '';
     document.getElementById('rm-name').textContent  = redeemMember.name;
     document.getElementById('rm-phone').textContent = redeemMember.phone;
     document.getElementById('rm-pts').textContent   = redeemMember.points;
-    document.getElementById('rm-tier').textContent  = getTier(redeemMember.points).label || '';
+    const tier = getTier(redeemMember.points);
+    document.getElementById('rm-tier').textContent  = tier ? tier.label : '';
     buildWalkinRedeemItems(redeemMember.points);
     card.style.display = 'block';
-  } catch(e) {
-    msgEl.textContent = 'Error. Try again.';
-    msgEl.className = 'msg error';
-  }
+  } catch(e) { msgEl.textContent = 'Error. Try again.'; msgEl.className = 'msg error'; }
 }
 
 function buildWalkinRedeemItems(pts) {
   const list = document.getElementById('redeem-items-list');
-  list.innerHTML = '';
-
-  if (pts < 150) {
-    list.innerHTML = '<div style="font-size:0.82rem;opacity:0.6;">Need minimum 150 pts to redeem. Customer has ' + pts + ' pts.</div>';
-    return;
-  }
-
-  let hasAny = false;
+  if (pts < 150) { list.innerHTML = '<div style="font-size:0.82rem;opacity:0.6;">Need min 150 pts. Customer has ' + pts + ' pts.</div>'; return; }
+  let html = ''; let added = 0;
   WALKIN_ITEMS.forEach(item => {
     const ptsCost = Math.round(item.price / 0.065);
     if (pts < ptsCost) return;
-    hasAny = true;
-    const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;justify-content:space-between;align-items:center;width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:0.5rem;cursor:pointer;font-family:var(--font-body);color:var(--cream);text-align:left;';
-    btn.innerHTML = '<span style="font-size:0.85rem;font-weight:500;">' + item.name + '</span>' +
-      '<span style="font-size:0.78rem;opacity:0.7;">FREE · ' + ptsCost + ' pts</span>';
-    btn.onclick = () => confirmWalkinRedeem(item, ptsCost);
-    list.appendChild(btn);
+    added++;
+    html += '<button style="display:flex;justify-content:space-between;align-items:center;width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:0.5rem;cursor:pointer;font-family:var(--font-body);color:var(--cream);text-align:left;" onclick="confirmWalkinRedeem(' + JSON.stringify(item) + ',' + ptsCost + ')">' +
+      '<span style="font-size:0.85rem;font-weight:500;">' + item.name + '</span>' +
+      '<span style="font-size:0.78rem;opacity:0.7;">FREE · ' + ptsCost + ' pts</span>' +
+    '</button>';
   });
-
-  if (!hasAny) {
-    list.innerHTML = '<div style="font-size:0.82rem;opacity:0.6;">Not enough points for any item yet.</div>';
-  }
+  if (!added) html = '<div style="font-size:0.82rem;opacity:0.6;">Not enough points for any item yet.</div>';
+  list.innerHTML = html;
 }
 
 async function confirmWalkinRedeem(item, ptsCost) {
   if (!redeemMember) return;
   const msgEl = document.getElementById('redeem-msg');
-
-  const ok = confirm('Redeem ' + item.name + ' (FREE) for ' + redeemMember.name + '?\nThis will deduct ' + ptsCost + ' points from their balance.');
+  const ok = confirm('Redeem ' + item.name + ' (FREE) for ' + redeemMember.name + '?\nDeducts ' + ptsCost + ' pts.');
   if (!ok) return;
-
-  msgEl.textContent = 'Processing…';
-  msgEl.className = 'msg';
-
+  msgEl.textContent = 'Processing…'; msgEl.className = 'msg';
   try {
-    // 1. Deduct points in Supabase
     const newPts = redeemMember.points - ptsCost;
-    await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(redeemMember.phone), {
-      method: 'PATCH',
-      body: JSON.stringify({ points: newPts, updated_at: new Date().toISOString() })
-    });
-    await sbFetch('loyalty_transactions', {
-      method: 'POST',
-      body: JSON.stringify({
-        phone:       redeemMember.phone,
-        description: 'Walk-in redeem: ' + item.name,
-        points:      -ptsCost,
-        order_ref:   'WALKIN-' + Date.now(),
-        staff_name:  currentStaffName
-      })
-    });
-
-    // 2. Create receipt in Loyverse with 100% discount
-    await createLoyverseRedeemReceipt(item, redeemMember);
-
-    // 3. Update local state
+    await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(redeemMember.phone), { method: 'PATCH', body: JSON.stringify({ points: newPts, updated_at: new Date().toISOString() }) });
+    await sbFetch('loyalty_transactions', { method: 'POST', body: JSON.stringify({ phone: redeemMember.phone, description: 'Walk-in redeem: ' + item.name, points: -ptsCost, order_ref: 'WALKIN-' + Date.now(), staff_name: currentStaffName }) });
     redeemMember.points = newPts;
     document.getElementById('rm-pts').textContent = newPts;
     buildWalkinRedeemItems(newPts);
-
-    msgEl.textContent = '✓ Done! ' + item.name + ' redeemed. ' + ptsCost + ' pts deducted. New balance: ' + newPts + ' pts.';
+    msgEl.textContent = '✓ Done! ' + item.name + ' redeemed. New balance: ' + newPts + ' pts.';
     msgEl.className = 'msg success';
-
-  } catch(e) {
-    msgEl.textContent = 'Error: ' + e.message;
-    msgEl.className = 'msg error';
-  }
-}
-
-async function createLoyverseRedeemReceipt(item, member) {
-  // Route through Supabase Edge Function to avoid CORS
-  const EDGE_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyverse-redeem';
-  try {
-    const res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh'
-      },
-      body: JSON.stringify({
-        loyverse_token: LOYVERSE_TOKEN,
-        item_name:  item.name,
-        item_price: item.price,
-        customer:   member.name,
-        phone:      member.phone
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) console.warn('Loyverse proxy error:', data);
-  } catch(e) {
-    // Edge function not deployed yet — silent fail, points already deducted
-    console.warn('Loyverse edge function not reachable:', e.message);
-  }
+    // Loyverse via edge function
+    try {
+      await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyverse-redeem', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh' },
+        body: JSON.stringify({ loyverse_token: LOYVERSE_TOKEN, item_name: item.name, item_price: item.price, customer: redeemMember.name, phone: redeemMember.phone })
+      });
+    } catch(e) { console.warn('Loyverse edge fn:', e.message); }
+  } catch(e) { msgEl.textContent = 'Error: ' + e.message; msgEl.className = 'msg error'; }
 }
 
 // ── AVAILABILITY ──────────────────────────────────────────────────────
@@ -1247,8 +1026,6 @@ const MENU_CATEGORIES = {
   'Drip Bags':         ['drip-5','drip-10'],
   'Merchandise':       ['mug','tote'],
 };
-
-// Product key to display name map for the availability panel
 const PROD_NAMES = {
   'esp':'Espresso','lb':'Long Black','latte':'Café Latte','cap':'Cappuccino',
   'lb-lem':'Long Black Lemon','latte-gm':'Café Latte Gula Melaka','latte-van':'Café Latte Vanilla',
@@ -1269,31 +1046,20 @@ const PROD_NAMES = {
   'drip-5':'Drip Bags x5','drip-10':'Drip Bags x10',
   'mug':'Teduh Mug','tote':'Teduh Tote Bag',
 };
-
-// Local availability state: { 'item_name': true/false }
 let availState = {};
 
 async function loadAvailability() {
-  // Load shop status
   try {
     const statusData = await sbFetch('shop_status?id=eq.1&select=is_open', { method: 'GET' });
     const isOpen = statusData[0] ? statusData[0].is_open : true;
     document.getElementById('shop-open-toggle').checked = isOpen;
     updateShopBadge(isOpen);
-  } catch(e) { console.error('Status load error:', e); }
-
-  // Load item availability
+  } catch(e) { console.warn('Status load:', e); }
   try {
     const items = await sbFetch('item_availability?select=item_id,available', { method: 'GET' });
-    // Default all to true, override with DB values
-    Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
-    if (Array.isArray(items)) {
-      items.forEach(r => { availState[r.item_id] = r.available; });
-    }
-  } catch(e) {
-    Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
-  }
-
+    Object.values(MENU_CATEGORIES).flat().forEach(k => availState[k] = true);
+    if (Array.isArray(items)) items.forEach(r => { availState[r.item_id] = r.available; });
+  } catch(e) { Object.values(MENU_CATEGORIES).flat().forEach(k => availState[k] = true); }
   renderAvailCategories();
 }
 
@@ -1306,187 +1072,81 @@ function updateShopBadge(isOpen) {
 async function toggleShopStatus(isOpen) {
   updateShopBadge(isOpen);
   try {
-    await sbFetch('shop_status?id=eq.1', {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName })
-    });
+    await sbFetch('shop_status?id=eq.1', { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName }) });
     logShopToggle(isOpen);
-  } catch(e) { console.error('Toggle error:', e); }
+  } catch(e) { console.warn('Toggle error:', e); }
 }
 
 function renderAvailCategories() {
   const el = document.getElementById('avail-categories');
   if (!el) return;
-
   let html = '';
-  Object.entries(MENU_CATEGORIES).forEach(([cat, items]) => {
-    const allOn  = items.every(k => availState[k] !== false);
-    const countOn = items.filter(k => availState[k] !== false).length;
-    const catId  = cat.replace(/[^a-z0-9]/gi, '-');
-    const makeAvail = !allOn;
-
-    html += '<div class="avail-cat-block" id="catblock-' + catId + '">';
+  Object.entries(MENU_CATEGORIES).forEach(function(entry) {
+    const cat = entry[0]; const items = entry[1];
+    const allOn = items.every(function(k) { return availState[k] !== false; });
+    const countOn = items.filter(function(k) { return availState[k] !== false; }).length;
+    const catId = cat.replace(/[^a-z0-9]/gi, '-');
+    html += '<div class="avail-cat-block">';
     html += '<div class="avail-cat-header">';
-    html += '<div>';
-    html += '<div class="avail-cat-name">' + cat + '</div>';
-    html += '<div class="avail-cat-count">' + countOn + ' / ' + items.length + ' available</div>';
-    html += '</div>';
-    html += '<button class="avail-cat-toggle" onclick="toggleCategory(`' + catId + '`,`' + cat + '`,' + makeAvail + ')">' + (allOn ? 'Uncheck all' : 'Check all') + '</button>';
-    html += '</div>';
-
-    html += '<div class="avail-items-grid">';
-    items.forEach(key => {
-      const avail   = availState[key] !== false;
-      const label   = PROD_NAMES[key] || key;
+    html += '<div><div class="avail-cat-name">' + cat + '</div><div class="avail-cat-count">' + countOn + ' / ' + items.length + ' available</div></div>';
+    html += '<button class="avail-cat-toggle" onclick="toggleCategory(\'' + catId + '\',\'' + cat.replace(/'/g,'&#39;') + '\',' + (!allOn) + ')">' + (allOn ? 'Uncheck all' : 'Check all') + '</button>';
+    html += '</div><div class="avail-items-grid">';
+    items.forEach(function(key) {
+      const avail = availState[key] !== false;
+      const label = PROD_NAMES[key] || key;
       html += '<label class="avail-item' + (avail ? '' : ' unavailable') + '">' +
         '<span>' + label + '</span>' +
-        '<input type="checkbox" ' + (avail ? 'checked' : '') + ' onchange="toggleItem(`' + key + '`,this.checked)">' +
+        '<input type="checkbox" ' + (avail ? 'checked' : '') + ' onchange="toggleItem(\'' + key + '\',this.checked)">' +
         '</label>';
     });
     html += '</div></div>';
   });
-
   el.innerHTML = html;
 }
 
-function toggleItem(item, checked) {
-  availState[item] = checked;
-  renderAvailCategories();
-}
+function toggleItem(key, checked) { availState[key] = checked; renderAvailCategories(); }
 
 function toggleCategory(catId, cat, makeAvail) {
-  // Find by cat name or by searching catId
-  let items = MENU_CATEGORIES[cat];
-  if (!items) {
-    // fallback: find cat whose id matches
-    const found = Object.keys(MENU_CATEGORIES).find(c => c.replace(/[^a-z0-9]/gi,'-') === catId);
-    if (found) items = MENU_CATEGORIES[found];
-  }
-  if (!items) return;
-  items.forEach(item => availState[item] = makeAvail);
+  const found = Object.keys(MENU_CATEGORIES).find(function(c) { return c.replace(/[^a-z0-9]/gi,'-') === catId || c === cat; });
+  if (found) MENU_CATEGORIES[found].forEach(function(k) { availState[k] = makeAvail; });
   renderAvailCategories();
 }
 
 async function saveAvailability() {
   const msgEl = document.getElementById('avail-save-msg');
-  msgEl.textContent = 'Saving…';
-  msgEl.className = 'msg';
-
+  msgEl.textContent = 'Saving…'; msgEl.className = 'msg';
   try {
-    // Detect changes for log
-    const changes = Object.entries(availState)
-      .filter(([k, v]) => v === false)
-      .map(([k, v]) => ({ item_id: k, item_name: PROD_NAMES[k] || k, available: v }));
-
-    const upserts = Object.entries(availState).map(([item_id, available]) => ({
-      item_id,
-      available,
-      category: Object.keys(MENU_CATEGORIES).find(c => MENU_CATEGORIES[c].includes(item_id)) || '',
-      updated_at: new Date().toISOString()
-    }));
-
+    const upserts = Object.entries(availState).map(function(e) {
+      return { item_id: e[0], available: e[1], category: Object.keys(MENU_CATEGORIES).find(function(c) { return MENU_CATEGORIES[c].includes(e[0]); }) || '', updated_at: new Date().toISOString() };
+    });
     const res = await fetch(SUPABASE_URL + '/rest/v1/item_availability', {
       method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates,return=minimal'
-      },
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify(upserts)
     });
-
-    // 204 No Content = success with return=minimal
-    // 200/201 = success with data
     if (res.status === 204 || res.status === 200 || res.status === 201) {
-      msgEl.textContent = '✓ Availability saved!';
-      msgEl.className = 'msg success';
-      setTimeout(() => msgEl.textContent = '', 3000);
-      // Only log items that changed to unavailable (not all items each time)
-      const unavailChanged = Object.entries(availState).filter(([k,v]) => v === false).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v }));
-      const availChanged = Object.entries(availState).filter(([k,v]) => v === true).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v }));
-      logAvailabilityChange([...unavailChanged, ...availChanged]);
+      msgEl.textContent = '✓ Saved!'; msgEl.className = 'msg success';
+      setTimeout(function() { msgEl.textContent = ''; }, 3000);
+      const changes = Object.entries(availState).map(function(e) { return { item_id: e[0], item_name: PROD_NAMES[e[0]]||e[0], available: e[1] }; });
+      logAvailabilityChange(changes);
     } else {
       const err = await res.text();
       throw new Error('HTTP ' + res.status + ': ' + err);
     }
-  } catch(e) {
-    console.error('Save error:', e);
-    msgEl.textContent = e.message || 'Error saving. Try again.';
-    msgEl.className = 'msg error';
-  }
+  } catch(e) { console.error('Save error:', e); msgEl.textContent = e.message || 'Error saving.'; msgEl.className = 'msg error'; }
 }
 
 // ── AVAILABILITY LOG ──────────────────────────────────────────────────
 async function logAvailabilityChange(changes) {
-  // changes = array of { item_id, item_name, available }
   if (!changes.length) return;
-  const rows = changes.map(c => ({
-    staff_name: currentStaffName,
-    action: c.available ? 'marked available' : 'marked unavailable',
-    item_id: c.item_id,
-    item_name: c.item_name,
-    available: c.available,
-    created_at: new Date().toISOString()
-  }));
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify(rows)
-    });
-  } catch(e) { console.warn('Log error:', e); }
+  const rows = changes.map(function(c) { return { staff_name: currentStaffName, action: c.available ? 'marked available' : 'marked unavailable', item_id: c.item_id, item_name: c.item_name, available: c.available, created_at: new Date().toISOString() }; });
+  try { await fetch(SUPABASE_URL + '/rest/v1/availability_log', { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify(rows) }); } catch(e) {}
 }
 
 async function logShopToggle(isOpen) {
   try {
-    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify([{
-        staff_name: currentStaffName,
-        action: isOpen ? 'opened online ordering' : 'closed online ordering',
-        item_id: 'shop_status',
-        item_name: 'Online Ordering',
-        available: isOpen,
-        created_at: new Date().toISOString()
-      }])
-    });
-  } catch(e) { console.warn('Log error:', e); }
-}
-
-
-async function logShopToggle(isOpen) {
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify([{
-        staff_name: currentStaffName,
-        action: isOpen ? 'opened online ordering' : 'closed online ordering',
-        item_id: 'shop_status',
-        item_name: 'Online Ordering',
-        available: isOpen,
-        created_at: new Date().toISOString()
-      }])
-    });
-  } catch(e) { console.warn('Log error:', e); }
+    await fetch(SUPABASE_URL + '/rest/v1/availability_log', { method: 'POST', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' }, body: JSON.stringify([{ staff_name: currentStaffName, action: isOpen ? 'opened online ordering' : 'closed online ordering', item_id: 'shop_status', item_name: 'Online Ordering', available: isOpen, created_at: new Date().toISOString() }]) });
+  } catch(e) {}
 }
 
 async function loadAvailLog() {
@@ -1494,16 +1154,10 @@ async function loadAvailLog() {
   list.innerHTML = '<div class="loading-state">Loading…</div>';
   try {
     const data = await sbFetch('availability_log?select=*&order=created_at.desc&limit=200', { method: 'GET' });
-    if (!data || !data.length) {
-      list.innerHTML = '<div class="empty-state">No changes logged yet.</div>';
-      return;
-    }
-
-    // Group by created_at (batch saves happen same second)
-    // Group entries within 2 seconds of each other from same staff as one batch
+    if (!data || !data.length) { list.innerHTML = '<div class="empty-state">No changes logged yet.</div>'; return; }
     const batches = [];
     let current = null;
-    data.forEach(r => {
+    data.forEach(function(r) {
       const t = new Date(r.created_at).getTime();
       if (current && r.staff_name === current.staff && (current.time - t) < 3000) {
         current.items.push(r);
@@ -1512,1286 +1166,46 @@ async function loadAvailLog() {
         batches.push(current);
       }
     });
-
-    list.innerHTML = batches.map((batch, bi) => {
-      const time     = new Date(batch.date).toLocaleString('en-MY', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
-      const unavail  = batch.items.filter(r => r.available === false && r.item_id !== 'shop_status');
-      const shopItem = batch.items.find(r => r.item_id === 'shop_status');
-      const isShopToggle = shopItem && !unavail.length;
-
-      // Title line
-      let title = '';
-      let dot   = 'var(--accent)';
-
-      if (isShopToggle) {
+    list.innerHTML = batches.map(function(batch, bi) {
+      const time = new Date(batch.date).toLocaleString('en-MY', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      const unavail = batch.items.filter(function(r) { return r.available === false && r.item_id !== 'shop_status'; });
+      const shopItem = batch.items.find(function(r) { return r.item_id === 'shop_status'; });
+      let title = ''; let dot = 'var(--accent)';
+      if (shopItem && !unavail.length) {
         title = shopItem.available ? 'Opened online ordering' : 'Closed online ordering';
-        dot   = shopItem.available ? 'var(--accent)' : 'var(--error)';
-      } else if (shopItem && !shopItem.available) {
-        title = 'Closed online ordering';
-        dot   = 'var(--error)';
+        dot = shopItem.available ? 'var(--accent)' : 'var(--error)';
       } else if (unavail.length === 0) {
-        title = 'All items available';
-        dot   = 'var(--accent)';
+        title = 'All items available'; dot = 'var(--accent)';
       } else {
-        title = unavail.length + ' item' + (unavail.length > 1 ? 's' : '') + ' marked unavailable';
-        dot   = 'var(--error)';
+        title = unavail.length + ' item' + (unavail.length > 1 ? 's' : '') + ' marked unavailable'; dot = 'var(--error)';
       }
-
       const hasDetails = unavail.length > 0;
-      const detailId   = 'avlog-' + bi;
-
-      const onclickAttr = hasDetails ? ' onclick="toggleAvailLogDetail(\'' + detailId + '\')"' : '';
+      const detailId = 'avlog-' + bi;
+      const onclickStr = hasDetails ? ' onclick="toggleAvailLogDetail(\'' + detailId + '\')"' : '';
       const arrowEl = hasDetails ? '<div style="font-size:0.75rem;color:var(--medium-brown);margin-left:4px;">&#9658;</div>' : '';
-      const detailEl = hasDetails
-        ? '<div id="' + detailId + '" style="display:none;padding:0 0 0.75rem 18px;">' +
-            unavail.map(r => '<div style="font-size:0.78rem;color:var(--error);padding:2px 0;">&middot; ' + (r.item_name || r.item_id) + '</div>').join('') +
-          '</div>'
-        : '';
-
+      const detailEl = hasDetails ? '<div id="' + detailId + '" style="display:none;padding:0 0 0.75rem 18px;">' + unavail.map(function(r) { return '<div style="font-size:0.78rem;color:var(--error);padding:2px 0;">&middot; ' + (r.item_name || r.item_id) + '</div>'; }).join('') + '</div>' : '';
       return '<div style="border-bottom:1px solid var(--border);">' +
-        '<div style="display:flex;align-items:center;gap:10px;padding:0.75rem 0;' + (hasDetails ? 'cursor:pointer;' : '') + '"' + onclickAttr + '>' +
-          '<div style="width:8px;height:8px;border-radius:50%;background:' + dot + ';flex-shrink:0;"></div>' +
-          '<div style="flex:1;">' +
-            '<div style="font-size:0.85rem;font-weight:500;color:var(--warm-brown);">' + title + '</div>' +
-          '</div>' +
-          '<div style="text-align:right;flex-shrink:0;">' +
-            '<div style="font-size:0.72rem;color:var(--medium-brown);">' + time + '</div>' +
-            '<div style="margin-top:2px;"><span class="' + (batch.staff === 'Admin' ? 'online-pill' : 'staff-pill') + '">' + batch.staff + '</span></div>' +
-          '</div>' +
-          arrowEl +
-        '</div>' +
-        detailEl +
-      '</div>';
-      };ng="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — Teduh</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --cream: #F7F3EE; --warm-brown: #3D2B1F; --medium-brown: #7A5C46;
-    --light-brown: #C4A882; --accent: #5B7E5A; --accent-light: #EAF0E9;
-    --border: #E2D9CE; --white: #FFFFFF; --error: #C0392B;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
-  body { font-family: var(--font-body); background: var(--cream); color: var(--warm-brown); min-height: 100vh; }
-
-  /* ── PIN screen ── */
-  .pin-screen {
-    min-height: 100vh; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 2rem; background: var(--warm-brown);
-  }
-  .pin-logo { font-family: var(--font-display); font-size: 2rem; color: var(--cream); margin-bottom: 0.25rem; }
-  .pin-sub { font-size: 0.78rem; color: var(--light-brown); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2.5rem; }
-  .pin-dots { display: flex; gap: 14px; margin-bottom: 2rem; }
-  .pin-dot { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--light-brown); background: transparent; transition: background 0.15s; }
-  .pin-dot.filled { background: var(--light-brown); }
-  .pin-dot.error { border-color: #e88; background: #e88; }
-  .pin-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 240px; }
-  .pin-key {
-    height: 60px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 10px; color: var(--cream); font-family: var(--font-body);
-    font-size: 1.3rem; cursor: pointer; transition: background 0.1s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .pin-key:hover { background: rgba(255,255,255,0.15); }
-  .pin-key:active { background: rgba(255,255,255,0.25); }
-  .pin-key.empty { background: transparent; border: none; cursor: default; }
-  .pin-key.del { font-size: 1rem; }
-  .pin-error { color: #e88; font-size: 0.8rem; margin-top: 1.25rem; min-height: 1.2rem; text-align: center; }
-
-  /* ── Dashboard ── */
-  .dashboard { display: none; }
-  header { background: var(--warm-brown); padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-  header .logo { font-family: var(--font-display); font-size: 1.4rem; color: var(--cream); }
-  .header-right { display: flex; align-items: center; gap: 0.75rem; }
-  .role-badge { font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.05em; text-transform: uppercase; }
-  .role-badge.staff { background: rgba(255,255,255,0.12); color: var(--light-brown); }
-  .role-badge.admin { background: #C4A882; color: var(--warm-brown); }
-  .staff-name-tag { font-size: 0.82rem; color: var(--light-brown); font-weight: 500; }
-  .logout-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--light-brown); font-family: var(--font-body); font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; cursor: pointer; transition: background 0.15s; }
-  .logout-btn:hover { background: rgba(255,255,255,0.1); }
-
-  main { max-width: 720px; margin: 1.5rem auto 3rem; padding: 0 1.25rem; }
-
-  /* Stats */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
-  .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
-  .stat-num { font-size: 1.6rem; font-weight: 500; color: var(--warm-brown); line-height: 1; }
-  .stat-label { font-size: 0.68rem; color: var(--medium-brown); margin-top: 0.3rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  @media (max-width: 500px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
-
-  /* Tabs */
-  .tab-row { display: flex; background: var(--white); border-radius: 12px 12px 0 0; border: 1px solid var(--border); border-bottom: none; overflow-x: auto; }
-  .tab-btn { flex: 1; padding: 0.85rem 0.5rem; background: transparent; border: none; font-family: var(--font-body); font-size: 0.78rem; font-weight: 500; color: var(--medium-brown); cursor: pointer; transition: all 0.15s; border-bottom: 2px solid transparent; white-space: nowrap; text-align: center; min-width: 70px; }
-  .tab-btn.active { color: var(--warm-brown); border-bottom-color: var(--warm-brown); background: var(--cream); }
-  .tab-btn.admin-tab { color: #C4A882; }
-  .tab-btn.admin-tab.active { color: var(--warm-brown); border-bottom-color: #C4A882; }
-
-  .card { background: var(--white); border-radius: 0 0 12px 12px; border: 1px solid var(--border); padding: 1.5rem; margin-bottom: 1.25rem; }
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* Form */
-  .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.85rem; }
-  label { font-size: 0.75rem; font-weight: 500; color: var(--medium-brown); letter-spacing: 0.04em; text-transform: uppercase; }
-  input[type="text"], input[type="tel"], input[type="number"] { width: 100%; padding: 0.7rem 0.9rem; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 0.95rem; color: var(--warm-brown); background: var(--white); outline: none; transition: border-color 0.15s; -webkit-appearance: none; }
-  input:focus { border-color: var(--medium-brown); }
-
-  .member-preview { background: var(--cream); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 0.85rem; display: none; }
-  .mp-name { font-size: 0.9rem; font-weight: 500; color: var(--warm-brown); }
-  .mp-pts { font-size: 0.8rem; color: var(--medium-brown); margin-top: 2px; }
-
-  .pts-preview { background: var(--accent-light); border-radius: 8px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: var(--accent); margin-bottom: 0.85rem; }
-  .pts-preview span { font-size: 1rem; font-weight: 500; }
-
-  .submit-btn { width: 100%; padding: 0.85rem; background: var(--warm-brown); color: var(--cream); border: none; border-radius: 8px; font-family: var(--font-display); font-size: 1rem; cursor: pointer; transition: background 0.15s; letter-spacing: 0.02em; }
-  .submit-btn:hover { background: #2C1E14; }
-  .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-  .msg { border-radius: 8px; padding: 0.7rem 1rem; font-size: 0.83rem; margin-top: 0.75rem; display: none; }
-  .msg.success { background: var(--accent-light); color: var(--accent); border: 1px solid #b6d4b5; display: block; }
-  .msg.error   { background: #fdf0ef; color: var(--error); border: 1px solid #f5c6c6; display: block; }
-  .msg.info    { background: var(--cream); color: var(--medium-brown); border: 1px solid var(--border); display: block; }
-
-  /* ── Receipt popup ── */
-  .receipt-overlay { display: none; position: fixed; inset: 0; background: rgba(61,43,31,0.75); align-items: center; justify-content: center; z-index: 9999; padding: 1.5rem; }
-  .receipt-overlay.active { display: flex; }
-  .receipt-box { background: var(--white); border-radius: 12px; width: 100%; max-width: 300px; overflow: hidden; }
-  .receipt-header { background: var(--warm-brown); padding: 1.25rem; text-align: center; color: var(--cream); }
-  .r-logo { font-family: var(--font-display); font-size: 1.4rem; }
-  .r-sub { font-size: 0.68rem; opacity: 0.55; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.2rem; }
-  .receipt-body { padding: 1.1rem 1.25rem; }
-  .receipt-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.38rem 0; border-bottom: 1px dashed var(--border); font-size: 0.82rem; }
-  .receipt-row:last-child { border-bottom: none; }
-  .r-label { color: var(--medium-brown); flex-shrink: 0; }
-  .r-val { font-weight: 500; color: var(--warm-brown); text-align: right; margin-left: 0.5rem; }
-  .receipt-pts-box { background: var(--accent-light); border-radius: 8px; padding: 0.85rem; text-align: center; margin: 0.85rem 0 0.5rem; }
-  .r-pts-num { font-size: 2rem; font-weight: 500; color: var(--accent); line-height: 1; }
-  .r-pts-label { font-size: 0.72rem; color: var(--accent); margin-top: 0.15rem; }
-  .r-pts-bal { font-size: 0.78rem; color: var(--medium-brown); margin-top: 0.3rem; }
-  .receipt-footer { padding: 0.85rem 1.25rem 1.1rem; }
-  .receipt-close-btn { width: 100%; padding: 0.75rem; background: var(--warm-brown); color: var(--cream); border: none; border-radius: 8px; font-family: var(--font-display); font-size: 0.95rem; cursor: pointer; transition: background 0.15s; }
-  .receipt-close-btn:hover { background: #2C1E14; }
-  .r-ref-bottom { font-size: 0.68rem; color: var(--light-brown); text-align: center; margin-top: 0.5rem; }
-
-  /* Member card */
-  .member-card { background: var(--warm-brown); border-radius: 10px; padding: 1.25rem; color: var(--cream); margin-top: 1rem; display: none; }
-  .mc-name { font-size: 1rem; font-weight: 500; opacity: 0.85; }
-  .mc-phone { font-size: 0.75rem; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 0.85rem; }
-  .mc-pts-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 0.2rem; }
-  .mc-pts { font-size: 2rem; font-weight: 500; line-height: 1; }
-  .mc-pts-label { font-size: 0.75rem; opacity: 0.6; }
-  .mc-tier { display: inline-block; background: var(--light-brown); color: var(--warm-brown); font-size: 0.68rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-top: 0.6rem; }
-  .history-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.6rem 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.82rem; }
-  .history-item:last-child { border-bottom: none; }
-  .h-desc { color: var(--cream); font-size: 0.8rem; }
-  .h-date { font-size: 0.7rem; opacity: 0.5; margin-top: 2px; }
-  .h-pts.earn   { color: #a8d5a7; font-weight: 500; }
-  .h-pts.redeem { color: #e88; font-weight: 500; }
-
-  /* Admin tables */
-  .search-row { display: flex; gap: 8px; margin-bottom: 1rem; }
-  .search-row input { flex: 1; padding: 0.6rem 0.85rem; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 0.88rem; color: var(--warm-brown); outline: none; }
-  .search-row input:focus { border-color: var(--medium-brown); }
-  .sort-select { padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 0.82rem; color: var(--medium-brown); outline: none; background: var(--white); }
-
-  .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .data-table th { text-align: left; padding: 0.5rem 0.65rem; font-size: 0.68rem; font-weight: 500; color: var(--medium-brown); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1.5px solid var(--border); }
-  .data-table td { padding: 0.6rem 0.65rem; border-bottom: 1px solid var(--border); color: var(--warm-brown); vertical-align: middle; }
-  .data-table tr:last-child td { border-bottom: none; }
-  .data-table tr:hover td { background: var(--cream); }
-
-  .tier-pill { display: inline-block; font-size: 0.65rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 7px; border-radius: 20px; }
-  .tier-regular  { background: #E2D9CE; color: #7A5C46; }
-  .tier-silver   { background: #D3D1C7; color: #444441; }
-  .tier-gold     { background: #FAC775; color: #633806; }
-  .tier-platinum { background: #3D2B1F; color: #C4A882; }
-
-  .tx-earn   { color: var(--accent); font-weight: 500; }
-  .tx-redeem { color: var(--error); font-weight: 500; }
-  .staff-pill { display: inline-block; background: var(--warm-brown); color: var(--cream); font-size: 0.68rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
-  .online-pill { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.68rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
-
-  .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
-  .admin-stat { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; }
-  .admin-stat-num { font-size: 1.8rem; font-weight: 500; color: var(--warm-brown); line-height: 1; }
-  .admin-stat-label { font-size: 0.72rem; color: var(--medium-brown); margin-top: 0.25rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .admin-stat-sub { font-size: 0.75rem; color: var(--light-brown); margin-top: 0.2rem; }
-
-  .section-label-sm { font-size: 0.72rem; font-weight: 500; color: var(--medium-brown); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.75rem; margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
-
-  .empty-state { text-align: center; padding: 2rem 0; color: var(--light-brown); font-size: 0.85rem; }
-  .loading-state { text-align: center; padding: 1.5rem 0; color: var(--medium-brown); font-size: 0.82rem; }
-  .table-footer { font-size: 0.72rem; color: var(--light-brown); margin-top: 0.6rem; text-align: right; }
-
-  footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; color: var(--light-brown); }
-
-  /* Availability */
-  .avail-shop-toggle { display:flex; align-items:center; justify-content:space-between; background:var(--white); border:1px solid var(--border); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.25rem; }
-  .avail-shop-label { font-size:0.95rem; font-weight:500; color:var(--warm-brown); }
-  .avail-shop-sub { font-size:0.75rem; color:var(--medium-brown); margin-top:2px; }
-  .toggle-switch { position:relative; width:48px; height:26px; }
-  .toggle-switch input { opacity:0; width:0; height:0; }
-  .toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--border); border-radius:26px; transition:.3s; }
-  .toggle-slider:before { content:""; position:absolute; width:20px; height:20px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s; }
-  .toggle-switch input:checked + .toggle-slider { background:var(--accent); }
-  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(22px); }
-  .avail-status-badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:0.72rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; }
-  .avail-status-badge.open { background:var(--accent-light); color:var(--accent); }
-  .avail-status-badge.closed { background:#fdf0ef; color:var(--error); }
-  .avail-cat-header { display:flex; align-items:center; justify-content:space-between; padding:0.65rem 0; border-bottom:1px solid var(--border); margin-bottom:0.5rem; cursor:pointer; }
-  .avail-cat-name { font-size:0.88rem; font-weight:500; color:var(--warm-brown); }
-  .avail-cat-count { font-size:0.72rem; color:var(--medium-brown); }
-  .avail-cat-toggle { font-size:0.72rem; color:var(--accent); cursor:pointer; padding:2px 8px; border:1px solid var(--accent); border-radius:20px; background:transparent; font-family:var(--font-body); }
-  .avail-items-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:1rem; }
-  .avail-item { display:flex; align-items:center; justify-content:space-between; background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:var(--warm-brown); }
-  .avail-item.unavailable { opacity:0.45; text-decoration:line-through; }
-  .avail-item input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; }
-
-  /* Queue */
-  .q-filter-btn { padding: 0.35rem 0.85rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.78rem; background: transparent; color: var(--medium-brown); cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
-  .q-filter-btn.active { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
-  .queue-card { border: 1px solid var(--border); border-radius: 10px; padding: 1rem; margin-bottom: 0.75rem; cursor: pointer; transition: border-color 0.15s; }
-  .queue-card:hover { border-color: var(--medium-brown); }
-  .queue-card.status-pending { border-left: 3px solid var(--light-brown); }
-  .queue-card.status-ready   { border-left: 3px solid var(--accent); background: var(--accent-light); }
-  .queue-card.status-done    { border-left: 3px solid var(--border); opacity: 0.55; }
-  .qc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem; }
-  .qc-number { font-family: var(--font-display); font-size: 1.4rem; font-weight: 500; color: var(--warm-brown); line-height: 1; }
-  .qc-status { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; }
-  .qc-status.pending { background: #FAC775; color: #633806; }
-  .qc-status.ready   { background: var(--accent-light); color: var(--accent); }
-  .qc-status.done    { background: var(--border); color: var(--medium-brown); }
-  .qc-name { font-size: 0.88rem; font-weight: 500; color: var(--warm-brown); margin-bottom: 0.2rem; }
-  .qc-items { font-size: 0.78rem; color: var(--medium-brown); margin-bottom: 0.5rem; line-height: 1.4; }
-  .qc-meta { font-size: 0.72rem; color: var(--light-brown); }
-  .qc-actions { display: flex; gap: 6px; margin-top: 0.65rem; }
-  .qc-btn { flex: 1; padding: 0.45rem; border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; font-weight: 500; cursor: pointer; font-family: var(--font-body); transition: all 0.15s; background: transparent; color: var(--medium-brown); }
-  .qc-btn.ready-btn  { background: var(--accent); color: white; border-color: var(--accent); }
-  .qc-btn.done-btn   { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
-  .qc-btn.revert-btn { color: var(--medium-brown); }
-
-</style>
-</head>
-<body>
-
-<!-- PIN Screen -->
-<div class="pin-screen" id="pin-screen">
-  <div class="pin-logo">Teduh</div>
-  <div class="pin-sub" id="pin-sub-label">Enter your PIN</div>
-  <div class="pin-dots" id="pin-dots">
-    <div class="pin-dot" id="d0"></div>
-    <div class="pin-dot" id="d1"></div>
-    <div class="pin-dot" id="d2"></div>
-    <div class="pin-dot" id="d3"></div>
-  </div>
-  <div class="pin-pad">
-    <button class="pin-key" onclick="pinPress('1')">1</button>
-    <button class="pin-key" onclick="pinPress('2')">2</button>
-    <button class="pin-key" onclick="pinPress('3')">3</button>
-    <button class="pin-key" onclick="pinPress('4')">4</button>
-    <button class="pin-key" onclick="pinPress('5')">5</button>
-    <button class="pin-key" onclick="pinPress('6')">6</button>
-    <button class="pin-key" onclick="pinPress('7')">7</button>
-    <button class="pin-key" onclick="pinPress('8')">8</button>
-    <button class="pin-key" onclick="pinPress('9')">9</button>
-    <button class="pin-key empty"></button>
-    <button class="pin-key" onclick="pinPress('0')">0</button>
-    <button class="pin-key del" onclick="pinDel()">⌫</button>
-  </div>
-  <div class="pin-error" id="pin-error"></div>
-</div>
-
-<!-- Dashboard -->
-<div class="dashboard" id="dashboard">
-  <header>
-    <div class="logo">Teduh</div>
-    <div class="header-right">
-      <span class="staff-name-tag" id="staff-name-tag"></span>
-      <span class="role-badge" id="role-badge">Staff</span>
-      <button class="logout-btn" onclick="logout()">Lock</button>
-    </div>
-  </header>
-
-  <main>
-    <div class="stats-row">
-      <div class="stat-card"><div class="stat-num" id="stat-members">—</div><div class="stat-label">Members</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-tx">—</div><div class="stat-label">Transactions</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-pts">—</div><div class="stat-label">Points issued</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-redeemed">—</div><div class="stat-label">Redeemed</div></div>
-    </div>
-
-    <div class="tab-row">
-      <button class="tab-btn active" id="tab-add"      onclick="switchTab('add')">Add Points</button>
-      <button class="tab-btn"        id="tab-lookup"   onclick="switchTab('lookup')">Lookup</button>
-      <button class="tab-btn"        id="tab-register" onclick="switchTab('register')">Register</button>
-      <button class="tab-btn"        id="tab-queue"    onclick="switchTab('queue')">Queue</button>
-      <button class="tab-btn"        id="tab-redeem"   onclick="switchTab('redeem')">Redeem</button>
-      <button class="tab-btn"        id="tab-avail"    onclick="switchTab('avail')">Availability</button>
-      <button class="tab-btn admin-tab" id="tab-avail-log" onclick="switchTab('avail-log')" style="display:none;">Avail Log</button>
-      <button class="tab-btn admin-tab" id="tab-members"  onclick="switchTab('members')"  style="display:none;">Members</button>
-      <button class="tab-btn admin-tab" id="tab-txlog"    onclick="switchTab('txlog')"    style="display:none;">Log</button>
-      <button class="tab-btn admin-tab" id="tab-overview" onclick="switchTab('overview')" style="display:none;">Overview</button>
-    </div>
-
-    <div class="card">
-
-      <!-- ADD POINTS -->
-      <div class="panel active" id="panel-add">
-        <div class="form-group">
-          <label for="add-phone">Customer phone</label>
-          <input type="tel" id="add-phone" placeholder="e.g. 0123456789"
-            oninput="onAddPhoneInput()"
-            onkeydown="if(event.key==='Enter')document.getElementById('add-amount').focus()" />
-        </div>
-        <div class="member-preview" id="add-member-preview">
-          <div class="mp-name" id="add-mp-name"></div>
-          <div class="mp-pts"  id="add-mp-pts"></div>
-        </div>
-        <div class="form-group">
-          <label for="add-amount">Bill amount (RM)</label>
-          <input type="number" id="add-amount" placeholder="0" min="1" step="1"
-            oninput="updateAddPreview()"
-            onkeydown="if(event.key==='Enter')submitAddPoints()" />
-        </div>
-        <div class="pts-preview" id="add-pts-preview" style="display:none;">
-          Points to add <span id="add-pts-val">0 pts</span>
-        </div>
-        <button class="submit-btn" id="add-submit-btn" onclick="submitAddPoints()">Add Points</button>
-        <div class="msg" id="add-msg"></div>
-      </div>
-
-      <!-- LOOKUP -->
-      <div class="panel" id="panel-lookup">
-        <div class="form-group">
-          <label for="lookup-phone">Customer phone</label>
-          <input type="tel" id="lookup-phone" placeholder="e.g. 0123456789"
-            onkeydown="if(event.key==='Enter')lookupMember()" />
-        </div>
-        <button class="submit-btn" onclick="lookupMember()">Look Up</button>
-        <div class="msg" id="lookup-msg"></div>
-        <div class="member-card" id="lookup-card">
-          <div class="mc-name" id="lc-name"></div>
-          <div class="mc-phone" id="lc-phone"></div>
-          <div class="mc-pts-row"><span class="mc-pts" id="lc-pts">0</span><span class="mc-pts-label">points</span></div>
-          <div class="mc-tier" id="lc-tier"></div>
-          <div style="margin-top:1rem;padding-top:0.85rem;border-top:1px solid rgba(255,255,255,0.12);">
-            <div style="font-size:0.68rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.6rem;">Recent transactions</div>
-            <div id="lc-history"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- REGISTER -->
-      <div class="panel" id="panel-register">
-        <div class="form-group">
-          <label for="reg-name">Customer name</label>
-          <input type="text" id="reg-name" placeholder="Full name" />
-        </div>
-        <div class="form-group">
-          <label for="reg-phone">Phone number</label>
-          <input type="tel" id="reg-phone" placeholder="e.g. 0123456789" />
-        </div>
-        <button class="submit-btn" onclick="registerMember()">Register Member</button>
-        <div class="msg" id="reg-msg"></div>
-      </div>
-
-      <!-- ADMIN: MEMBERS -->
-      <div class="panel" id="panel-members">
-        <div class="search-row">
-          <input type="text" id="members-search" placeholder="Search name or phone…" oninput="filterMembers()" />
-          <select class="sort-select" id="members-sort" onchange="filterMembers()">
-            <option value="points-desc">Most points</option>
-            <option value="points-asc">Least points</option>
-            <option value="name-asc">Name A–Z</option>
-            <option value="joined-desc">Newest first</option>
-          </select>
-        </div>
-        <div id="members-table-wrap"><div class="loading-state">Loading…</div></div>
-      </div>
-
-      <!-- ADMIN: TRANSACTION LOG -->
-      <div class="panel" id="panel-txlog">
-        <div class="search-row">
-          <input type="text" id="tx-search" placeholder="Search phone, staff, description…" oninput="filterTx()" />
-          <select class="sort-select" id="tx-filter" onchange="filterTx()">
-            <option value="all">All</option>
-            <option value="earn">Earned</option>
-            <option value="redeem">Redeemed</option>
-            <option value="walkin">Walk-in</option>
-            <option value="online">Online</option>
-            <option value="syukri">Syukri</option>
-            <option value="zul">Zul</option>
-          </select>
-        </div>
-        <div id="tx-table-wrap"><div class="loading-state">Loading…</div></div>
-      </div>
-
-      <!-- ADMIN: OVERVIEW -->
-      <div class="panel" id="panel-overview">
-        <div class="admin-stats">
-          <div class="admin-stat"><div class="admin-stat-num" id="ov-members">—</div><div class="admin-stat-label">Total members</div></div>
-          <div class="admin-stat"><div class="admin-stat-num" id="ov-pts-issued">—</div><div class="admin-stat-label">Points issued</div><div class="admin-stat-sub">≈ RM <span id="ov-rm-issued">—</span> in sales</div></div>
-          <div class="admin-stat"><div class="admin-stat-num" id="ov-pts-redeemed">—</div><div class="admin-stat-label">Redeemed</div><div class="admin-stat-sub">≈ RM <span id="ov-rm-redeemed">—</span> given</div></div>
-          <div class="admin-stat"><div class="admin-stat-num" id="ov-active">—</div><div class="admin-stat-label">Active members</div></div>
-          <div class="admin-stat"><div class="admin-stat-num" id="ov-online">—</div><div class="admin-stat-label">Online orders</div></div>
-          <div class="admin-stat"><div class="admin-stat-num" id="ov-walkin">—</div><div class="admin-stat-label">Walk-in orders</div></div>
-        </div>
-
-        <div class="section-label-sm">Tier breakdown</div>
-        <div id="tier-breakdown" style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;"></div>
-
-        <div class="section-label-sm">Top 5 members</div>
-        <div id="top-members"></div>
-
-        <div class="section-label-sm">Points added by staff</div>
-        <div id="staff-breakdown"></div>
-      </div>
-
-      <!-- REDEEM -->
-      <div class="panel" id="panel-redeem">
-        <div class="form-group">
-          <label for="redeem-phone">Customer phone</label>
-          <input type="tel" id="redeem-phone" placeholder="e.g. 0123456789"
-            oninput="onRedeemPhoneInput()"
-            onkeydown="if(event.key==='Enter')lookupRedeemMember()" />
-        </div>
-        <div class="member-card" id="redeem-member-card" style="display:none;">
-          <div class="mc-name" id="rm-name"></div>
-          <div class="mc-phone" id="rm-phone"></div>
-          <div class="mc-pts-row"><span class="mc-pts" id="rm-pts">0</span><span class="mc-pts-label">points</span></div>
-          <div class="mc-tier" id="rm-tier"></div>
-
-          <div style="margin-top:1rem;padding-top:0.85rem;border-top:1px solid rgba(255,255,255,0.12);">
-            <div style="font-size:0.68rem;opacity:0.5;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.75rem;">Select item to redeem</div>
-            <div id="redeem-items-list"></div>
-            <div id="redeem-msg" class="msg" style="margin-top:0.75rem;"></div>
-          </div>
-        </div>
-        <div class="msg" id="redeem-lookup-msg"></div>
-      </div>
-
-
-
-      <!-- AVAILABILITY -->
-      <div class="panel" id="panel-avail">
-
-        <!-- Shop open/closed toggle -->
-        <div class="avail-shop-toggle">
-          <div>
-            <div class="avail-shop-label">Online ordering</div>
-            <div class="avail-shop-sub">Customers can place orders when ON</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span class="avail-status-badge" id="shop-status-badge">Loading…</span>
-            <label class="toggle-switch">
-              <input type="checkbox" id="shop-open-toggle" onchange="toggleShopStatus(this.checked)">
-              <span class="toggle-slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <div style="font-size:0.72rem;color:var(--medium-brown);margin-bottom:1rem;opacity:0.7;">
-          Toggle categories or individual items. Unchecked = sold out today.
-        </div>
-
-        <div id="avail-categories"></div>
-
-        <button onclick="saveAvailability()" style="width:100%;margin-top:0.5rem;padding:0.85rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:8px;font-family:var(--font-display);font-size:0.95rem;cursor:pointer;">
-          Save availability
-        </button>
-        <div class="msg" id="avail-save-msg" style="margin-top:0.75rem;text-align:center;"></div>
-      </div>
-
-
-      <!-- AVAILABILITY LOG -->
-      <div class="panel" id="panel-avail-log">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-          <div style="font-size:0.75rem;color:var(--medium-brown);">Availability changes by staff</div>
-          <button onclick="loadAvailLog()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.75rem;color:var(--medium-brown);cursor:pointer;font-family:var(--font-body);">↻ Refresh</button>
-        </div>
-        <div id="avail-log-list"><div class="loading-state">Loading…</div></div>
-      </div>
-
-      <!-- QUEUE -->
-      <div class="panel" id="panel-queue">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-          <div style="font-size:0.75rem;color:var(--medium-brown);">Live queue — auto-refreshes every 30s</div>
-          <button onclick="loadQueue()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.75rem;color:var(--medium-brown);cursor:pointer;font-family:var(--font-body);">↻ Refresh</button>
-        </div>
-        <div style="display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;">
-          <button class="q-filter-btn active" onclick="filterQueue('all', this)">All</button>
-          <button class="q-filter-btn" onclick="filterQueue('pending', this)">Pending</button>
-          <button class="q-filter-btn" onclick="filterQueue('ready', this)">Ready</button>
-          <button class="q-filter-btn" onclick="filterQueue('done', this)">Done</button>
-        </div>
-        <div id="queue-list"><div class="loading-state">Loading queue…</div></div>
-      </div>
-
-    </div>
-  </main>
-  <footer>Teduh Dashboard · <span id="footer-role">Staff</span></footer>
-</div>
-
-<!-- Receipt -->
-<div class="receipt-overlay" id="receipt-overlay">
-  <div class="receipt-box">
-    <div class="receipt-header">
-      <div class="r-logo">Teduh</div>
-      <div class="r-sub">Loyalty Points Receipt</div>
-    </div>
-    <div class="receipt-body">
-      <div class="receipt-row"><span class="r-label">Date</span><span class="r-val" id="r-date"></span></div>
-      <div class="receipt-row"><span class="r-label">Time</span><span class="r-val" id="r-time"></span></div>
-      <div class="receipt-row"><span class="r-label">Ref</span><span class="r-val" id="r-ref" style="font-size:0.72rem;"></span></div>
-      <div class="receipt-row"><span class="r-label">Staff</span><span class="r-val" id="r-staff"></span></div>
-      <div class="receipt-row"><span class="r-label">Customer</span><span class="r-val" id="r-customer"></span></div>
-      <div class="receipt-row"><span class="r-label">Phone</span><span class="r-val" id="r-phone"></span></div>
-      <div class="receipt-row"><span class="r-label">Bill amount</span><span class="r-val" id="r-bill"></span></div>
-      <div class="receipt-pts-box">
-        <div class="r-pts-num" id="r-pts">+0</div>
-        <div class="r-pts-label">points earned</div>
-        <div class="r-pts-bal" id="r-bal"></div>
-      </div>
-    </div>
-    <div class="receipt-footer">
-      <button class="receipt-close-btn" onclick="closeReceipt()">Done</button>
-      <div class="r-ref-bottom" id="r-ref-bottom"></div>
-    </div>
-  </div>
-</div>
-
-<script>
-const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
-
-// ── Staff directory — add/edit here ──────────────────────────────────
-const STAFF_PINS = {
-  '0011': { name: 'Syukri', role: 'staff' },
-  '0012': { name: 'Zul',    role: 'staff' },
-  '8808': { name: 'Admin',  role: 'admin' },
-};
-
-const TIERS = [
-  { name: 'Regular',  min: 0,    max: 199  },
-  { name: 'Silver',   min: 200,  max: 499  },
-  { name: 'Gold',     min: 500,  max: 999  },
-  { name: 'Platinum', min: 1000, max: Infinity },
-];
-
-function getTier(pts) { return TIERS.find(t => pts >= t.min && pts <= t.max) || TIERS[0]; }
-function fmtDateTime(ts) { return new Date(ts).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }); }
-function fmtDate(ts) { return new Date(ts).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' }); }
-function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' }); }
-
-let pinEntry = '';
-let currentRole = null;
-let currentStaffName = '';
-let allMembers = [];
-let allTx = [];
-
-// ── PIN ───────────────────────────────────────────────────────────────
-function pinPress(d) {
-  if (pinEntry.length >= 4) return;
-  pinEntry += d;
-  updatePinDots();
-  if (pinEntry.length === 4) checkPin();
+        '<div style="display:flex;align-items:center;gap:10px;padding:0.75rem 0;' + (hasDetails ? 'cursor:pointer;' : '') + '"' + onclickStr + '>' +
+        '<div style="width:8px;height:8px;border-radius:50%;background:' + dot + ';flex-shrink:0;"></div>' +
+        '<div style="flex:1;"><div style="font-size:0.85rem;font-weight:500;color:var(--warm-brown);">' + title + '</div></div>' +
+        '<div style="text-align:right;flex-shrink:0;"><div style="font-size:0.72rem;color:var(--medium-brown);">' + time + '</div><div style="margin-top:2px;"><span class="' + (batch.staff === 'Admin' ? 'online-pill' : 'staff-pill') + '">' + batch.staff + '</span></div></div>' +
+        arrowEl + '</div>' + detailEl + '</div>';
+    }).join('');
+  } catch(e) { list.innerHTML = '<div class="empty-state">Could not load log.</div>'; }
 }
 
-function pinDel() {
-  pinEntry = pinEntry.slice(0, -1);
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-}
-
-function updatePinDots() {
-  for (let i = 0; i < 4; i++) {
-    const d = document.getElementById('d' + i);
-    d.classList.toggle('filled', i < pinEntry.length);
-    d.classList.remove('error');
-  }
-}
-
-function checkPin() {
-  const staff = STAFF_PINS[pinEntry];
-  if (staff) {
-    currentRole      = staff.role;
-    currentStaffName = staff.name;
-    sessionStorage.setItem('teduh_role',       currentRole);
-    sessionStorage.setItem('teduh_staff_name', currentStaffName);
-    document.getElementById('pin-screen').style.display = 'none';
-    unlockDashboard(currentRole);
-  } else {
-    for (let i = 0; i < 4; i++) document.getElementById('d' + i).classList.add('error');
-    document.getElementById('pin-error').textContent = 'Incorrect PIN.';
-    setTimeout(() => { pinEntry = ''; updatePinDots(); }, 800);
-  }
-}
-
-function unlockDashboard(role) {
-  document.getElementById('dashboard').style.display = 'block';
-  const badge = document.getElementById('role-badge');
-  badge.textContent = role === 'admin' ? 'Admin' : 'Staff';
-  badge.className   = 'role-badge ' + role;
-  document.getElementById('staff-name-tag').textContent = currentStaffName;
-  document.getElementById('footer-role').textContent    = role === 'admin' ? 'Admin · ' + currentStaffName : currentStaffName;
-
-  if (role === 'admin') {
-    ['tab-avail-log','tab-members','tab-txlog','tab-overview'].forEach(id => {
-      document.getElementById(id).style.display = '';
-    });
-    loadAllMembers();
-    loadAllTx();
-    loadOverview();
-  }
-  loadStats();
-  loadQueue();
-}
-
-function logout() {
-  sessionStorage.removeItem('teduh_role');
-  sessionStorage.removeItem('teduh_staff_name');
-  currentRole = null; currentStaffName = ''; pinEntry = '';
-  updatePinDots();
-  document.getElementById('pin-error').textContent = '';
-  document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('pin-screen').style.display = 'flex';
-  ['tab-members','tab-txlog','tab-overview'].forEach(id => document.getElementById(id).style.display = 'none');
-  switchTab('add');
-}
-
-// Restore session
-const savedRole = sessionStorage.getItem('teduh_role');
-const savedName = sessionStorage.getItem('teduh_staff_name');
-if (savedRole && savedName) {
-  currentRole = savedRole; currentStaffName = savedName;
-  document.getElementById('pin-screen').style.display = 'none';
-  unlockDashboard(savedRole);
-}
-
-// ── Supabase ──────────────────────────────────────────────────────────
-async function sbFetch(path, options = {}) {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json', 'Prefer': 'return=representation',
-      ...(options.headers || {})
-    }
-  });
-  return res.json();
-}
-
-// ── Stats ─────────────────────────────────────────────────────────────
-async function loadStats() {
-  try {
-    const [members, earnTx, redeemTx] = await Promise.all([
-      sbFetch('loyalty_members?select=points'),
-      sbFetch('loyalty_transactions?select=points&points=gt.0'),
-      sbFetch('loyalty_transactions?select=points&points=lt.0'),
-    ]);
-    document.getElementById('stat-members').textContent  = members.length  || 0;
-    document.getElementById('stat-tx').textContent       = (earnTx.length + redeemTx.length) || 0;
-    document.getElementById('stat-pts').textContent      = earnTx.reduce((s,t)  => s + t.points, 0) || 0;
-    document.getElementById('stat-redeemed').textContent = Math.abs(redeemTx.reduce((s,t) => s + t.points, 0)) || 0;
-  } catch(e) {}
-}
-
-// ── Tab switch ────────────────────────────────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + tab).classList.add('active');
-  document.getElementById('tab-'   + tab).classList.add('active');
-  if (tab === 'queue') {
-    loadQueue();
-    if (!queueInterval) queueInterval = setInterval(loadQueue, 30000);
-  } else {
-    if (queueInterval) { clearInterval(queueInterval); queueInterval = null; }
-  }
-  if (tab === 'avail') loadAvailability();
-  if (tab === 'avail-log') loadAvailLog();
-}
-
-function showMsg(id, text, type) {
+function toggleAvailLogDetail(id) {
   const el = document.getElementById(id);
-  el.textContent = text; el.className = 'msg ' + type;
-}
-
-// ── Add Points ────────────────────────────────────────────────────────
-let addTarget = null;
-let addPhoneTimer = null;
-
-function onAddPhoneInput() {
-  clearTimeout(addPhoneTimer);
-  addTarget = null;
-  document.getElementById('add-member-preview').style.display = 'none';
-  document.getElementById('add-pts-preview').style.display    = 'none';
-  document.getElementById('add-msg').className = 'msg';
-  const phone = document.getElementById('add-phone').value.trim().replace(/[\s\-]/g,'');
-  if (phone.length < 9) return;
-  addPhoneTimer = setTimeout(() => autoLookupAdd(phone), 600);
-}
-
-async function autoLookupAdd(phone) {
-  try {
-    const data = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
-    const m = data[0];
-    if (m) {
-      addTarget = m;
-      document.getElementById('add-mp-name').textContent = m.name;
-      document.getElementById('add-mp-pts').textContent  = `Balance: ${m.points} pts`;
-      document.getElementById('add-member-preview').style.display = 'block';
-      updateAddPreview();
-    } else {
-      showMsg('add-msg', 'Phone not registered. Register them first.', 'info');
-    }
-  } catch(e) {}
-}
-
-function updateAddPreview() {
-  const amt  = parseInt(document.getElementById('add-amount').value) || 0;
-  const prev = document.getElementById('add-pts-preview');
-  if (amt > 0 && addTarget) {
-    prev.style.display = 'flex';
-    document.getElementById('add-pts-val').textContent = amt + ' pts';
-  } else { prev.style.display = 'none'; }
-}
-
-async function submitAddPoints() {
-  const phone = document.getElementById('add-phone').value.trim().replace(/[\s\-]/g,'');
-  const amt   = parseInt(document.getElementById('add-amount').value) || 0;
-  if (!phone)     { showMsg('add-msg', 'Enter customer phone number.', 'error'); return; }
-  if (!addTarget) { showMsg('add-msg', 'Customer not found. Check the phone number.', 'error'); return; }
-  if (amt <= 0)   { showMsg('add-msg', 'Enter a valid bill amount.', 'error'); return; }
-
-  const btn = document.getElementById('add-submit-btn');
-  btn.disabled = true; btn.textContent = 'Adding…';
-
-  try {
-    const newPts   = addTarget.points + amt;
-    const orderRef = 'WALKIN-' + Date.now();
-    const now      = new Date().toISOString();
-
-    await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(addTarget.phone)}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ points: newPts, updated_at: now })
-    });
-
-    await sbFetch('loyalty_transactions', {
-      method: 'POST',
-      body: JSON.stringify({
-        phone:      addTarget.phone,
-        description: `Walk-in RM ${amt}`,
-        points:     amt,
-        order_ref:  orderRef,
-        staff_name: currentStaffName
-      })
-    });
-
-    showReceipt({
-      ref:          orderRef,
-      staffName:    currentStaffName,
-      customerName: addTarget.name,
-      phone:        addTarget.phone,
-      billAmt:      amt,
-      ptsAdded:     amt,
-      newBalance:   newPts,
-      timestamp:    now
-    });
-
-    document.getElementById('add-phone').value  = '';
-    document.getElementById('add-amount').value = '';
-    document.getElementById('add-member-preview').style.display = 'none';
-    document.getElementById('add-pts-preview').style.display    = 'none';
-    addTarget = null;
-    loadStats();
-    if (currentRole === 'admin') { loadAllMembers(); loadAllTx(); loadOverview(); }
-
-  } catch(e) { showMsg('add-msg', 'Error adding points. Try again.', 'error'); }
-  btn.disabled = false; btn.textContent = 'Add Points';
-}
-
-// ── Receipt ───────────────────────────────────────────────────────────
-function showReceipt(d) {
-  document.getElementById('r-date').textContent     = fmtDate(d.timestamp);
-  document.getElementById('r-time').textContent     = fmtTime(d.timestamp);
-  document.getElementById('r-ref').textContent      = d.ref;
-  document.getElementById('r-ref-bottom').textContent = d.ref;
-  document.getElementById('r-staff').textContent    = d.staffName;
-  document.getElementById('r-customer').textContent = d.customerName;
-  document.getElementById('r-phone').textContent    = d.phone;
-  document.getElementById('r-bill').textContent     = `RM ${d.billAmt.toFixed(2)}`;
-  document.getElementById('r-pts').textContent      = `+${d.ptsAdded}`;
-  document.getElementById('r-bal').textContent      = `New balance: ${d.newBalance} pts`;
-  document.getElementById('receipt-overlay').classList.add('active');
-}
-
-function closeReceipt() {
-  document.getElementById('receipt-overlay').classList.remove('active');
-}
-
-// ── Lookup ────────────────────────────────────────────────────────────
-async function lookupMember() {
-  const phone = document.getElementById('lookup-phone').value.trim().replace(/[\s\-]/g,'');
-  const card  = document.getElementById('lookup-card');
-  if (!phone) { showMsg('lookup-msg', 'Enter a phone number.', 'error'); return; }
-  card.style.display = 'none';
-  document.getElementById('lookup-msg').className = 'msg';
-  try {
-    const data = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
-    const m = data[0];
-    if (!m) { showMsg('lookup-msg', 'No member found.', 'info'); return; }
-    document.getElementById('lc-name').textContent  = m.name;
-    document.getElementById('lc-phone').textContent = m.phone;
-    document.getElementById('lc-pts').textContent   = m.points;
-    document.getElementById('lc-tier').textContent  = getTier(m.points).name + ' Member';
-    const txData = await sbFetch(`loyalty_transactions?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc&limit=8`);
-    const histEl = document.getElementById('lc-history');
-    if (!txData || !txData.length) {
-      histEl.innerHTML = '<div style="font-size:0.78rem;opacity:0.4;">No transactions yet.</div>';
-    } else {
-      histEl.innerHTML = txData.map(t => `
-        <div class="history-item">
-          <div>
-            <div class="h-desc">${t.description}${t.staff_name ? ` <span style="opacity:0.55;font-size:0.72rem;">· ${t.staff_name}</span>` : ''}</div>
-            <div class="h-date">${fmtDateTime(t.created_at)}</div>
-          </div>
-          <div class="h-pts ${t.points > 0 ? 'earn' : 'redeem'}">${t.points > 0 ? '+' : ''}${t.points}</div>
-        </div>`).join('');
-    }
-    card.style.display = 'block';
-  } catch(e) { showMsg('lookup-msg', 'Connection error. Try again.', 'error'); }
-}
-
-// ── Register ──────────────────────────────────────────────────────────
-async function registerMember() {
-  const name  = document.getElementById('reg-name').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim().replace(/[\s\-]/g,'');
-  if (!name)  { showMsg('reg-msg', 'Enter customer name.', 'error'); return; }
-  if (!phone) { showMsg('reg-msg', 'Enter phone number.', 'error'); return; }
-  const btn = document.querySelector('#panel-register .submit-btn');
-  btn.disabled = true; btn.textContent = 'Registering…';
-  try {
-    const existing = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
-    if (existing && existing[0]) {
-      showMsg('reg-msg', `Already registered — ${existing[0].name}, ${existing[0].points} pts.`, 'info');
-      btn.disabled = false; btn.textContent = 'Register Member'; return;
-    }
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members`, {
-      method: 'POST',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-      body: JSON.stringify({ name, phone, points: 0 })
-    });
-    if (res.ok) {
-      showMsg('reg-msg', `${name} registered! (by ${currentStaffName})`, 'success');
-      document.getElementById('reg-name').value  = '';
-      document.getElementById('reg-phone').value = '';
-      loadStats();
-      if (currentRole === 'admin') { loadAllMembers(); loadOverview(); }
-    } else { showMsg('reg-msg', 'Registration failed. Try again.', 'error'); }
-  } catch(e) { showMsg('reg-msg', 'Connection error. Try again.', 'error'); }
-  btn.disabled = false; btn.textContent = 'Register Member';
-}
-
-// ── ADMIN: Members ────────────────────────────────────────────────────
-async function loadAllMembers() {
-  try {
-    const data = await sbFetch('loyalty_members?select=*&order=points.desc');
-    allMembers = data || [];
-    renderMembersTable(allMembers);
-  } catch(e) {
-    document.getElementById('members-table-wrap').innerHTML = '<div class="empty-state">Could not load.</div>';
+  if (!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  const arrow = el.previousElementSibling ? el.previousElementSibling.querySelector('div:last-child') : null;
+  if (arrow && (arrow.innerHTML === '&#9658;' || arrow.innerHTML === '&#9660;')) {
+    arrow.innerHTML = isOpen ? '&#9658;' : '&#9660;';
   }
 }
 
-function filterMembers() {
-  const q    = document.getElementById('members-search').value.toLowerCase();
-  const sort = document.getElementById('members-sort').value;
-  let f = allMembers.filter(m => m.name.toLowerCase().includes(q) || m.phone.includes(q));
-  if (sort === 'points-desc') f.sort((a,b) => b.points - a.points);
-  if (sort === 'points-asc')  f.sort((a,b) => a.points - b.points);
-  if (sort === 'name-asc')    f.sort((a,b) => a.name.localeCompare(b.name));
-  if (sort === 'joined-desc') f.sort((a,b) => new Date(b.joined_at) - new Date(a.joined_at));
-  renderMembersTable(f);
-}
 
-function renderMembersTable(members) {
-  const wrap = document.getElementById('members-table-wrap');
-  if (!members.length) { wrap.innerHTML = '<div class="empty-state">No members found.</div>'; return; }
-  const tc = { Regular:'tier-regular', Silver:'tier-silver', Gold:'tier-gold', Platinum:'tier-platinum' };
-  wrap.innerHTML = `
-    <table class="data-table">
-      <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Pts</th><th>Tier</th><th>Joined</th></tr></thead>
-      <tbody>${members.map((m,i) => {
-        const tier = getTier(m.points);
-        return `<tr>
-          <td style="color:var(--light-brown);font-size:0.72rem;">${i+1}</td>
-          <td style="font-weight:500;">${m.name}</td>
-          <td style="color:var(--medium-brown);font-size:0.8rem;">${m.phone}</td>
-          <td style="font-weight:500;">${m.points}</td>
-          <td><span class="tier-pill ${tc[tier.name]}">${tier.name}</span></td>
-          <td style="color:var(--medium-brown);font-size:0.75rem;">${fmtDate(m.joined_at)}</td>
-        </tr>`;
-      }).join('')}</tbody>
-    </table>
-    <div class="table-footer">${members.length} member${members.length!==1?'s':''}</div>`;
-}
-
-// ── ADMIN: Transaction Log ────────────────────────────────────────────
-async function loadAllTx() {
-  try {
-    const data = await sbFetch('loyalty_transactions?select=*&order=created_at.desc&limit=500');
-    allTx = data || [];
-    renderTxTable(allTx);
-  } catch(e) {
-    document.getElementById('tx-table-wrap').innerHTML = '<div class="empty-state">Could not load.</div>';
-  }
-}
-
-function filterTx() {
-  const q      = document.getElementById('tx-search').value.toLowerCase();
-  const filter = document.getElementById('tx-filter').value;
-  let f = allTx.filter(t => {
-    const matchQ = t.phone.includes(q)
-      || t.description.toLowerCase().includes(q)
-      || (t.order_ref||'').toLowerCase().includes(q)
-      || (t.staff_name||'').toLowerCase().includes(q);
-    if (filter === 'earn')    return matchQ && t.points > 0;
-    if (filter === 'redeem')  return matchQ && t.points < 0;
-    if (filter === 'walkin')  return matchQ && (t.order_ref||'').startsWith('WALKIN');
-    if (filter === 'online')  return matchQ && (t.order_ref||'').startsWith('TEDUH');
-    if (filter === 'syukri')  return matchQ && (t.staff_name||'').toLowerCase() === 'syukri';
-    if (filter === 'zul')     return matchQ && (t.staff_name||'').toLowerCase() === 'zul';
-    return matchQ;
-  });
-  renderTxTable(f);
-}
-
-function renderTxTable(txs) {
-  const wrap = document.getElementById('tx-table-wrap');
-  if (!txs.length) { wrap.innerHTML = '<div class="empty-state">No transactions found.</div>'; return; }
-  wrap.innerHTML = `
-    <table class="data-table">
-      <thead><tr><th>Date & Time</th><th>Customer</th><th>Description</th><th>Staff</th><th>Pts</th></tr></thead>
-      <tbody>${txs.map(t => `<tr>
-        <td style="white-space:nowrap;font-size:0.75rem;color:var(--medium-brown);">${fmtDateTime(t.created_at)}</td>
-        <td style="font-size:0.8rem;">${t.phone}</td>
-        <td style="color:var(--medium-brown);font-size:0.78rem;">${t.description}</td>
-        <td>${t.staff_name
-          ? `<span class="staff-pill">${t.staff_name}</span>`
-          : `<span class="online-pill">online</span>`
-        }</td>
-        <td class="${t.points > 0 ? 'tx-earn' : 'tx-redeem'}">${t.points > 0 ? '+' : ''}${t.points}</td>
-      </tr>`).join('')}</tbody>
-    </table>
-    <div class="table-footer">${txs.length} record${txs.length!==1?'s':''}</div>`;
-}
-
-// ── ADMIN: Overview ───────────────────────────────────────────────────
-async function loadOverview() {
-  try {
-    const [members, txData] = await Promise.all([
-      sbFetch('loyalty_members?select=*'),
-      sbFetch('loyalty_transactions?select=*'),
-    ]);
-    const earned   = txData.filter(t => t.points > 0);
-    const redeemed = txData.filter(t => t.points < 0);
-    const online   = txData.filter(t => (t.order_ref||'').startsWith('TEDUH'));
-    const walkin   = txData.filter(t => (t.order_ref||'').startsWith('WALKIN'));
-    const active   = new Set(txData.map(t => t.phone)).size;
-    const totEarned   = earned.reduce((s,t) => s + t.points, 0);
-    const totRedeemed = Math.abs(redeemed.reduce((s,t) => s + t.points, 0));
-
-    document.getElementById('ov-members').textContent      = members.length;
-    document.getElementById('ov-pts-issued').textContent   = totEarned;
-    document.getElementById('ov-rm-issued').textContent    = totEarned;
-    document.getElementById('ov-pts-redeemed').textContent = totRedeemed;
-    document.getElementById('ov-rm-redeemed').textContent  = totRedeemed;
-    document.getElementById('ov-active').textContent       = active;
-    document.getElementById('ov-online').textContent       = online.length;
-    document.getElementById('ov-walkin').textContent       = walkin.length;
-
-    // Tier breakdown
-    const tierCount = { Regular:0, Silver:0, Gold:0, Platinum:0 };
-    members.forEach(m => tierCount[getTier(m.points).name]++);
-    const tc = { Regular:'#E2D9CE', Silver:'#D3D1C7', Gold:'#FAC775', Platinum:'#3D2B1F' };
-    const tt = { Regular:'#7A5C46', Silver:'#444441', Gold:'#633806', Platinum:'#C4A882' };
-    document.getElementById('tier-breakdown').innerHTML = Object.entries(tierCount).map(([n,c]) => `
-      <div style="background:${tc[n]};border-radius:8px;padding:0.75rem;text-align:center;">
-        <div style="font-size:1.4rem;font-weight:500;color:${tt[n]};">${c}</div>
-        <div style="font-size:0.65rem;color:${tt[n]};text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">${n}</div>
-      </div>`).join('');
-
-    // Top 5 members
-    const top5   = [...members].sort((a,b) => b.points - a.points).slice(0,5);
-    const maxPts = top5[0]?.points || 1;
-    document.getElementById('top-members').innerHTML = top5.map((m,i) => `
-      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.6rem;">
-        <div style="width:18px;font-size:0.72rem;color:var(--light-brown);text-align:right;">${i+1}</div>
-        <div style="flex:1;">
-          <div style="font-size:0.85rem;font-weight:500;color:var(--warm-brown);">${m.name} <span style="font-size:0.75rem;color:var(--medium-brown);font-weight:400;">${m.phone}</span></div>
-          <div style="height:5px;background:var(--border);border-radius:3px;margin-top:4px;">
-            <div style="height:100%;width:${Math.round((m.points/maxPts)*100)}%;background:var(--light-brown);border-radius:3px;"></div>
-          </div>
-        </div>
-        <div style="font-size:0.85rem;font-weight:500;color:var(--warm-brown);min-width:50px;text-align:right;">${m.points} pts</div>
-      </div>`).join('');
-
-    // Staff breakdown
-    const staffMap = {};
-    walkin.forEach(t => {
-      const n = t.staff_name || 'Unknown';
-      if (!staffMap[n]) staffMap[n] = { count:0, pts:0 };
-      staffMap[n].count++;
-      staffMap[n].pts += t.points;
-    });
-    const staffList = Object.entries(staffMap).sort((a,b) => b[1].pts - a[1].pts);
-    document.getElementById('staff-breakdown').innerHTML = staffList.length
-      ? `<table class="data-table">
-          <thead><tr><th>Staff</th><th>Transactions</th><th>Total pts added</th><th>≈ RM value</th></tr></thead>
-          <tbody>${staffList.map(([name, d]) => `<tr>
-            <td><span class="staff-pill">${name}</span></td>
-            <td>${d.count}</td>
-            <td class="tx-earn">+${d.pts}</td>
-            <td style="color:var(--medium-brown);">RM ${d.pts}</td>
-          </tr>`).join('')}</tbody>
-        </table>`
-      : '<div class="empty-state">No walk-in transactions yet.</div>';
-
-  } catch(e) { console.error(e); }
-}
-// ── QUEUE ─────────────────────────────────────────────────────────────
-let allQueue = [];
-let queueFilter = 'all';
-let queueInterval = null;
-
-async function loadQueue() {
-  try {
-    const today = new Date();
-    today.setHours(0,0,0,0);
-    const data = await sbFetch('queue_orders?select=*&order=created_at.asc&created_at=gte.' + today.toISOString());
-    allQueue = Array.isArray(data) ? data : [];
-    renderQueue();
-  } catch(e) {
-    document.getElementById('queue-list').innerHTML = '<div class="empty-state">Could not load queue.</div>';
-  }
-}
-
-function filterQueue(status, btn) {
-  queueFilter = status;
-  document.querySelectorAll('.q-filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderQueue();
-}
-
-function renderQueue() {
-  const list = document.getElementById('queue-list');
-  let filtered = queueFilter === 'all' ? allQueue : allQueue.filter(o => o.status === queueFilter);
-  if (!filtered.length) {
-    list.innerHTML = '<div class="empty-state">No orders' + (queueFilter !== 'all' ? ' with status: ' + queueFilter : ' today') + '.</div>';
-    return;
-  }
-  list.innerHTML = filtered.map(o => {
-    const isPU   = o.queue_number.startsWith('#PU');
-    const typeLabel = isPU ? 'Pickup' : 'Delivery';
-    const timeStr = new Date(o.created_at).toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit' });
-    return `<div class="queue-card status-${o.status}" id="qc-${o.id}">
-      <div class="qc-top">
-        <div class="qc-number">${o.queue_number}</div>
-        <span class="qc-status ${o.status}">${o.status}</span>
-      </div>
-      <div class="qc-name">${o.customer_name} · ${o.phone}</div>
-      <div class="qc-items">${o.items}</div>
-      <div class="qc-meta">${typeLabel}${o.address ? ' · ' + o.address.substring(0,40) + '…' : ''} · ${timeStr}${o.notes ? ' · Note: ' + o.notes : ''}</div>
-      <div class="qc-actions">
-        ${o.status === 'pending' ? `
-          <button class="qc-btn ready-btn" onclick="updateQueueStatus('${o.id}', 'ready')">Mark Ready</button>
-        ` : ''}
-        ${o.status === 'ready' ? `
-          <button class="qc-btn done-btn"  onclick="updateQueueStatus('${o.id}', 'done')">Mark Done</button>
-          <button class="qc-btn revert-btn" onclick="updateQueueStatus('${o.id}', 'pending')">← Pending</button>
-        ` : ''}
-        ${o.status === 'done' ? `
-          <button class="qc-btn revert-btn" onclick="updateQueueStatus('${o.id}', 'ready')">← Reopen</button>
-        ` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-async function updateQueueStatus(id, status) {
-  try {
-    await sbFetch('queue_orders?id=eq.' + id, {
-      method: 'PATCH',
-      body: JSON.stringify({ status })
-    });
-    const idx = allQueue.findIndex(o => o.id === id);
-    if (idx > -1) allQueue[idx].status = status;
-    renderQueue();
-  } catch(e) { alert('Could not update status. Try again.'); }
-}
-
-// ── REDEEM TAB ─────────────────────────────────────────────────────────
-const LOYVERSE_TOKEN = '5f56ff3b1e7c4d2ab0376499be53a744';
-const LOYVERSE_API   = 'https://api.loyverse.com/v1.0';
-
-// Fixed café menu items for walk-in redeem (price >= RM8)
-const WALKIN_ITEMS = [
-  { name: 'Americano',        price: 9   },
-  { name: 'Café Latte',       price: 12  },
-  { name: 'Cappuccino',       price: 12  },
-  { name: 'Cold Brew',        price: 13  },
-  { name: 'Teduh Signature',  price: 15  },
-  { name: 'House Blend 250g', price: 35  },
-  { name: 'House Blend 500g', price: 60  },
-  { name: 'House Blend 1kg',  price: 105 },
-  { name: 'Drip Bags x5',     price: 25  },
-  { name: 'Drip Bags x10',    price: 45  },
-];
-
-let redeemMember = null;
-
-function onRedeemPhoneInput() {
-  const phone = document.getElementById('redeem-phone').value.trim();
-  if (phone.length === 10 || phone.length === 11) lookupRedeemMember();
-}
-
-async function lookupRedeemMember() {
-  const phone  = document.getElementById('redeem-phone').value.trim().replace(/[\s\-]/g,'');
-  const msgEl  = document.getElementById('redeem-lookup-msg');
-  const card   = document.getElementById('redeem-member-card');
-  msgEl.textContent = '';
-  card.style.display = 'none';
-  redeemMember = null;
-
-  if (!phone) return;
-  msgEl.textContent = 'Looking up…';
-  msgEl.className = 'msg';
-
-  try {
-    const data = await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(phone) + '&limit=1');
-    if (!data[0]) {
-      msgEl.textContent = 'Customer not found.';
-      msgEl.className = 'msg error';
-      return;
-    }
-    redeemMember = data[0];
-    msgEl.textContent = '';
-    document.getElementById('rm-name').textContent  = redeemMember.name;
-    document.getElementById('rm-phone').textContent = redeemMember.phone;
-    document.getElementById('rm-pts').textContent   = redeemMember.points;
-    document.getElementById('rm-tier').textContent  = getTier(redeemMember.points).label || '';
-    buildWalkinRedeemItems(redeemMember.points);
-    card.style.display = 'block';
-  } catch(e) {
-    msgEl.textContent = 'Error. Try again.';
-    msgEl.className = 'msg error';
-  }
-}
-
-function buildWalkinRedeemItems(pts) {
-  const list = document.getElementById('redeem-items-list');
-  list.innerHTML = '';
-
-  if (pts < 150) {
-    list.innerHTML = '<div style="font-size:0.82rem;opacity:0.6;">Need minimum 150 pts to redeem. Customer has ' + pts + ' pts.</div>';
-    return;
-  }
-
-  let hasAny = false;
-  WALKIN_ITEMS.forEach(item => {
-    const ptsCost = Math.round(item.price / 0.065);
-    if (pts < ptsCost) return;
-    hasAny = true;
-    const btn = document.createElement('button');
-    btn.style.cssText = 'display:flex;justify-content:space-between;align-items:center;width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:0.5rem;cursor:pointer;font-family:var(--font-body);color:var(--cream);text-align:left;';
-    btn.innerHTML = '<span style="font-size:0.85rem;font-weight:500;">' + item.name + '</span>' +
-      '<span style="font-size:0.78rem;opacity:0.7;">FREE · ' + ptsCost + ' pts</span>';
-    btn.onclick = () => confirmWalkinRedeem(item, ptsCost);
-    list.appendChild(btn);
-  });
-
-  if (!hasAny) {
-    list.innerHTML = '<div style="font-size:0.82rem;opacity:0.6;">Not enough points for any item yet.</div>';
-  }
-}
-
-async function confirmWalkinRedeem(item, ptsCost) {
-  if (!redeemMember) return;
-  const msgEl = document.getElementById('redeem-msg');
-
-  const ok = confirm('Redeem ' + item.name + ' (FREE) for ' + redeemMember.name + '?\nThis will deduct ' + ptsCost + ' points from their balance.');
-  if (!ok) return;
-
-  msgEl.textContent = 'Processing…';
-  msgEl.className = 'msg';
-
-  try {
-    // 1. Deduct points in Supabase
-    const newPts = redeemMember.points - ptsCost;
-    await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(redeemMember.phone), {
-      method: 'PATCH',
-      body: JSON.stringify({ points: newPts, updated_at: new Date().toISOString() })
-    });
-    await sbFetch('loyalty_transactions', {
-      method: 'POST',
-      body: JSON.stringify({
-        phone:       redeemMember.phone,
-        description: 'Walk-in redeem: ' + item.name,
-        points:      -ptsCost,
-        order_ref:   'WALKIN-' + Date.now(),
-        staff_name:  currentStaffName
-      })
-    });
-
-    // 2. Create receipt in Loyverse with 100% discount
-    await createLoyverseRedeemReceipt(item, redeemMember);
-
-    // 3. Update local state
-    redeemMember.points = newPts;
-    document.getElementById('rm-pts').textContent = newPts;
-    buildWalkinRedeemItems(newPts);
-
-    msgEl.textContent = '✓ Done! ' + item.name + ' redeemed. ' + ptsCost + ' pts deducted. New balance: ' + newPts + ' pts.';
-    msgEl.className = 'msg success';
-
-  } catch(e) {
-    msgEl.textContent = 'Error: ' + e.message;
-    msgEl.className = 'msg error';
-  }
-}
-
-async function createLoyverseRedeemReceipt(item, member) {
-  // Route through Supabase Edge Function to avoid CORS
-  const EDGE_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyverse-redeem';
-  try {
-    const res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh'
-      },
-      body: JSON.stringify({
-        loyverse_token: LOYVERSE_TOKEN,
-        item_name:  item.name,
-        item_price: item.price,
-        customer:   member.name,
-        phone:      member.phone
-      })
-    });
-    const data = await res.json();
-    if (!res.ok) console.warn('Loyverse proxy error:', data);
-  } catch(e) {
-    // Edge function not deployed yet — silent fail, points already deducted
-    console.warn('Loyverse edge function not reachable:', e.message);
-  }
-}
-
-// ── AVAILABILITY ──────────────────────────────────────────────────────
+</script>
+</body>
+</html>
