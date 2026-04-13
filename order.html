@@ -1789,7 +1789,46 @@ async function checkShopStatus() {
       data.forEach(r => { itemAvailability[r.item_id] = r.available; });
     }
     buildMenuGrid();
+    applyStaticAvailability();
   } catch(e) { console.warn('Availability check error:', e); }
+}
+
+// Apply availability to static product cards (beans, drip, merch)
+function applyStaticAvailability() {
+  const staticMap = {
+    'pc-drip-5':   'Drip Bags ×5',
+    'pc-drip-10':  'Drip Bags ×10',
+    'pc-bean-250': 'House Blend 250g',
+    'pc-bean-500': 'House Blend 500g',
+    'pc-bean-1kg': 'House Blend 1kg',
+    'pc-mug':      'Teduh Mug',
+    'pc-tote':     'Teduh Tote Bag',
+  };
+  Object.entries(staticMap).forEach(([cardId, itemName]) => {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+    const soldOut = itemAvailability[itemName] === false;
+    if (soldOut) {
+      card.style.opacity = '0.45';
+      card.style.pointerEvents = 'none';
+      // Add sold out badge if not already there
+      if (!card.querySelector('.sold-out-badge')) {
+        const name = card.querySelector('.product-name');
+        if (name) {
+          const badge = document.createElement('span');
+          badge.className = 'sold-out-badge';
+          badge.style.cssText = 'font-size:0.72rem;color:var(--error);font-weight:400;margin-left:6px;';
+          badge.textContent = '· Sold out';
+          name.appendChild(badge);
+        }
+      }
+    } else {
+      card.style.opacity = '';
+      card.style.pointerEvents = '';
+      const badge = card.querySelector('.sold-out-badge');
+      if (badge) badge.remove();
+    }
+  });
 }
 
 </script>

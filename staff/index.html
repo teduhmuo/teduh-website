@@ -1232,7 +1232,7 @@ const MENU_CATEGORIES = {
   'Pasta':             ['Aglio e Oglio','Aglio e Oglio Garlic Chicken','Aglio e Oglio Smoked Duck'],
   'Snack & Pastry':    ['Plain Croissant','Chocolate Roll','Mini Egg Tart','Banana Bar','Egg Mayo Croissant','Tuna Mayo Croissant'],
   'Coffee Beans':      ['House Blend 250g','House Blend 500g','House Blend 1kg'],
-  'Drip Bags':         ['Drip Bags x5','Drip Bags x10'],
+  'Drip Bags':         ['Drip Bags ×5','Drip Bags ×10'],
   'Merchandise':       ['Teduh Mug','Teduh Tote Bag'],
 };
 
@@ -1357,14 +1357,16 @@ async function saveAvailability() {
       body: JSON.stringify(upserts)
     });
 
-    if (!res.ok) {
+    // 204 No Content = success with return=minimal
+    // 200/201 = success with data
+    if (res.status === 204 || res.status === 200 || res.status === 201) {
+      msgEl.textContent = '✓ Availability saved!';
+      msgEl.className = 'msg success';
+      setTimeout(() => msgEl.textContent = '', 3000);
+    } else {
       const err = await res.text();
       throw new Error('HTTP ' + res.status + ': ' + err);
     }
-
-    msgEl.textContent = '✓ Availability saved!';
-    msgEl.className = 'msg success';
-    setTimeout(() => msgEl.textContent = '', 3000);
   } catch(e) {
     console.error('Save error:', e);
     msgEl.textContent = e.message || 'Error saving. Try again.';
