@@ -271,6 +271,7 @@
       <button class="tab-btn"        id="tab-queue"    onclick="switchTab('queue')">Queue</button>
       <button class="tab-btn"        id="tab-redeem"   onclick="switchTab('redeem')">Redeem</button>
       <button class="tab-btn"        id="tab-avail"    onclick="switchTab('avail')">Availability</button>
+      <button class="tab-btn admin-tab" id="tab-avail-log" onclick="switchTab('avail-log')" style="display:none;">Avail Log</button>
       <button class="tab-btn admin-tab" id="tab-members"  onclick="switchTab('members')"  style="display:none;">Members</button>
       <button class="tab-btn admin-tab" id="tab-txlog"    onclick="switchTab('txlog')"    style="display:none;">Log</button>
       <button class="tab-btn admin-tab" id="tab-overview" onclick="switchTab('overview')" style="display:none;">Overview</button>
@@ -443,6 +444,16 @@
           Save availability
         </button>
         <div class="msg" id="avail-save-msg" style="margin-top:0.75rem;text-align:center;"></div>
+      </div>
+
+
+      <!-- AVAILABILITY LOG -->
+      <div class="panel" id="panel-avail-log">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+          <div style="font-size:0.75rem;color:var(--medium-brown);">Availability changes by staff</div>
+          <button onclick="loadAvailLog()" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:4px 12px;font-size:0.75rem;color:var(--medium-brown);cursor:pointer;font-family:var(--font-body);">↻ Refresh</button>
+        </div>
+        <div id="avail-log-list"><div class="loading-state">Loading…</div></div>
       </div>
 
       <!-- QUEUE -->
@@ -642,6 +653,7 @@ function switchTab(tab) {
     if (queueInterval) { clearInterval(queueInterval); queueInterval = null; }
   }
   if (tab === 'avail') loadAvailability();
+  if (tab === 'avail-log') loadAvailLog();
 }
 
 function showMsg(id, text, type) {
@@ -1299,6 +1311,7 @@ async function toggleShopStatus(isOpen) {
       headers: { 'Prefer': 'return=minimal' },
       body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName })
     });
+    logShopToggle(isOpen);
   } catch(e) { console.error('Toggle error:', e); }
 }
 
@@ -1361,6 +1374,11 @@ async function saveAvailability() {
   msgEl.className = 'msg';
 
   try {
+    // Detect changes for log
+    const changes = Object.entries(availState)
+      .filter(([k, v]) => v === false)
+      .map(([k, v]) => ({ item_id: k, item_name: PROD_NAMES[k] || k, available: v }));
+
     const upserts = Object.entries(availState).map(([item_id, available]) => ({
       item_id,
       available,
@@ -1385,6 +1403,7 @@ async function saveAvailability() {
       msgEl.textContent = '✓ Availability saved!';
       msgEl.className = 'msg success';
       setTimeout(() => msgEl.textContent = '', 3000);
+      logAvailabilityChange(Object.entries(availState).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v })));
     } else {
       const err = await res.text();
       throw new Error('HTTP ' + res.status + ': ' + err);
@@ -1393,6 +1412,85 @@ async function saveAvailability() {
     console.error('Save error:', e);
     msgEl.textContent = e.message || 'Error saving. Try again.';
     msgEl.className = 'msg error';
+  }
+}
+
+// ── AVAILABILITY LOG ──────────────────────────────────────────────────
+async function logAvailabilityChange(changes) {
+  // changes = array of { item_id, item_name, available }
+  if (!changes.length) return;
+  const rows = changes.map(c => ({
+    staff_name: currentStaffName,
+    action: c.available ? 'marked available' : 'marked unavailable',
+    item_id: c.item_id,
+    item_name: c.item_name,
+    available: c.available,
+    created_at: new Date().toISOString()
+  }));
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(rows)
+    });
+  } catch(e) { console.warn('Log error:', e); }
+}
+
+async function logShopToggle(isOpen) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify([{
+        staff_name: currentStaffName,
+        action: isOpen ? 'opened online ordering' : 'closed online ordering',
+        item_id: 'shop_status',
+        item_name: 'Online Ordering',
+        available: isOpen,
+        created_at: new Date().toISOString()
+      }])
+    });
+  } catch(e) { console.warn('Log error:', e); }
+}
+
+async function loadAvailLog() {
+  const list = document.getElementById('avail-log-list');
+  list.innerHTML = '<div class="loading-state">Loading…</div>';
+  try {
+    const data = await sbFetch('availability_log?select=*&order=created_at.desc&limit=100', { method: 'GET' });
+    if (!data.length) {
+      list.innerHTML = '<div class="empty-state">No changes logged yet.</div>';
+      return;
+    }
+    list.innerHTML = data.map(r => {
+      const time = new Date(r.created_at).toLocaleString('en-MY', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      const isOpen   = r.available;
+      const isShop   = r.item_id === 'shop_status';
+      const dotColor = isOpen ? 'var(--accent)' : 'var(--error)';
+      return \`<div style="display:flex;align-items:flex-start;gap:10px;padding:0.65rem 0;border-bottom:1px solid var(--border);">
+        <div style="width:8px;height:8px;border-radius:50%;background:\${dotColor};margin-top:5px;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div style="font-size:0.82rem;font-weight:500;color:var(--warm-brown);">\${r.item_name}</div>
+          <div style="font-size:0.75rem;color:var(--medium-brown);">\${r.action}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0;">
+          <div style="font-size:0.72rem;color:var(--medium-brown);">\${time}</div>
+          <div style="font-size:0.72rem;margin-top:2px;"><span class="\${r.staff_name === 'Admin' ? 'online-pill' : 'staff-pill'}">\${r.staff_name}</span></div>
+        </div>
+      </div>\`;
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="empty-state">Could not load log.</div>';
   }
 }
 
