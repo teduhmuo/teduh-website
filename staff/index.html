@@ -1080,6 +1080,10 @@ async function toggleShopStatus(isOpen) {
 function renderAvailCategories() {
   const el = document.getElementById('avail-categories');
   if (!el) return;
+  // Always ensure all keys initialized
+  Object.values(MENU_CATEGORIES).flat().forEach(function(k) {
+    if (!(k in availState)) availState[k] = true;
+  });
   let html = '';
   Object.entries(MENU_CATEGORIES).forEach(function(entry) {
     const cat = entry[0]; const items = entry[1];
