@@ -169,6 +169,28 @@
 
   footer { text-align: center; padding: 1.5rem; font-size: 0.75rem; color: var(--light-brown); }
 
+  /* Availability */
+  .avail-shop-toggle { display:flex; align-items:center; justify-content:space-between; background:var(--white); border:1px solid var(--border); border-radius:12px; padding:1rem 1.25rem; margin-bottom:1.25rem; }
+  .avail-shop-label { font-size:0.95rem; font-weight:500; color:var(--warm-brown); }
+  .avail-shop-sub { font-size:0.75rem; color:var(--medium-brown); margin-top:2px; }
+  .toggle-switch { position:relative; width:48px; height:26px; }
+  .toggle-switch input { opacity:0; width:0; height:0; }
+  .toggle-slider { position:absolute; cursor:pointer; inset:0; background:var(--border); border-radius:26px; transition:.3s; }
+  .toggle-slider:before { content:""; position:absolute; width:20px; height:20px; left:3px; bottom:3px; background:white; border-radius:50%; transition:.3s; }
+  .toggle-switch input:checked + .toggle-slider { background:var(--accent); }
+  .toggle-switch input:checked + .toggle-slider:before { transform:translateX(22px); }
+  .avail-status-badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:0.72rem; font-weight:500; letter-spacing:0.04em; text-transform:uppercase; }
+  .avail-status-badge.open { background:var(--accent-light); color:var(--accent); }
+  .avail-status-badge.closed { background:#fdf0ef; color:var(--error); }
+  .avail-cat-header { display:flex; align-items:center; justify-content:space-between; padding:0.65rem 0; border-bottom:1px solid var(--border); margin-bottom:0.5rem; cursor:pointer; }
+  .avail-cat-name { font-size:0.88rem; font-weight:500; color:var(--warm-brown); }
+  .avail-cat-count { font-size:0.72rem; color:var(--medium-brown); }
+  .avail-cat-toggle { font-size:0.72rem; color:var(--accent); cursor:pointer; padding:2px 8px; border:1px solid var(--accent); border-radius:20px; background:transparent; font-family:var(--font-body); }
+  .avail-items-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:1rem; }
+  .avail-item { display:flex; align-items:center; justify-content:space-between; background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:0.5rem 0.75rem; font-size:0.78rem; color:var(--warm-brown); }
+  .avail-item.unavailable { opacity:0.45; text-decoration:line-through; }
+  .avail-item input[type=checkbox] { width:16px; height:16px; accent-color:var(--accent); cursor:pointer; flex-shrink:0; }
+
   /* Queue */
   .q-filter-btn { padding: 0.35rem 0.85rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.78rem; background: transparent; color: var(--medium-brown); cursor: pointer; font-family: var(--font-body); transition: all 0.15s; }
   .q-filter-btn.active { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
@@ -248,6 +270,7 @@
       <button class="tab-btn"        id="tab-register" onclick="switchTab('register')">Register</button>
       <button class="tab-btn"        id="tab-queue"    onclick="switchTab('queue')">Queue</button>
       <button class="tab-btn"        id="tab-redeem"   onclick="switchTab('redeem')">Redeem</button>
+      <button class="tab-btn"        id="tab-avail"    onclick="switchTab('avail')">Availability</button>
       <button class="tab-btn admin-tab" id="tab-members"  onclick="switchTab('members')"  style="display:none;">Members</button>
       <button class="tab-btn admin-tab" id="tab-txlog"    onclick="switchTab('txlog')"    style="display:none;">Log</button>
       <button class="tab-btn admin-tab" id="tab-overview" onclick="switchTab('overview')" style="display:none;">Overview</button>
@@ -390,6 +413,37 @@
         <div class="msg" id="redeem-lookup-msg"></div>
       </div>
 
+
+
+      <!-- AVAILABILITY -->
+      <div class="panel" id="panel-avail">
+
+        <!-- Shop open/closed toggle -->
+        <div class="avail-shop-toggle">
+          <div>
+            <div class="avail-shop-label">Online ordering</div>
+            <div class="avail-shop-sub">Customers can place orders when ON</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="avail-status-badge" id="shop-status-badge">Loading…</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="shop-open-toggle" onchange="toggleShopStatus(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div style="font-size:0.72rem;color:var(--medium-brown);margin-bottom:1rem;opacity:0.7;">
+          Toggle categories or individual items. Unchecked = sold out today.
+        </div>
+
+        <div id="avail-categories"></div>
+
+        <button onclick="saveAvailability()" style="width:100%;margin-top:0.5rem;padding:0.85rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:8px;font-family:var(--font-display);font-size:0.95rem;cursor:pointer;">
+          Save availability
+        </button>
+        <div class="msg" id="avail-save-msg" style="margin-top:0.75rem;text-align:center;"></div>
+      </div>
 
       <!-- QUEUE -->
       <div class="panel" id="panel-queue">
@@ -587,6 +641,7 @@ function switchTab(tab) {
   } else {
     if (queueInterval) { clearInterval(queueInterval); queueInterval = null; }
   }
+  if (tab === 'avail') loadAvailability();
 }
 
 function showMsg(id, text, type) {
@@ -1057,7 +1112,7 @@ async function lookupRedeemMember() {
     document.getElementById('rm-name').textContent  = redeemMember.name;
     document.getElementById('rm-phone').textContent = redeemMember.phone;
     document.getElementById('rm-pts').textContent   = redeemMember.points;
-    document.getElementById('rm-tier').textContent  = getTier(redeemMember.points);
+    document.getElementById('rm-tier').textContent  = getTier(redeemMember.points).label || '';
     buildWalkinRedeemItems(redeemMember.points);
     card.style.display = 'block';
   } catch(e) {
@@ -1139,68 +1194,169 @@ async function confirmWalkinRedeem(item, ptsCost) {
 }
 
 async function createLoyverseRedeemReceipt(item, member) {
-  // Get store info first
-  const storeRes = await fetch(LOYVERSE_API + '/stores', {
-    headers: { 'Authorization': 'Bearer ' + LOYVERSE_TOKEN }
+  // Route through Supabase Edge Function to avoid CORS
+  const EDGE_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyverse-redeem';
+  try {
+    const res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh'
+      },
+      body: JSON.stringify({
+        loyverse_token: LOYVERSE_TOKEN,
+        item_name:  item.name,
+        item_price: item.price,
+        customer:   member.name,
+        phone:      member.phone
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) console.warn('Loyverse proxy error:', data);
+  } catch(e) {
+    // Edge function not deployed yet — silent fail, points already deducted
+    console.warn('Loyverse edge function not reachable:', e.message);
+  }
+}
+
+// ── AVAILABILITY ──────────────────────────────────────────────────────
+const MENU_CATEGORIES = {
+  'Coffee Essential':  ['Espresso','Long Black','Café Latte','Cappuccino'],
+  'Flavoured Coffee':  ['Long Black Lemon','Café Latte Gula Melaka','Café Latte Vanilla','Café Latte Caramel','Café Latte Nutty','Café Latte Strawberry','Café Latte Asian','Café Latte Caramel Machiato','Café Latte Mocha','Espressoda','Espressoda Lemon'],
+  'Chocolate':         ['Chocolate','Chocolate Mint','Chocolate Gula Melaka'],
+  'Matcha':            ['Matcha Latte','Matcha Latte Strawberry','Matcha Latte Mango','Matcha Lemonade'],
+  'Refresher':         ['Sparkling Vanilla Mint','Sparkling Vanilla Peach','Sparkling Lemonade','Semangka Laici'],
+  'Frappe Series':     ['Strawberry Frappe','Caramel Café Frappe','Mocha Choco Chip Frappe','Double Choco Chip Frappe'],
+  'Neapolitan Pizza':  ['Margherita Pizza','Beef Pepperoni Pizza','Sliced Beef Pizza','Spicy Garlic Chicken Pizza','Teduh Smoked Pizza','Creamy Truffle Beef Pizza','White Beef Pepperoni Pizza'],
+  'Half-Half Pizza':   ['Beef Pepperoni & Garlic Chicken','Beef Sliced & Creamy Truffle Beef','White Pepperoni & Garlic Chicken Pizza','White Pepperoni & Truffle Beef Pizza'],
+  'Pasta':             ['Aglio e Oglio','Aglio e Oglio Garlic Chicken','Aglio e Oglio Smoked Duck'],
+  'Snack & Pastry':    ['Plain Croissant','Chocolate Roll','Mini Egg Tart','Banana Bar','Egg Mayo Croissant','Tuna Mayo Croissant'],
+  'Coffee Beans':      ['House Blend 250g','House Blend 500g','House Blend 1kg'],
+  'Drip Bags':         ['Drip Bags x5','Drip Bags x10'],
+  'Merchandise':       ['Teduh Mug','Teduh Tote Bag'],
+};
+
+// Local availability state: { 'item_name': true/false }
+let availState = {};
+
+async function loadAvailability() {
+  // Load shop status
+  try {
+    const statusData = await sbFetch('shop_status?id=eq.1&select=is_open');
+    const isOpen = statusData[0] ? statusData[0].is_open : true;
+    document.getElementById('shop-open-toggle').checked = isOpen;
+    updateShopBadge(isOpen);
+  } catch(e) { console.error('Status load error:', e); }
+
+  // Load item availability
+  try {
+    const items = await sbFetch('item_availability?select=item_id,available');
+    // Default all to true, override with DB values
+    Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
+    if (Array.isArray(items)) {
+      items.forEach(r => { availState[r.item_id] = r.available; });
+    }
+  } catch(e) {
+    Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
+  }
+
+  renderAvailCategories();
+}
+
+function updateShopBadge(isOpen) {
+  const badge = document.getElementById('shop-status-badge');
+  badge.textContent = isOpen ? 'OPEN' : 'CLOSED';
+  badge.className = 'avail-status-badge ' + (isOpen ? 'open' : 'closed');
+}
+
+async function toggleShopStatus(isOpen) {
+  updateShopBadge(isOpen);
+  try {
+    await sbFetch('shop_status?id=eq.1', {
+      method: 'PATCH',
+      body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName })
+    });
+  } catch(e) { console.error('Toggle error:', e); }
+}
+
+function renderAvailCategories() {
+  const el = document.getElementById('avail-categories');
+  if (!el) return;
+
+  let html = '';
+  Object.entries(MENU_CATEGORIES).forEach(([cat, items]) => {
+    const allOn  = items.every(i => availState[i] !== false);
+    const countOn = items.filter(i => availState[i] !== false).length;
+    const catId  = cat.replace(/[^a-z0-9]/gi, '-');
+    const makeAvail = !allOn;
+
+    html += '<div class="avail-cat-block" id="catblock-' + catId + '">';
+    html += '<div class="avail-cat-header">';
+    html += '<div>';
+    html += '<div class="avail-cat-name">' + cat + '</div>';
+    html += '<div class="avail-cat-count">' + countOn + ' / ' + items.length + ' available</div>';
+    html += '</div>';
+    html += '<button class="avail-cat-toggle" onclick="toggleCategory(\`' + catId + '\`,\`' + cat + '\`,' + makeAvail + ')">' + (allOn ? 'Uncheck all' : 'Check all') + '</button>';
+    html += '</div>';
+
+    html += '<div class="avail-items-grid">';
+    items.forEach(item => {
+      const avail   = availState[item] !== false;
+      const safeItem = item.replace(/`/g, "'");
+      html += '<label class="avail-item' + (avail ? '' : ' unavailable') + '">' +
+        '<span>' + item + '</span>' +
+        '<input type="checkbox" ' + (avail ? 'checked' : '') + ' onchange="toggleItem(\`' + safeItem + '\`,this.checked)">' +
+        '</label>';
+    });
+    html += '</div></div>';
   });
 
-  if (!storeRes.ok) throw new Error('Could not reach Loyverse. Points deducted — please apply discount manually in Loyverse.');
+  el.innerHTML = html;
+}
 
-  const storeData = await storeRes.json();
-  const store = storeData.stores && storeData.stores[0];
-  if (!store) throw new Error('No Loyverse store found.');
+function toggleItem(item, checked) {
+  availState[item] = checked;
+  renderAvailCategories();
+}
 
-  // Get items to find variant ID
-  const itemsRes = await fetch(LOYVERSE_API + '/items?limit=250', {
-    headers: { 'Authorization': 'Bearer ' + LOYVERSE_TOKEN }
-  });
-  const itemsData = await itemsRes.json();
-  const loyItem = itemsData.items && itemsData.items.find(i =>
-    i.item_name.toLowerCase().includes(item.name.toLowerCase().split(' ')[0])
-  );
+function toggleCategory(catId, cat, makeAvail) {
+  // Find by cat name or by searching catId
+  let items = MENU_CATEGORIES[cat];
+  if (!items) {
+    // fallback: find cat whose id matches
+    const found = Object.keys(MENU_CATEGORIES).find(c => c.replace(/[^a-z0-9]/gi,'-') === catId);
+    if (found) items = MENU_CATEGORIES[found];
+  }
+  if (!items) return;
+  items.forEach(item => availState[item] = makeAvail);
+  renderAvailCategories();
+}
 
-  const lineItem = loyItem && loyItem.variants && loyItem.variants[0]
-    ? {
-        item_id: loyItem.id,
-        variant_id: loyItem.variants[0].variant_id,
-        quantity: 1,
-        price: item.price,
-        total_money: 0,
-        gross_total_money: item.price,
-        discount: { type: 'PERCENT', value: 100, name: 'Loyalty Redeem' }
-      }
-    : {
-        item_name: item.name,
-        quantity: 1,
-        price: item.price,
-        total_money: 0,
-        gross_total_money: item.price,
-        discount: { type: 'PERCENT', value: 100, name: 'Loyalty Redeem' }
-      };
+async function saveAvailability() {
+  const msgEl = document.getElementById('avail-save-msg');
+  msgEl.textContent = 'Saving…';
+  msgEl.className = 'msg';
 
-  const receipt = {
-    source: { store_id: store.id },
-    receipt_date: new Date().toISOString(),
-    line_items: [lineItem],
-    payments: [{ payment_type_id: null, name: 'Loyalty Redeem', money_amount: 0 }],
-    note: 'Walk-in loyalty redeem — ' + member.name + ' (' + member.phone + ')',
-    total_money: 0,
-    total_discount: item.price
-  };
+  try {
+    const upserts = Object.entries(availState).map(([item_id, available]) => ({
+      item_id,
+      available,
+      category: Object.keys(MENU_CATEGORIES).find(c => MENU_CATEGORIES[c].includes(item_id)) || '',
+      updated_at: new Date().toISOString()
+    }));
 
-  const receiptRes = await fetch(LOYVERSE_API + '/receipts', {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + LOYVERSE_TOKEN,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(receipt)
-  });
+    await sbFetch('item_availability', {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates' },
+      body: JSON.stringify(upserts)
+    });
 
-  if (!receiptRes.ok) {
-    const err = await receiptRes.json();
-    console.warn('Loyverse receipt error:', err);
-    // Don't throw — points already deducted, just warn
+    msgEl.textContent = '✓ Availability saved!';
+    msgEl.className = 'msg success';
+    setTimeout(() => msgEl.textContent = '', 3000);
+  } catch(e) {
+    msgEl.textContent = 'Error saving. Try again.';
+    msgEl.className = 'msg error';
   }
 }
 

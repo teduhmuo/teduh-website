@@ -313,6 +313,8 @@
     border-color: var(--warm-brown);
   }
 
+  .menu-item-card.sold-out { opacity: 0.45; pointer-events: none; }
+
   .menu-item-desc {
     font-size: 0.72rem;
     color: var(--medium-brown);
@@ -1156,8 +1158,9 @@ function buildMenuGrid() {
     const hasTemp = p.hotPrice !== null;
     if (!tempSelection[key]) tempSelection[key] = hasTemp ? 'ice' : null;
 
-    html += '<div class="menu-item-card" id="card-' + key + '">';
-    html += '<div class="menu-item-name">' + p.name + '</div>';
+    const soldOut = itemAvailability[p.name] === false;
+    html += '<div class="menu-item-card' + (soldOut ? ' sold-out' : '') + '" id="card-' + key + '">';
+    html += '<div class="menu-item-name">' + p.name + (soldOut ? ' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· Sold out</span>' : '') + '</div>';
     if (p.desc) html += '<div class="menu-item-desc">' + p.desc + '</div>';
 
     if (hasTemp) {
@@ -1752,7 +1755,43 @@ function syncLoyaltyPhone() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => { buildMenuGrid(); });
+document.addEventListener('DOMContentLoaded', () => { buildMenuGrid(); checkShopStatus(); });
+// ── Shop status & availability check ─────────────────────────────────
+let shopIsOpen = true;
+let itemAvailability = {};
+
+async function sbQuery(path) {
+  const res = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+  });
+  return res.json();
+}
+
+async function checkShopStatus() {
+  try {
+    const data = await sbQuery('shop_status?id=eq.1&select=is_open');
+    shopIsOpen = Array.isArray(data) && data.length > 0 ? data[0].is_open : true;
+
+    const banner = document.getElementById('closed-banner');
+    const payBtn = document.getElementById('pay-btn');
+    if (!shopIsOpen) {
+      banner.style.display = 'block';
+      if (payBtn) { payBtn.disabled = true; payBtn.textContent = 'Online ordering is closed'; }
+    } else {
+      banner.style.display = 'none';
+      if (payBtn) { payBtn.disabled = false; payBtn.textContent = 'Proceed to Payment'; }
+    }
+  } catch(e) { console.warn('Status check error:', e); }
+
+  try {
+    const data = await sbQuery('item_availability?select=item_id,available');
+    if (Array.isArray(data)) {
+      data.forEach(r => { itemAvailability[r.item_id] = r.available; });
+    }
+    buildMenuGrid();
+  } catch(e) { console.warn('Availability check error:', e); }
+}
+
 </script>
 </body>
 </html>
