@@ -1242,7 +1242,7 @@ let availState = {};
 async function loadAvailability() {
   // Load shop status
   try {
-    const statusData = await sbFetch('shop_status?id=eq.1&select=is_open');
+    const statusData = await sbFetch('shop_status?id=eq.1&select=is_open', { method: 'GET' });
     const isOpen = statusData[0] ? statusData[0].is_open : true;
     document.getElementById('shop-open-toggle').checked = isOpen;
     updateShopBadge(isOpen);
@@ -1250,7 +1250,7 @@ async function loadAvailability() {
 
   // Load item availability
   try {
-    const items = await sbFetch('item_availability?select=item_id,available');
+    const items = await sbFetch('item_availability?select=item_id,available', { method: 'GET' });
     // Default all to true, override with DB values
     Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
     if (Array.isArray(items)) {
@@ -1274,6 +1274,7 @@ async function toggleShopStatus(isOpen) {
   try {
     await sbFetch('shop_status?id=eq.1', {
       method: 'PATCH',
+      headers: { 'Prefer': 'return=minimal' },
       body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName })
     });
   } catch(e) { console.error('Toggle error:', e); }
@@ -1347,7 +1348,7 @@ async function saveAvailability() {
 
     await sbFetch('item_availability', {
       method: 'POST',
-      headers: { 'Prefer': 'resolution=merge-duplicates' },
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify(upserts)
     });
 
@@ -1355,6 +1356,7 @@ async function saveAvailability() {
     msgEl.className = 'msg success';
     setTimeout(() => msgEl.textContent = '', 3000);
   } catch(e) {
+    console.error('Save error:', e);
     msgEl.textContent = 'Error saving. Try again.';
     msgEl.className = 'msg error';
   }
