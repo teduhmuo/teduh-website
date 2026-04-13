@@ -1403,7 +1403,356 @@ async function saveAvailability() {
       msgEl.textContent = '✓ Availability saved!';
       msgEl.className = 'msg success';
       setTimeout(() => msgEl.textContent = '', 3000);
-      logAvailabilityChange(Object.entries(availState).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v })));
+      // Only log items that changed to unavailable (not all items each time)
+      const unavailChanged = Object.entries(availState).filter(([k,v]) => v === false).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v }));
+      const availChanged = Object.entries(availState).filter(([k,v]) => v === true).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v }));
+      logAvailabilityChange([...unavailChanged, ...availChanged]);
+    } else {
+      const err = await res.text();
+      throw new Error('HTTP ' + res.status + ': ' + err);
+    }
+  } catch(e) {
+    console.error('Save error:', e);
+    msgEl.textContent = e.message || 'Error saving. Try again.';
+    msgEl.className = 'msg error';
+  }
+}
+
+// ── AVAILABILITY LOG ──────────────────────────────────────────────────
+async function logAvailabilityChange(changes) {
+  // changes = array of { item_id, item_name, available }
+  if (!changes.length) return;
+  const rows = changes.map(c => ({
+    staff_name: currentStaffName,
+    action: c.available ? 'marked available' : 'marked unavailable',
+    item_id: c.item_id,
+    item_name: c.item_name,
+    available: c.available,
+    created_at: new Date().toISOString()
+  }));
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(rows)
+    });
+  } catch(e) { console.warn('Log error:', e); }
+}
+
+async function logShopToggle(isOpen) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify([{
+        staff_name: currentStaffName,
+        action: isOpen ? 'opened online ordering' : 'closed online ordering',
+        item_id: 'shop_status',
+        item_name: 'Online Ordering',
+        available: isOpen,
+        created_at: new Date().toISOString()
+      }])
+    });
+  } catch(e) { console.warn('Log error:', e); }
+}
+
+
+async function logShopToggle(isOpen) {
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/availability_log', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify([{
+        staff_name: currentStaffName,
+        action: isOpen ? 'opened online ordering' : 'closed online ordering',
+        item_id: 'shop_status',
+        item_name: 'Online Ordering',
+        available: isOpen,
+        created_at: new Date().toISOString()
+      }])
+    });
+  } catch(e) { console.warn('Log error:', e); }
+}
+
+async function loadAvailLog() {
+  const list = document.getElementById('avail-log-list');
+  list.innerHTML = '<div class="loading-state">Loading…</div>';
+  try {
+    const data = await sbFetch('availability_log?select=*&order=created_at.desc&limit=200', { method: 'GET' });
+    if (!data || !data.length) {
+      list.innerHTML = '<div class="empty-state">No changes logged yet.</div>';
+      return;
+    }
+
+    // Group by created_at (batch saves happen same second)
+    // Group entries within 2 seconds of each other from same staff as one batch
+    const batches = [];
+    let current = null;
+    data.forEach(r => {
+      const t = new Date(r.created_at).getTime();
+      if (current && r.staff_name === current.staff && (current.time - t) < 3000) {
+        current.items.push(r);
+      } else {
+        current = { staff: r.staff_name, time: t, date: r.created_at, items: [r] };
+        batches.push(current);
+      }
+    });
+
+    list.innerHTML = batches.map((batch, bi) => {
+      const time     = new Date(batch.date).toLocaleString('en-MY', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+      const unavail  = batch.items.filter(r => r.available === false && r.item_id !== 'shop_status');
+      const shopItem = batch.items.find(r => r.item_id === 'shop_status');
+      const isShopToggle = shopItem && !unavail.length;
+
+      // Title line
+      let title = '';
+      let dot   = 'var(--accent)';
+
+      if (isShopToggle) {
+        title = shopItem.available ? 'Opened online ordering' : 'Closed online ordering';
+        dot   = shopItem.available ? 'var(--accent)' : 'var(--error)';
+      } else if (shopItem && !shopItem.available) {
+        title = 'Closed online ordering';
+        dot   = 'var(--error)';
+      } else if (unavail.length === 0) {
+        title = 'All items available';
+        dot   = 'var(--accent)';
+      } else {
+        title = unavail.length + ' item' + (unavail.length > 1 ? 's' : '') + ' marked unavailable';
+        dot   = 'var(--error)';
+      }
+
+      const hasDetails = unavail.length > 0;
+      const detailId   = 'avlog-' + bi;
+
+      return '<div style="border-bottom:1px solid var(--border);">' +
+        '<div style="display:flex;align-items:center;gap:10px;padding:0.75rem 0;' + (hasDetails ? 'cursor:pointer;' : '') + '" ' + (hasDetails ? 'onclick="toggleAvailLogDetail('' + detailId + '')"' : '') + '>' +
+          '<div style="width:8px;height:8px;border-radius:50%;background:' + dot + ';flex-shrink:0;"></div>' +
+          '<div style="flex:1;">' +
+            '<div style="font-size:0.85rem;font-weight:500;color:var(--warm-brown);">' + title + '</div>' +
+          '</div>' +
+          '<div style="text-align:right;flex-shrink:0;">' +
+            '<div style="font-size:0.72rem;color:var(--medium-brown);">' + time + '</div>' +
+            '<div style="margin-top:2px;"><span class="' + (batch.staff === 'Admin' ? 'online-pill' : 'staff-pill') + '">' + batch.staff + '</span></div>' +
+          '</div>' +
+          (hasDetails ? '<div style="font-size:0.75rem;color:var(--medium-brown);margin-left:4px;">▸</div>' : '') +
+        '</div>' +
+        (hasDetails ? '<div id="' + detailId + '" style="display:none;padding:0 0 0.75rem 18px;">' +
+          unavail.map(r => '<div style="font-size:0.78rem;color:var(--error);padding:2px 0;">· ' + (r.item_name || r.item_id) + '</div>').join('') +
+        '</div>' : '') +
+      '</div>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="empty-state">Could not load log.</div>';
+    console.error(e);
+  }
+}
+
+function toggleAvailLogDetail(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  // Flip arrow
+  const row = el.previousElementSibling;
+  const arrow = row ? row.querySelector('div:last-child') : null;
+  if (arrow && (arrow.textContent === '▸' || arrow.textContent === '▾')) {
+    arrow.textContent = isOpen ? '▸' : '▾';
+  }
+}
+
+
+// ── AVAILABILITY ──────────────────────────────────────────────────────
+const MENU_CATEGORIES = {
+  'Coffee Essential':  ['esp','lb','latte','cap'],
+  'Flavoured Coffee':  ['lb-lem','latte-gm','latte-van','latte-car','latte-nut','latte-str','latte-asi','latte-mac','latte-moc'],
+  'Chocolate':         ['choc','choc-mint','choc-gm'],
+  'Matcha':            ['mat','mat-str','mat-man','mat-lem'],
+  'Refresher':         ['ref-vm','ref-vp','ref-lem','ref-sem'],
+  'Frappe Series':     ['frp-str','frp-car','frp-moc','frp-dbl'],
+  'Neapolitan Pizza':  ['piz-mar','piz-pep','piz-bsf','piz-chk','piz-smk','piz-trf','piz-wbp'],
+  'Half-Half Pizza':   ['hpiz-bpgc','hpiz-bstf','hpiz-wpgc','hpiz-wptf'],
+  'Pasta':             ['pas-ao','pas-aogc','pas-aosd'],
+  'Snack & Pastry':    ['snk-cro','snk-chcro','snk-tart','snk-ban','snk-egg','snk-tuna'],
+  'Coffee Beans':      ['bean-250','bean-500','bean-1kg'],
+  'Drip Bags':         ['drip-5','drip-10'],
+  'Merchandise':       ['mug','tote'],
+};
+
+// Product key to display name map for the availability panel
+const PROD_NAMES = {
+  'esp':'Espresso','lb':'Long Black','latte':'Café Latte','cap':'Cappuccino',
+  'lb-lem':'Long Black Lemon','latte-gm':'Café Latte Gula Melaka','latte-van':'Café Latte Vanilla',
+  'latte-car':'Café Latte Caramel','latte-nut':'Café Latte Nutty','latte-str':'Café Latte Strawberry',
+  'latte-asi':'Café Latte Asian','latte-mac':'Café Latte Caramel Machiato','latte-moc':'Café Latte Mocha',
+  'choc':'Chocolate','choc-mint':'Chocolate Mint','choc-gm':'Chocolate Gula Melaka',
+  'mat':'Matcha Latte','mat-str':'Matcha Latte Strawberry','mat-man':'Matcha Latte Mango','mat-lem':'Matcha Lemonade',
+  'ref-vm':'Sparkling Vanilla Mint','ref-vp':'Sparkling Vanilla Peach','ref-lem':'Sparkling Lemonade','ref-sem':'Semangka Laici',
+  'frp-str':'Strawberry Frappe','frp-car':'Caramel Café Frappe','frp-moc':'Mocha Choco Chip Frappe','frp-dbl':'Double Choco Chip Frappe',
+  'piz-mar':'Margherita Pizza','piz-pep':'Beef Pepperoni Pizza','piz-bsf':'Sliced Beef Pizza',
+  'piz-chk':'Spicy Garlic Chicken Pizza','piz-smk':'Teduh Smoked Pizza','piz-trf':'Creamy Truffle Beef Pizza','piz-wbp':'White Beef Pepperoni Pizza',
+  'hpiz-bpgc':'Beef Pepperoni & Garlic Chicken','hpiz-bstf':'Beef Sliced & Creamy Truffle Beef',
+  'hpiz-wpgc':'White Pepperoni & Garlic Chicken','hpiz-wptf':'White Pepperoni & Truffle Beef',
+  'pas-ao':'Aglio e Oglio','pas-aogc':'Aglio e Oglio Garlic Chicken','pas-aosd':'Aglio e Oglio Smoked Duck',
+  'snk-cro':'Plain Croissant','snk-chcro':'Chocolate Roll','snk-tart':'Mini Egg Tart',
+  'snk-ban':'Banana Bar','snk-egg':'Egg Mayo Croissant','snk-tuna':'Tuna Mayo Croissant',
+  'bean-250':'House Blend 250g','bean-500':'House Blend 500g','bean-1kg':'House Blend 1kg',
+  'drip-5':'Drip Bags x5','drip-10':'Drip Bags x10',
+  'mug':'Teduh Mug','tote':'Teduh Tote Bag',
+};
+
+// Local availability state: { 'item_name': true/false }
+let availState = {};
+
+async function loadAvailability() {
+  // Load shop status
+  try {
+    const statusData = await sbFetch('shop_status?id=eq.1&select=is_open', { method: 'GET' });
+    const isOpen = statusData[0] ? statusData[0].is_open : true;
+    document.getElementById('shop-open-toggle').checked = isOpen;
+    updateShopBadge(isOpen);
+  } catch(e) { console.error('Status load error:', e); }
+
+  // Load item availability
+  try {
+    const items = await sbFetch('item_availability?select=item_id,available', { method: 'GET' });
+    // Default all to true, override with DB values
+    Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
+    if (Array.isArray(items)) {
+      items.forEach(r => { availState[r.item_id] = r.available; });
+    }
+  } catch(e) {
+    Object.values(MENU_CATEGORIES).flat().forEach(name => availState[name] = true);
+  }
+
+  renderAvailCategories();
+}
+
+function updateShopBadge(isOpen) {
+  const badge = document.getElementById('shop-status-badge');
+  badge.textContent = isOpen ? 'OPEN' : 'CLOSED';
+  badge.className = 'avail-status-badge ' + (isOpen ? 'open' : 'closed');
+}
+
+async function toggleShopStatus(isOpen) {
+  updateShopBadge(isOpen);
+  try {
+    await sbFetch('shop_status?id=eq.1', {
+      method: 'PATCH',
+      headers: { 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName })
+    });
+    logShopToggle(isOpen);
+  } catch(e) { console.error('Toggle error:', e); }
+}
+
+function renderAvailCategories() {
+  const el = document.getElementById('avail-categories');
+  if (!el) return;
+
+  let html = '';
+  Object.entries(MENU_CATEGORIES).forEach(([cat, items]) => {
+    const allOn  = items.every(k => availState[k] !== false);
+    const countOn = items.filter(k => availState[k] !== false).length;
+    const catId  = cat.replace(/[^a-z0-9]/gi, '-');
+    const makeAvail = !allOn;
+
+    html += '<div class="avail-cat-block" id="catblock-' + catId + '">';
+    html += '<div class="avail-cat-header">';
+    html += '<div>';
+    html += '<div class="avail-cat-name">' + cat + '</div>';
+    html += '<div class="avail-cat-count">' + countOn + ' / ' + items.length + ' available</div>';
+    html += '</div>';
+    html += '<button class="avail-cat-toggle" onclick="toggleCategory(`' + catId + '`,`' + cat + '`,' + makeAvail + ')">' + (allOn ? 'Uncheck all' : 'Check all') + '</button>';
+    html += '</div>';
+
+    html += '<div class="avail-items-grid">';
+    items.forEach(key => {
+      const avail   = availState[key] !== false;
+      const label   = PROD_NAMES[key] || key;
+      html += '<label class="avail-item' + (avail ? '' : ' unavailable') + '">' +
+        '<span>' + label + '</span>' +
+        '<input type="checkbox" ' + (avail ? 'checked' : '') + ' onchange="toggleItem(`' + key + '`,this.checked)">' +
+        '</label>';
+    });
+    html += '</div></div>';
+  });
+
+  el.innerHTML = html;
+}
+
+function toggleItem(item, checked) {
+  availState[item] = checked;
+  renderAvailCategories();
+}
+
+function toggleCategory(catId, cat, makeAvail) {
+  // Find by cat name or by searching catId
+  let items = MENU_CATEGORIES[cat];
+  if (!items) {
+    // fallback: find cat whose id matches
+    const found = Object.keys(MENU_CATEGORIES).find(c => c.replace(/[^a-z0-9]/gi,'-') === catId);
+    if (found) items = MENU_CATEGORIES[found];
+  }
+  if (!items) return;
+  items.forEach(item => availState[item] = makeAvail);
+  renderAvailCategories();
+}
+
+async function saveAvailability() {
+  const msgEl = document.getElementById('avail-save-msg');
+  msgEl.textContent = 'Saving…';
+  msgEl.className = 'msg';
+
+  try {
+    // Detect changes for log
+    const changes = Object.entries(availState)
+      .filter(([k, v]) => v === false)
+      .map(([k, v]) => ({ item_id: k, item_name: PROD_NAMES[k] || k, available: v }));
+
+    const upserts = Object.entries(availState).map(([item_id, available]) => ({
+      item_id,
+      available,
+      category: Object.keys(MENU_CATEGORIES).find(c => MENU_CATEGORIES[c].includes(item_id)) || '',
+      updated_at: new Date().toISOString()
+    }));
+
+    const res = await fetch(SUPABASE_URL + '/rest/v1/item_availability', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=minimal'
+      },
+      body: JSON.stringify(upserts)
+    });
+
+    // 204 No Content = success with return=minimal
+    // 200/201 = success with data
+    if (res.status === 204 || res.status === 200 || res.status === 201) {
+      msgEl.textContent = '✓ Availability saved!';
+      msgEl.className = 'msg success';
+      setTimeout(() => msgEl.textContent = '', 3000);
+      // Only log items that changed to unavailable (not all items each time)
+      const unavailChanged = Object.entries(availState).filter(([k,v]) => v === false).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v }));
+      const availChanged = Object.entries(availState).filter(([k,v]) => v === true).map(([k,v]) => ({ item_id: k, item_name: PROD_NAMES[k]||k, available: v }));
+      logAvailabilityChange([...unavailChanged, ...availChanged]);
     } else {
       const err = await res.text();
       throw new Error('HTTP ' + res.status + ': ' + err);
