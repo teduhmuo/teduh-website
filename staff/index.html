@@ -505,7 +505,7 @@
 
 <script>
 const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
 let queueInterval = null;
 
 // ── Staff directory — add/edit here ──────────────────────────────────
@@ -1086,7 +1086,7 @@ async function confirmWalkinRedeem(item, ptsCost) {
     try {
       await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyverse-redeem', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer sb_publishable_EjBVFOi956996CB7xDGHsQ_Bs_lCilh' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0' },
         body: JSON.stringify({ loyverse_token: LOYVERSE_TOKEN, item_name: item.name, item_price: item.price, customer: redeemMember.name, phone: redeemMember.phone })
       });
     } catch(e) { console.warn('Loyverse edge fn:', e.message); }
