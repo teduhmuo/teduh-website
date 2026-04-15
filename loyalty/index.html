@@ -507,24 +507,25 @@ async function registerMember() {
       return;
     }
 
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members`, {
+ const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
       method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
-      },
-      body: JSON.stringify({ name, phone, points: 0 })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'register', name, phone })
     });
+    const data = await res.json();
 
-    if (res.ok) {
-      const bonusMsg = ` 🎁 You also get 10 free points as a welcome reward!`;
-      showMsg('reg-msg', `🎉 Welcome to Teduh Loyalty, ${name}! You're all set. Every RM1 you spend earns 1 point.${bonusMsg}`, 'success');
+    if (data.exists) {
+      showMsg('reg-msg', `Welcome back, ${data.member.name}! You already have a loyalty account with ${data.member.points} points.`, 'info');
+      btn.disabled = false; btn.textContent = 'Join Teduh Loyalty';
+      return;
+    }
+
+    if (data.registered) {
+      showMsg('reg-msg', `🎉 Welcome to Teduh Loyalty, ${name}! Every RM1 earns 1 point. 🎁 You get 10 free points as a welcome reward!`, 'success');
       document.getElementById('reg-name').value = '';
       document.getElementById('reg-phone').value = '';
     } else {
-      showMsg('reg-msg', 'Registration failed. Please try again or ask our staff for help.', 'error');
+      showMsg('reg-msg', 'Registration failed. Please try again.', 'error');
     }
   } catch(e) {
     showMsg('reg-msg', 'Connection error. Please try again.', 'error');
