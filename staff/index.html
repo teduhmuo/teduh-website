@@ -627,14 +627,15 @@ async function sbFetch(path, options = {}) {
 // ── Stats ─────────────────────────────────────────────────────────────
 async function loadStats() {
   try {
-    const [members, earnTx, redeemTx] = await Promise.all([
-      sbFetch('loyalty_members?select=points'),
-      sbFetch('loyalty_transactions?select=points&points=gt.0'),
-      sbFetch('loyalty_transactions?select=points&points=lt.0'),
-    ]);
-    document.getElementById('stat-members').textContent  = members.length  || 0;
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'stats' })
+    });
+    const { members, earnTx, redeemTx } = await res.json();
+    document.getElementById('stat-members').textContent  = members.length || 0;
     document.getElementById('stat-tx').textContent       = (earnTx.length + redeemTx.length) || 0;
-    document.getElementById('stat-pts').textContent      = earnTx.reduce((s,t)  => s + t.points, 0) || 0;
+    document.getElementById('stat-pts').textContent      = earnTx.reduce((s,t) => s + t.points, 0) || 0;
     document.getElementById('stat-redeemed').textContent = Math.abs(redeemTx.reduce((s,t) => s + t.points, 0)) || 0;
   } catch(e) {}
 }
@@ -849,8 +850,13 @@ async function registerMember() {
 // ── ADMIN: Members ────────────────────────────────────────────────────
 async function loadAllMembers() {
   try {
-    const data = await sbFetch('loyalty_members?select=*&order=points.desc');
-    allMembers = data || [];
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'all_members' })
+    });
+    const { members } = await res.json();
+    allMembers = members || [];
     renderMembersTable(allMembers);
   } catch(e) {
     document.getElementById('members-table-wrap').innerHTML = '<div class="empty-state">Could not load.</div>';
@@ -893,8 +899,13 @@ function renderMembersTable(members) {
 // ── ADMIN: Transaction Log ────────────────────────────────────────────
 async function loadAllTx() {
   try {
-    const data = await sbFetch('loyalty_transactions?select=*&order=created_at.desc&limit=500');
-    allTx = data || [];
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-admin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'all_transactions' })
+    });
+    const { transactions } = await res.json();
+    allTx = transactions || [];
     renderTxTable(allTx);
   } catch(e) {
     document.getElementById('tx-table-wrap').innerHTML = '<div class="empty-state">Could not load.</div>';
@@ -1046,16 +1057,21 @@ async function lookupRedeemMember() {
   if (!phone) return;
   msgEl.textContent = 'Looking up…'; msgEl.className = 'msg';
   try {
-    const data = await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(phone) + '&limit=1');
-    if (!data[0]) { msgEl.textContent = 'Customer not found.'; msgEl.className = 'msg error'; return; }
-    redeemMember = data[0];
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ phone })
+    });
+    if (res.status === 404) { msgEl.textContent = 'Customer not found.'; msgEl.className = 'msg error'; return; }
+    const { member } = await res.json();
+    redeemMember = member;
     msgEl.textContent = '';
-    document.getElementById('rm-name').textContent  = redeemMember.name;
-    document.getElementById('rm-phone').textContent = redeemMember.phone;
-    document.getElementById('rm-pts').textContent   = redeemMember.points;
-    const tier = getTier(redeemMember.points);
-    document.getElementById('rm-tier').textContent  = tier ? tier.label : '';
-    buildWalkinRedeemItems(redeemMember.points);
+    document.getElementById('rm-name').textContent  = member.name;
+    document.getElementById('rm-phone').textContent = member.phone;
+    document.getElementById('rm-pts').textContent   = member.points;
+    const tier = getTier(member.points);
+    document.getElementById('rm-tier').textContent  = tier ? tier.name + ' Member' : '';
+    buildWalkinRedeemItems(member.points);
     card.style.display = 'block';
   } catch(e) { msgEl.textContent = 'Error. Try again.'; msgEl.className = 'msg error'; }
 }
