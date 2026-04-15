@@ -820,10 +820,17 @@ async function registerMember() {
   const btn = document.querySelector('#panel-register .submit-btn');
   btn.disabled = true; btn.textContent = 'Registering…';
   try {
-    const existing = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
-    if (existing && existing[0]) {
-      showMsg('reg-msg', `Already registered — ${existing[0].name}, ${existing[0].points} pts.`, 'info');
-      btn.disabled = false; btn.textContent = 'Register Member'; return;
+    // With this:
+const checkRes = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+  body: JSON.stringify({ phone })
+});
+if (checkRes.status !== 404) {
+  const { member } = await checkRes.json();
+  showMsg('reg-msg', `Already registered — ${member.name}, ${member.points} pts.`, 'info');
+  btn.disabled = false; btn.textContent = 'Register Member'; return;
+}
     }
     const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members`, {
       method: 'POST',
