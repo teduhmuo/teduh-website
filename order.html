@@ -1349,8 +1349,13 @@ async function lookupLoyalty() {
   redeemItem = null;
 
   try {
-    let member = await sbGet('loyalty_members', { phone });
-
+    // With this:
+const lRes = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+  body: JSON.stringify({ phone })
+});
+let member = lRes.status === 404 ? null : (await lRes.json()).member;
     if (!member) {
       // Auto-register using name from Step 3 if filled, else use phone as placeholder
       const nameField = document.getElementById('field-name').value.trim();
