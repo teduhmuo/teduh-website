@@ -820,17 +820,15 @@ async function registerMember() {
   const btn = document.querySelector('#panel-register .submit-btn');
   btn.disabled = true; btn.textContent = 'Registering…';
   try {
-    // With this:
-const checkRes = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
-  body: JSON.stringify({ phone })
-});
-if (checkRes.status !== 404) {
-  const { member } = await checkRes.json();
-  showMsg('reg-msg', `Already registered — ${member.name}, ${member.points} pts.`, 'info');
-  btn.disabled = false; btn.textContent = 'Register Member'; return;
-}
+    const checkRes = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ phone })
+    });
+    if (checkRes.status !== 404) {
+      const { member } = await checkRes.json();
+      showMsg('reg-msg', `Already registered — ${member.name}, ${member.points} pts.`, 'info');
+      btn.disabled = false; btn.textContent = 'Register Member'; return;
     }
     const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members`, {
       method: 'POST',
@@ -841,9 +839,7 @@ if (checkRes.status !== 404) {
       const totalMembers = await sbFetch('loyalty_members?select=id');
       const memberCount = totalMembers.length;
       const gotBonus = memberCount <= 64;
-      const bonusMsg = gotBonus
-        ? ` 🎉 ${name} gets 10 free points as a welcome reward!`
-        : '';
+      const bonusMsg = gotBonus ? ` 🎉 ${name} gets 10 free points as a welcome reward!` : '';
       showMsg('reg-msg', `${name} registered successfully!${bonusMsg} (by ${currentStaffName})`, 'success');
       document.getElementById('reg-name').value  = '';
       document.getElementById('reg-phone').value = '';
@@ -853,7 +849,6 @@ if (checkRes.status !== 404) {
   } catch(e) { showMsg('reg-msg', 'Connection error. Try again.', 'error'); }
   btn.disabled = false; btn.textContent = 'Register Member';
 }
-
 // ── ADMIN: Members ────────────────────────────────────────────────────
 async function loadAllMembers() {
   try {
