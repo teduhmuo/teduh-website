@@ -1400,7 +1400,7 @@ function buildRedeemOptions(pts) {
   Object.keys(cart).forEach(k => {
     const product = PRODUCTS[k];
     if (product.price < 8) return; // skip items under RM8
-    const ptsCost = Math.round(product.price / 0.065);
+    const ptsCost = Math.round(product.price / 0.08);
     if (pts >= ptsCost) {
       const opt = document.createElement('option');
       opt.value = k;
