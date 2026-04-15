@@ -826,7 +826,13 @@ async function registerMember() {
       body: JSON.stringify({ name, phone, points: 0 })
     });
     if (res.ok) {
-      showMsg('reg-msg', `${name} registered! (by ${currentStaffName})`, 'success');
+      const totalMembers = await sbFetch('loyalty_members?select=id');
+      const memberCount = totalMembers.length;
+      const gotBonus = memberCount <= 64;
+      const bonusMsg = gotBonus
+        ? ` 🎉 ${name} gets 10 free points as a welcome reward!`
+        : '';
+      showMsg('reg-msg', `${name} registered successfully!${bonusMsg} (by ${currentStaffName})`, 'success');
       document.getElementById('reg-name').value  = '';
       document.getElementById('reg-phone').value = '';
       loadStats();
