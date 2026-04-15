@@ -677,17 +677,18 @@ function onAddPhoneInput() {
 
 async function autoLookupAdd(phone) {
   try {
-    const data = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
-    const m = data[0];
-    if (m) {
-      addTarget = m;
-      document.getElementById('add-mp-name').textContent = m.name;
-      document.getElementById('add-mp-pts').textContent  = `Balance: ${m.points} pts`;
-      document.getElementById('add-member-preview').style.display = 'block';
-      updateAddPreview();
-    } else {
-      showMsg('add-msg', 'Phone not registered. Register them first.', 'info');
-    }
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ phone })
+    });
+    if (res.status === 404) { showMsg('add-msg', 'Phone not registered. Register them first.', 'info'); return; }
+    const { member } = await res.json();
+    addTarget = member;
+    document.getElementById('add-mp-name').textContent = member.name;
+    document.getElementById('add-mp-pts').textContent  = `Balance: ${member.points} pts`;
+    document.getElementById('add-member-preview').style.display = 'block';
+    updateAddPreview();
   } catch(e) {}
 }
 
@@ -781,19 +782,22 @@ async function lookupMember() {
   card.style.display = 'none';
   document.getElementById('lookup-msg').className = 'msg';
   try {
-    const data = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`);
-    const m = data[0];
-    if (!m) { showMsg('lookup-msg', 'No member found.', 'info'); return; }
-    document.getElementById('lc-name').textContent  = m.name;
-    document.getElementById('lc-phone').textContent = m.phone;
-    document.getElementById('lc-pts').textContent   = m.points;
-    document.getElementById('lc-tier').textContent  = getTier(m.points).name + ' Member';
-    const txData = await sbFetch(`loyalty_transactions?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc&limit=8`);
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ phone })
+    });
+    if (res.status === 404) { showMsg('lookup-msg', 'No member found.', 'info'); return; }
+    const { member, transactions } = await res.json();
+    document.getElementById('lc-name').textContent  = member.name;
+    document.getElementById('lc-phone').textContent = member.phone;
+    document.getElementById('lc-pts').textContent   = member.points;
+    document.getElementById('lc-tier').textContent  = getTier(member.points).name + ' Member';
     const histEl = document.getElementById('lc-history');
-    if (!txData || !txData.length) {
+    if (!transactions || !transactions.length) {
       histEl.innerHTML = '<div style="font-size:0.78rem;opacity:0.4;">No transactions yet.</div>';
     } else {
-      histEl.innerHTML = txData.map(t => `
+      histEl.innerHTML = transactions.map(t => `
         <div class="history-item">
           <div>
             <div class="h-desc">${t.description}${t.staff_name ? ` <span style="opacity:0.55;font-size:0.72rem;">· ${t.staff_name}</span>` : ''}</div>
