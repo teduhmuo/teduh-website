@@ -553,44 +553,39 @@ async function checkPoints() {
   document.getElementById('check-msg').className = 'msg';
 
   try {
-    // Get member
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(phone)}&limit=1`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_KEY}`
+      },
+      body: JSON.stringify({ phone })
     });
-    const data = await res.json();
 
-    if (!data || !data[0]) {
+    if (res.status === 404) {
       showMsg('check-msg', 'No account found for this number. Register first using the "Join Now" tab.', 'info');
       btn.disabled = false; btn.textContent = 'Check My Points';
       return;
     }
 
-    const m = data[0];
+    const { member, transactions } = await res.json();
     document.getElementById('check-msg').className = 'msg';
+    document.getElementById('mc-name').textContent = member.name;
+    document.getElementById('mc-phone').textContent = member.phone;
+    document.getElementById('mc-pts').textContent = member.points;
 
-    // Populate member card
-    document.getElementById('mc-name').textContent = m.name;
-    document.getElementById('mc-phone').textContent = m.phone;
-    document.getElementById('mc-pts').textContent = m.points;
-
-    const tier = getTier(m.points);
-    const prog = getTierProgress(m.points);
+    const tier = getTier(member.points);
+    const prog = getTierProgress(member.points);
     document.getElementById('mc-tier-name').textContent = tier.name;
     document.getElementById('mc-tier-next').textContent = prog.nextLabel;
     document.getElementById('mc-tier-fill').style.width = prog.pct + '%';
     document.getElementById('mc-tier-badge').textContent = tier.name + ' Member';
 
-    // Get recent transactions
-    const txRes = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_transactions?phone=eq.${encodeURIComponent(phone)}&order=created_at.desc&limit=5`, {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
-    });
-    const txData = await txRes.json();
-
     const histEl = document.getElementById('mc-history');
-    if (!txData || txData.length === 0) {
+    if (!transactions || transactions.length === 0) {
       histEl.innerHTML = '<div class="empty-hist" style="color:rgba(247,243,238,0.4); padding:0.5rem 0;">No transactions yet.</div>';
     } else {
-      histEl.innerHTML = txData.map(t => `
+      histEl.innerHTML = transactions.map(t => `
         <div class="history-item" style="border-bottom-color:rgba(255,255,255,0.1);">
           <div>
             <div class="h-desc" style="color:var(--cream); font-size:0.82rem;">${t.description}</div>
