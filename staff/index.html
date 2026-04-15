@@ -1058,7 +1058,6 @@ async function lookupRedeemMember() {
 
 function buildWalkinRedeemItems(pts) {
   const list = document.getElementById('redeem-items-list');
-  if (pts < 150) { list.innerHTML = '<div style="font-size:0.82rem;opacity:0.6;">Need min 150 pts. Customer has ' + pts + ' pts.</div>'; return; }
   let html = ''; let added = 0;
   WALKIN_ITEMS.forEach(item => {
     const ptsCost = Math.round(item.price / 0.08);
