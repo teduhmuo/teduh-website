@@ -830,21 +830,21 @@ async function registerMember() {
       showMsg('reg-msg', `Already registered — ${member.name}, ${member.points} pts.`, 'info');
       btn.disabled = false; btn.textContent = 'Register Member'; return;
     }
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members`, {
+const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
       method: 'POST',
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
-      body: JSON.stringify({ name, phone, points: 0 })
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
+      body: JSON.stringify({ action: 'register', name, phone })
     });
-    if (res.ok) {
-      const totalMembers = await sbFetch('loyalty_members?select=id');
-      const memberCount = totalMembers.length;
-      const gotBonus = memberCount <= 64;
-      const bonusMsg = gotBonus ? ` 🎉 ${name} gets 10 free points as a welcome reward!` : '';
+    const data = await res.json();
+    if (data.registered) {
+      const bonusMsg = ` 🎉 ${name} gets 10 free points as a welcome reward!`;
       showMsg('reg-msg', `${name} registered successfully!${bonusMsg} (by ${currentStaffName})`, 'success');
       document.getElementById('reg-name').value  = '';
       document.getElementById('reg-phone').value = '';
       loadStats();
       if (currentRole === 'admin') { loadAllMembers(); loadOverview(); }
+    } else if (data.exists) {
+      showMsg('reg-msg', `Already registered — ${data.member.name}, ${data.member.points} pts.`, 'info');
     } else { showMsg('reg-msg', 'Registration failed. Try again.', 'error'); }
   } catch(e) { showMsg('reg-msg', 'Connection error. Try again.', 'error'); }
   btn.disabled = false; btn.textContent = 'Register Member';
