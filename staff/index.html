@@ -1501,7 +1501,7 @@ function renderQueue() {
     return;
   }
   list.innerHTML = filtered.map(function(o) {
-    var isPU = o.queue_number && o.queue_number.startsWith('#PU');
+    var isPU = o.queue_number && o.queue_number.startsWith('#PO');
     var typeLabel = isPU ? 'Pickup' : 'Delivery';
     var typeClass = isPU ? 'pickup' : 'delivery';
     var timeStr = new Date(o.created_at).toLocaleTimeString('en-MY', { hour:'2-digit', minute:'2-digit' });
