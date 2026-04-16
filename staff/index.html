@@ -709,8 +709,10 @@ async function submitAddPoints() {
   if (!addTarget) { showMsg('add-msg', 'Customer not found. Check the phone number.', 'error'); return; }
   if (amt <= 0)   { showMsg('add-msg', 'Enter a valid bill amount.', 'error'); return; }
 
-  const btn = document.getElementById('add-submit-btn');
-  btn.disabled = true; btn.textContent = 'Adding…';
+const btn = document.getElementById('add-submit-btn');
+btn.disabled = true; btn.textContent = 'Adding…';
+console.log('addTarget phone:', addTarget.phone);
+console.log('encoded:', encodeURIComponent(addTarget.phone));
 
   try {
     const newPts   = addTarget.points + amt;
