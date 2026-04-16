@@ -68,12 +68,37 @@
   .ticket-items .ti-label { font-size: 0.68rem; color: rgba(247,243,238,0.45); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.35rem; }
   .ticket-items .ti-item { font-size: 0.82rem; color: var(--cream); padding: 0.2rem 0; }
 
+  /* Order summary card */
+  .order-summary {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.25rem;
+    margin-bottom: 1.25rem; display: none; text-align: left;
+  }
+  .os-title {
+    font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--medium-brown); margin-bottom: 0.85rem; font-weight: 500;
+  }
+  .os-ref {
+    font-family: var(--font-display); font-size: 1rem;
+    color: var(--warm-brown); margin-bottom: 0.75rem;
+  }
+  .os-row {
+    display: flex; justify-content: space-between;
+    font-size: 0.82rem; padding: 0.3rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .os-row:last-child { border-bottom: none; }
+  .os-row .ol { color: var(--medium-brown); }
+  .os-row .ov { font-weight: 500; color: var(--warm-brown); text-align: right; }
+  .os-items { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border); }
+  .os-items-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--medium-brown); margin-bottom: 0.4rem; }
+  .os-item { font-size: 0.82rem; color: var(--warm-brown); padding: 0.2rem 0; }
+
   /* Loyalty card */
   .loyalty-card {
     background: var(--white); border: 1px solid var(--border);
     border-radius: 12px; padding: 1.1rem 1.25rem;
-    margin-bottom: 1.25rem; display: none;
-    display: none; text-align: left;
+    margin-bottom: 1.25rem; display: none; text-align: left;
   }
   .lc-label { font-size: 0.72rem; opacity: 0.6; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.25rem; color: var(--medium-brown); }
   .lc-row { display: flex; align-items: baseline; gap: 6px; }
@@ -104,7 +129,7 @@
 <main>
   <div class="check-circle">✓</div>
   <h1>Order confirmed!</h1>
-  <p class="sub">Thank you for your order. We'll WhatsApp you with updates shortly.</p>
+  <p class="sub">Thank you for your order. We'll contact you on WhatsApp when your order is ready.</p>
 
   <p class="processing-msg" id="processing-msg">Setting up your order…</p>
 
@@ -112,7 +137,7 @@
   <div class="queue-ticket" id="queue-ticket">
     <div class="ticket-top">
       <div class="ticket-label">Your queue number</div>
-      <div class="ticket-number" id="ticket-number">#PU0001</div>
+      <div class="ticket-number" id="ticket-number">#PO0001</div>
       <div class="ticket-type" id="ticket-type">Pickup</div>
     </div>
     <div class="ticket-bottom">
@@ -128,6 +153,21 @@
         <div class="ti-label">Items ordered</div>
         <div id="ticket-items-list"></div>
       </div>
+    </div>
+  </div>
+
+  <!-- Order Summary -->
+  <div class="order-summary" id="order-summary">
+    <div class="os-title">Order summary</div>
+    <div class="os-ref" id="os-ref"></div>
+    <div class="os-row"><span class="ol">Name</span><span class="ov" id="os-name"></span></div>
+    <div class="os-row"><span class="ol">Phone</span><span class="ov" id="os-phone"></span></div>
+    <div class="os-row"><span class="ol">Fulfillment</span><span class="ov" id="os-fulfillment"></span></div>
+    <div class="os-row" id="os-address-row" style="display:none;"><span class="ol">Address</span><span class="ov" id="os-address"></span></div>
+    <div class="os-row"><span class="ol">Total paid</span><span class="ov" id="os-total"></span></div>
+    <div class="os-items">
+      <div class="os-items-label">Items</div>
+      <div id="os-items-list"></div>
     </div>
   </div>
 
@@ -157,8 +197,10 @@ async function sbFetch(path, options = {}) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
     ...options,
     headers: {
-      'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
-      'Content-Type': 'application/json', 'Prefer': 'return=representation',
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': 'return=representation',
       ...(options.headers || {})
     }
   });
@@ -167,15 +209,15 @@ async function sbFetch(path, options = {}) {
 
 // ── Generate queue number ─────────────────────────────────────────────
 async function generateQueueNumber(type) {
-  const prefix = type === 'pickup' ? 'PU' : 'DO';
+  // PO = Pickup Order, DO = Delivery Order
+  const prefix = type === 'delivery' ? 'DO' : 'PO';
 
-  // Get first day of current month
   const now   = new Date();
   const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-  // Count existing orders this month with same prefix
+  // %25 is encoded % for the LIKE wildcard
   const existing = await sbFetch(
-    `queue_orders?queue_number=like.%23${prefix}%&created_at=gte.${start}&select=queue_number`
+    `queue_orders?queue_number=like.%23${prefix}%25&created_at=gte.${encodeURIComponent(start)}&select=queue_number`
   );
 
   const count  = Array.isArray(existing) ? existing.length + 1 : 1;
@@ -210,7 +252,7 @@ function notifyWhatsApp(order, queueNum) {
   window.open('https://wa.me/' + NOTIFY_WA + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
-// ── Credit loyalty points (earn + redeem, both AFTER payment confirmed) ──
+// ── Credit loyalty points ─────────────────────────────────────────────
 async function creditPoints(pending) {
   try {
     const res  = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}&limit=1`, {
@@ -221,7 +263,6 @@ async function creditPoints(pending) {
 
     let balance = data[0].points;
 
-    // 1. Deduct redeem first (if any)
     if (pending.redeemItem && pending.redeemItem.price > 0) {
       balance = Math.max(0, balance - pending.redeemItem.price);
       await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}`, {
@@ -232,16 +273,10 @@ async function creditPoints(pending) {
       await fetch(`${SUPABASE_URL}/rest/v1/loyalty_transactions`, {
         method: 'POST',
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: pending.phone,
-          description: `Redeemed: ${pending.redeemItem.name} · Order ${pending.orderRef}`,
-          points: -pending.redeemItem.price,
-          order_ref: pending.orderRef
-        })
+        body: JSON.stringify({ phone: pending.phone, description: `Redeemed: ${pending.redeemItem.name} · Order ${pending.orderRef}`, points: -pending.redeemItem.price, order_ref: pending.orderRef })
       });
     }
 
-    // 2. Add earned points
     if (pending.points > 0) {
       balance = balance + pending.points;
       await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(pending.phone)}`, {
@@ -252,12 +287,7 @@ async function creditPoints(pending) {
       await fetch(`${SUPABASE_URL}/rest/v1/loyalty_transactions`, {
         method: 'POST',
         headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone: pending.phone,
-          description: `Online purchase · Order ${pending.orderRef}`,
-          points: pending.points,
-          order_ref: pending.orderRef
-        })
+        body: JSON.stringify({ phone: pending.phone, description: `Online purchase · Order ${pending.orderRef}`, points: pending.points, order_ref: pending.orderRef })
       });
     }
 
@@ -286,45 +316,69 @@ async function onLoad() {
   document.getElementById('processing-msg').textContent = 'Generating your queue number…';
 
   try {
-    // Generate queue number
     const queueNum = await generateQueueNumber(order.fulfillmentType || 'pickup');
 
-    // Save to queue_orders table
     await sbFetch('queue_orders', {
       method: 'POST',
       body: JSON.stringify({
-        queue_number:    queueNum,
-        order_ref:       order.orderRef,
-        customer_name:   order.name,
-        phone:           order.phone,
-        items:           order.itemsSimple || order.items,
+        queue_number:     queueNum,
+        order_ref:        order.orderRef,
+        customer_name:    order.name,
+        phone:            order.phone,
+        items:            order.itemsSimple || order.items,
         fulfillment_type: order.fulfillmentType || 'pickup',
-        address:         order.address  || '',
-        notes:           order.notes    || '',
-        status:          'pending'
+        address:          order.address  || '',
+        notes:            order.notes    || '',
+        status:           'pending'
       })
     });
 
-    // Show ticket
+    // Show queue ticket
     document.getElementById('processing-msg').style.display = 'none';
     const ticket = document.getElementById('queue-ticket');
     ticket.style.display = 'block';
     document.getElementById('ticket-number').textContent = queueNum;
-    document.getElementById('ticket-type').textContent   = order.fulfillmentType === 'delivery' ? 'Delivery' : 'Pickup';
+    document.getElementById('ticket-type').textContent   = order.fulfillmentType === 'delivery' ? 'Delivery Order' : 'Pickup Order';
     document.getElementById('ticket-name').textContent   = order.name;
     document.getElementById('ticket-total').textContent  = `RM ${order.total}`;
-
-    // Items list
     const itemsList = document.getElementById('ticket-items-list');
-    const items = (order.itemsSimple || '').split(', ');
-    itemsList.innerHTML = items.map(i => `<div class="ti-item">· ${i}</div>`).join('');
+    itemsList.innerHTML = (order.itemsSimple || '').split(', ').map(i => `<div class="ti-item">· ${i}</div>`).join('');
 
-    // WhatsApp notification
+    // Show order summary
+    const summary = document.getElementById('order-summary');
+    summary.style.display = 'block';
+    document.getElementById('os-ref').textContent         = `Ref: ${order.orderRef}`;
+    document.getElementById('os-name').textContent        = order.name;
+    document.getElementById('os-phone').textContent       = order.phone;
+    document.getElementById('os-fulfillment').textContent = order.fulfillmentType === 'delivery' ? 'Delivery' : 'Self-Pickup';
+    document.getElementById('os-total').textContent       = `RM ${order.total}`;
+    if (order.address) {
+      document.getElementById('os-address-row').style.display = 'flex';
+      document.getElementById('os-address').textContent = order.address;
+    }
+    document.getElementById('os-items-list').innerHTML = (order.itemsSimple || '').split(', ').map(i => `<div class="os-item">· ${i}</div>`).join('');
+
     notifyWhatsApp(order, queueNum);
 
   } catch(e) {
     console.error('Queue error:', e);
     document.getElementById('processing-msg').textContent = 'Order confirmed! Thank you.';
+
+    // Still show order summary even if queue fails
+    const summary = document.getElementById('order-summary');
+    if (order) {
+      summary.style.display = 'block';
+      document.getElementById('os-ref').textContent         = `Ref: ${order.orderRef}`;
+      document.getElementById('os-name').textContent        = order.name;
+      document.getElementById('os-phone').textContent       = order.phone;
+      document.getElementById('os-fulfillment').textContent = order.fulfillmentType === 'delivery' ? 'Delivery' : 'Self-Pickup';
+      document.getElementById('os-total').textContent       = `RM ${order.total}`;
+      if (order.address) {
+        document.getElementById('os-address-row').style.display = 'flex';
+        document.getElementById('os-address').textContent = order.address;
+      }
+      document.getElementById('os-items-list').innerHTML = (order.itemsSimple || '').split(', ').map(i => `<div class="os-item">· ${i}</div>`).join('');
+    }
   }
 
   // Credit loyalty points
