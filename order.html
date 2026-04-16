@@ -973,6 +973,7 @@
 const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
 const PORTAL_KEY   = '50423c0a44098dd31210a91e335e6192';
+const BAYARCASH_PAT = 'PASTE_YOUR_FULL_PAT_HERE';
 
 // ── Supabase helpers ───────────────────────────────────────────────
 async function sbGet(table, match) {
@@ -1550,7 +1551,7 @@ async function submitOrder() {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'Authorization': 'Bearer PASTE_YOUR_FULL_PAT_TOKEN_HERE',
+      'Authorization': 'Bearer ' + BAYARCASH_PAT,
     },
     body: JSON.stringify(payload),
   }
