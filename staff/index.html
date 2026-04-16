@@ -1129,7 +1129,7 @@ async function confirmWalkinRedeem(item, ptsCost) {
   try {
     const newPts = redeemMember.points - ptsCost;
     await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(redeemMember.phone), { method: 'PATCH', body: JSON.stringify({ points: newPts, updated_at: new Date().toISOString() }) });
-    await sbFetch('loyalty_transactions', { method: 'POST', body: JSON.stringify({ phone: redeemMember.phone, description: 'Walk-in redeem: ' + item.name, points: -ptsCost, order_ref: 'WALKIN-' + Date.now(), staff_name: currentStaffName }) });
+    await sbFetch('loyalty_transactions', { method: 'POST', body: JSON.stringify({ phone: redeemMember.phone, description: 'Walk-in redeem: ' + item.name, points: -ptsCost, order_ref: 'WALKIN-' + Date.now(), staff_name: currentStaffName, balance_after: newPts  }) });
     redeemMember.points = newPts;
     document.getElementById('rm-pts').textContent = newPts;
     buildWalkinRedeemItems(newPts);
