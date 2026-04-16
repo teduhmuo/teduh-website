@@ -771,6 +771,8 @@ async function submitAddPoints() {
     showMsg('add-msg', 'Error adding points. Try again.', 'error');
   }
   btn.disabled = false; btn.textContent = 'Add Points';
+  console.log('addTarget phone:', addTarget.phone);
+  console.log('encoded:', encodeURIComponent(addTarget.phone));
 }
 
 // ── Receipt ───────────────────────────────────────────────────────────
