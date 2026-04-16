@@ -713,37 +713,36 @@ async function submitAddPoints() {
   btn.disabled = true; btn.textContent = 'Adding…';
 
   try {
-    const newPts   = addTarget.points + amt;
-    const orderRef = 'WALKIN-' + Date.now();
-    const now      = new Date().toISOString();
+  const newPts   = addTarget.points + amt;
+  const orderRef = 'WALKIN-' + Date.now();
+  const now      = new Date().toISOString();
 
-    await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(addTarget.phone)}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ points: newPts, updated_at: now })
-    });
+  // ✅ Check PATCH result
+  const patchResult = await sbFetch(`loyalty_members?phone=eq.${encodeURIComponent(addTarget.phone)}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ points: newPts, updated_at: now })
+  });
 
-    await sbFetch('loyalty_transactions', {
-      method: 'POST',
-      body: JSON.stringify({
-        phone:      addTarget.phone,
-        description: `Walk-in RM ${amt}`,
-        points:     amt,
-        order_ref:  orderRef,
-        staff_name: currentStaffName
-      })
-    });
+  // If RLS blocks it or phone doesn't match, patchResult will be [] or an error object
+  if (!Array.isArray(patchResult) || patchResult.length === 0) {
+    console.error('PATCH result:', patchResult);
+    showMsg('add-msg', 'Points update failed — member row not found or blocked. Check Supabase RLS.', 'error');
+    btn.disabled = false; btn.textContent = 'Add Points';
+    return;
+  }
 
-    showReceipt({
-      ref:          orderRef,
-      staffName:    currentStaffName,
-      customerName: addTarget.name,
-      phone:        addTarget.phone,
-      billAmt:      amt,
-      ptsAdded:     amt,
-      newBalance:   newPts,
-      timestamp:    now
-    });
+  await sbFetch('loyalty_transactions', {
+    method: 'POST',
+    body: JSON.stringify({
+      phone:       addTarget.phone,
+      description: `Walk-in RM ${amt}`,
+      points:      amt,
+      order_ref:   orderRef,
+      staff_name:  currentStaffName
+    })
+  });
 
+  showReceipt({ ... }); // rest unchanged
     document.getElementById('add-phone').value  = '';
     document.getElementById('add-amount').value = '';
     document.getElementById('add-member-preview').style.display = 'none';
