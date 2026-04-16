@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback — Teduh</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #141412;
+            --bg2: #1c1b18;
+            --border: rgba(255,255,255,0.07);
+            --text: #e8e4dc;
+            --muted: #7a7670;
+            --accent: #c8a96e;
+            --accent-dim: rgba(200,169,110,0.12);
+            --error: #d97575;
+            --success: #7ab87a;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 300;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NAV */
+        nav {
+            padding: 1.5rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--text);
+            text-decoration: none;
+            letter-spacing: 0.01em;
+        }
+
+        .nav-back {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-back:hover { color: var(--text); }
+        .nav-back::before { content: '← '; }
+
+        /* MAIN */
+        main {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 4rem 1.5rem 6rem;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 560px;
+        }
+
+        /* HEADER */
+        .page-header {
+            margin-bottom: 3rem;
+        }
+
+        .page-header .eyebrow {
+            font-size: 0.72rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .page-header h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: clamp(2.2rem, 5vw, 3rem);
+            font-weight: 400;
+            line-height: 1.1;
+            color: var(--text);
+            margin-bottom: 0.9rem;
+        }
+
+        .page-header p {
+            font-size: 0.92rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* FORM */
+        .form-card {
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.6rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.78rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 0.6rem;
+        }
+
+        label .opt {
+            font-size: 0.7rem;
+            letter-spacing: 0.04em;
+            text-transform: none;
+            color: #524f4a;
+            margin-left: 4px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 300;
+            padding: 0.5rem 0 0.75rem;
+            transition: border-color 0.2s;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 0;
+        }
+
+        input::placeholder, textarea::placeholder {
+            color: #3e3c38;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7670' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 4px center;
+            padding-right: 1.5rem;
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1c1b18;
+            color: var(--text);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.6;
+        }
+
+        /* Radio group */
+        .radio-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 0.2rem;
+        }
+
+        .radio-pill {
+            position: relative;
+        }
+
+        .radio-pill input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .radio-pill label {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            letter-spacing: 0.03em;
+            text-transform: none;
+            color: var(--muted);
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 100px;
+            padding: 0.45rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+
+        .radio-pill input[type="radio"]:checked + label {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .radio-pill label:hover {
+            border-color: rgba(255,255,255,0.2);
+            color: var(--text);
+        }
+
+        /* Error messages */
+        .err {
+            font-size: 0.75rem;
+            color: var(--error);
+            margin-top: 0.4rem;
+            display: none;
+        }
+
+        /* Divider */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 1.8rem 0;
+        }
+
+        /* Submit */
+        .submit-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .submit-note {
+            font-size: 0.75rem;
+            color: var(--muted);
+            line-height: 1.5;
+            max-width: 220px;
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            color: #141412;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .submit-btn:hover {
+            background: #d9bb85;
+            transform: translateY(-1px);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Rating (conditional) */
+        #ratingGroup {
+            display: none;
+        }
+
+        /* Success */
+        .success-banner {
+            display: none;
+            align-items: flex-start;
+            gap: 1rem;
+            background: rgba(122, 184, 122, 0.08);
+            border: 1px solid rgba(122, 184, 122, 0.25);
+            border-radius: 4px;
+            padding: 1.2rem 1.4rem;
+            margin-top: 1.5rem;
+        }
+
+        .success-banner .icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .success-banner p {
+            font-size: 0.88rem;
+            color: var(--success);
+            line-height: 1.5;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 1.5rem 2.5rem;
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--muted);
+            letter-spacing: 0.04em;
+        }
+
+        /* Animations */
+        .form-card {
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .page-header {
+            animation: fadeUp 0.4s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            nav { padding: 1.2rem 1.2rem; }
+            main { padding: 2.5rem 1rem 5rem; }
+            .form-card { padding: 1.8rem 1.4rem; }
+            .submit-row { flex-direction: column-reverse; align-items: flex-start; }
+            .submit-note { max-width: 100%; }
+            .submit-btn { width: 100%; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/" class="nav-logo">Teduh</a>
+    <a href="/" class="nav-back">Back to home</a>
+</nav>
+
+<main>
+    <div class="wrapper">
+
+        <div class="page-header">
+            <div class="eyebrow">Share your thoughts</div>
+            <h1>We're listening.</h1>
+            <p>Complaints, compliments, ideas — all welcome. Your feedback helps us make Teduh better for everyone.</p>
+        </div>
+
+        <div class="form-card">
+            <form id="feedbackForm">
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your name" required>
+                    <div class="err" id="nameErr">Please enter your name.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email <span class="opt">(optional)</span></label>
+                    <input type="email" id="email" name="email" placeholder="you@email.com">
+                    <div class="err" id="emailErr">Enter a valid email address.</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Type of feedback</label>
+                    <div class="radio-row">
+                        <div class="radio-pill">
+                            <input type="radio" id="compliment" name="category" value="compliment" required>
+                            <label for="compliment">✨ Compliment</label>
+                        </div>
+                        <div class="radio-pill">
+                            <input type="radio" id="complaint" name="category" value="complaint">
+                            <label for="complaint">⚠️ Complaint</label>
+                        </div>
+                        <div class="radio-pill">
+                            <input type="radio" id="idea" name="category" value="idea">
+                            <label for="idea">💡 Idea</label>
+                        </div>
+                        <div class="radio-pill">
+                            <input type="radio" id="other" name="category" value="other">
+                            <label for="other">🗣️ Other</label>
+                        </div>
+                    </div>
+                    <div class="err" id="categoryErr">Please select a feedback type.</div>
+                </div>
+
+                <div class="form-group" id="ratingGroup">
+                    <label for="rating">Experience rating <span class="opt">(optional)</span></label>
+                    <select id="rating" name="rating">
+                        <option value="">Select rating</option>
+                        <option value="5">5 – Excellent</option>
+                        <option value="4">4 – Good</option>
+                        <option value="3">3 – Average</option>
+                        <option value="2">2 – Below average</option>
+                        <option value="1">1 – Poor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="Brief summary" required>
+                    <div class="err" id="subjectErr">Please add a subject.</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Tell us more…" required></textarea>
+                    <div class="err" id="messageErr">Please write your message.</div>
+                </div>
+
+                <hr class="divider">
+
+                <div class="submit-row">
+                    <p class="submit-note">For internal review only. We take your privacy seriously.</p>
+                    <button type="submit" class="submit-btn">Send feedback</button>
+                </div>
+
+                <div class="success-banner" id="successBanner">
+                    <span class="icon">✓</span>
+                    <p>Thank you. Your feedback has been received — we'll review it shortly.</p>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+<footer>
+    © 2025 Teduh · No. 11 Jalan Sulaiman, Muar, Johor
+</footer>
+
+<script>
+(function () {
+    const form = document.getElementById('feedbackForm');
+    const successBanner = document.getElementById('successBanner');
+    const ratingGroup = document.getElementById('ratingGroup');
+    const radios = document.querySelectorAll('input[name="category"]');
+
+    // Show rating for compliment/complaint
+    radios.forEach(r => {
+        r.addEventListener('change', () => {
+            const val = document.querySelector('input[name="category"]:checked')?.value;
+            ratingGroup.style.display = (val === 'compliment' || val === 'complaint') ? 'block' : 'none';
+        });
+    });
+
+    function showErr(id, show) {
+        document.getElementById(id).style.display = show ? 'block' : 'none';
+    }
+
+    function validEmail(e) {
+        return !e || /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/.test(e);
+    }
+
+    // Live email check
+    document.getElementById('email').addEventListener('blur', function () {
+        showErr('emailErr', this.value && !validEmail(this.value));
+    });
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        ['nameErr','emailErr','categoryErr','subjectErr','messageErr'].forEach(id => showErr(id, false));
+
+        const name     = document.getElementById('name').value.trim();
+        const email    = document.getElementById('email').value.trim();
+        const subject  = document.getElementById('subject').value.trim();
+        const message  = document.getElementById('message').value.trim();
+        const category = document.querySelector('input[name="category"]:checked');
+        const rating   = document.getElementById('rating').value;
+
+        let ok = true;
+        if (!name)           { showErr('nameErr', true);     ok = false; }
+        if (!validEmail(email)) { showErr('emailErr', true); ok = false; }
+        if (!category)       { showErr('categoryErr', true); ok = false; }
+        if (!subject)        { showErr('subjectErr', true);  ok = false; }
+        if (message.length < 5) { showErr('messageErr', true); ok = false; }
+
+        if (!ok) {
+            document.querySelector('.err[style*="block"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        const payload = {
+            name, email: email || 'not provided',
+            category: category.value,
+            subject, message,
+            rating: rating || 'not rated',
+            timestamp: new Date().toISOString()
+        };
+
+        console.log('📝 Feedback:', payload);
+
+        // ── Replace with real endpoint ──
+        // fetch('/api/feedback', {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(payload)
+        // });
+
+        // Or send via WhatsApp / email via FormSubmit:
+        // action="https://formsubmit.co/hello@teduh.com.my"
+
+        form.reset();
+        ratingGroup.style.display = 'none';
+        successBanner.style.display = 'flex';
+        successBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+        setTimeout(() => { successBanner.style.display = 'none'; }, 6000);
+    });
+})();
+</script>
+
+</body>
+</html>
