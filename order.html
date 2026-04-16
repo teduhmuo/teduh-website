@@ -1545,7 +1545,7 @@ async function submitOrder() {
   try {
     loadingMsg.textContent = 'Redirecting to payment…';
     const res = await fetch(
-  'https://portal.bayar.cash/api/v3/transaction-intents',
+  'https://console.bayar.cash/api/v3/transaction-intents',
   {
     method: 'POST',
     headers: {
