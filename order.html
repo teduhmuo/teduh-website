@@ -1545,13 +1545,12 @@ async function submitOrder() {
   try {
     loadingMsg.textContent = 'Redirecting to payment…';
     const res = await fetch(
-  'https://api.console.bayar.cash/v3/transaction-intents',
+  'https://nazkkichtnanodrgdyff.supabase.co/functions/v1/bayarcash-intent',
   {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': 'Bearer ' + BAYARCASH_PAT,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
     },
     body: JSON.stringify(payload),
   }
