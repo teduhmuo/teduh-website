@@ -1541,15 +1541,17 @@ async function submitOrder() {
   try {
     loadingMsg.textContent = 'Redirecting to payment…';
     const res = await fetch(
-  'https://nazkkichtnanodrgdyff.supabase.co/functions/v1/bayarcash-intent',
+  'https://portal.bayarcash.com/api/v3/transaction-intents',
   {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Accept': 'application/json',
+      'Authorization': 'Bearer PASTE_YOUR_FULL_PAT_TOKEN_HERE',
     },
     body: JSON.stringify(payload),
   }
+);
 );
     const data = await res.json();
     if (data && data.payment_url) {
