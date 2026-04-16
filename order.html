@@ -1556,7 +1556,6 @@ async function submitOrder() {
     body: JSON.stringify(payload),
   }
 );
-);
     const data = await res.json();
     if (data && data.payment_url) {
       window.location.href = data.payment_url;
