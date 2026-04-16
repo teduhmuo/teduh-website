@@ -742,7 +742,16 @@ async function submitAddPoints() {
     })
   });
 
-  showReceipt({ ... }); // rest unchanged
+  showReceipt({
+    ref:          orderRef,
+    staffName:    currentStaffName,
+    customerName: addTarget.name,
+    phone:        addTarget.phone,
+    billAmt:      amt,
+    ptsAdded:     amt,
+    newBalance:   newPts,
+    timestamp:    now
+  });
     document.getElementById('add-phone').value  = '';
     document.getElementById('add-amount').value = '';
     document.getElementById('add-member-preview').style.display = 'none';
