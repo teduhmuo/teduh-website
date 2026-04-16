@@ -1512,29 +1512,29 @@ function renderQueue() {
       itemsHtml = '<div class="qc-items">' + itemList.map(function(i) { return '<div class="qc-item-row">· ' + i + '</div>'; }).join('') + '</div>';
     }
     var badgeClass = 'badge-' + status;
-    var badgeLabel = status === 'delivering' ? 'Out for delivery' : status.charAt(0).toUpperCase() + status.slice(1);
+    var badgeLabel = status === 'delivering' ? 'Rider Picked Up' : status === 'done' ? (isPU ? 'Picked Up' : 'Delivered') : status.charAt(0).toUpperCase() + status.slice(1);
     var actions = '';
-    if (status === 'pending') {
-      actions = '<button class="qc-btn prepare-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">Start preparing</button>';
-    } else if (status === 'preparing') {
-      actions = '<button class="qc-btn ready-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">' + (isPU ? 'Mark ready' : 'Packed') + '</button>' +
-        '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'pending\')">↩</button>';
-    } else if (status === 'ready') {
-      if (isPU) {
-        actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'pickup\')">WA customer</button>' +
-          '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Done</button>' +
-          '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
-      } else {
-        actions = '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider picked up</button>' +
-          '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
-      }
-    } else if (status === 'delivering') {
-      actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'delivery\')">WA customer</button>' +
-        '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Done</button>' +
-        '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩</button>';
-    } else if (status === 'done') {
-      actions = '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩ Reopen</button>';
-    }
+if (status === 'pending') {
+  actions = '<button class="qc-btn prepare-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">Start Preparing</button>';
+} else if (status === 'preparing') {
+  actions = '<button class="qc-btn ready-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">' + (isPU ? 'Mark Ready' : 'Packed') + '</button>' +
+    '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'pending\')">↩</button>';
+} else if (status === 'ready') {
+  if (isPU) {
+    actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'pickup\')">WA Customer</button>' +
+      '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Customer Picked Up ✓</button>' +
+      '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
+  } else {
+    actions = '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider Picked Up</button>' +
+      '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
+  }
+} else if (status === 'delivering') {
+  actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'delivery\')">WA Customer</button>' +
+    '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Delivered ✓</button>' +
+    '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">↩</button>';
+} else if (status === 'done') {
+  actions = '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩ Reopen</button>';
+}
     var metaLine = typeLabel + ' · ' + timeStr;
     if (!isPU && o.address) metaLine += ' · ' + o.address.substring(0, 40);
     if (o.notes) metaLine += ' · Note: ' + o.notes;
