@@ -139,7 +139,10 @@
   .sort-select { padding: 0.6rem 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: 0.82rem; color: var(--medium-brown); outline: none; background: var(--white); }
 
   .data-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  .data-table th { text-align: left; padding: 0.5rem 0.65rem; font-size: 0.68rem; font-weight: 500; color: var(--medium-brown); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1.5px solid var(--border); }
+  .data-table th { text-align: left; padding: 0.5rem 0.65rem; font-size: 0.68rem; font-weight: 500; color: var(--medium-brown); text-transform: uppercase; letter-spacing: 0.04em; border-bottom: 1.5px solid var(--border); cursor: pointer; user-select: none; }
+  .data-table th:hover { color: var(--warm-brown); }
+  .data-table th.sorted-asc::after  { content: ' ▲'; font-size: 0.6rem; }
+  .data-table th.sorted-desc::after { content: ' ▼'; font-size: 0.6rem; }
   .data-table td { padding: 0.6rem 0.65rem; border-bottom: 1px solid var(--border); color: var(--warm-brown); vertical-align: middle; }
   .data-table tr:last-child td { border-bottom: none; }
   .data-table tr:hover td { background: var(--cream); }
@@ -154,6 +157,18 @@
   .tx-redeem { color: var(--error); font-weight: 500; }
   .staff-pill { display: inline-block; background: var(--warm-brown); color: var(--cream); font-size: 0.68rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
   .online-pill { display: inline-block; background: var(--accent-light); color: var(--accent); font-size: 0.68rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; }
+
+  /* Feedback category pills */
+  .fb-pill { display: inline-block; font-size: 0.68rem; font-weight: 500; padding: 2px 8px; border-radius: 20px; text-transform: capitalize; }
+  .fb-compliment { background: #EAF0E9; color: #3B6D11; }
+  .fb-complaint  { background: #fdf0ef; color: #C0392B; }
+  .fb-idea       { background: #FFF8E6; color: #8A6D00; }
+  .fb-other      { background: #E2D9CE; color: #7A5C46; }
+
+  /* Feedback message expand */
+  .fb-msg-cell { max-width: 200px; }
+  .fb-msg-short { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.78rem; color: var(--medium-brown); cursor: pointer; }
+  .fb-msg-full { display: none; font-size: 0.78rem; color: var(--medium-brown); white-space: pre-wrap; background: var(--cream); border-radius: 6px; padding: 0.5rem; margin-top: 4px; }
 
   .admin-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.25rem; }
   .admin-stat { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; }
@@ -224,6 +239,13 @@
   .badge-delivering{ background:#EEEDFE; color:#534AB7; }
   .badge-done      { background:var(--border); color:var(--medium-brown); }
 
+  /* Feedback overview highlight */
+  .fb-highlight-row { display:grid; grid-template-columns:repeat(4,1fr); gap:0.5rem; margin-bottom:0.75rem; }
+  .fb-highlight-card { border-radius:8px; padding:0.75rem; text-align:center; }
+  .fb-highlight-num { font-size:1.4rem; font-weight:500; line-height:1; }
+  .fb-highlight-label { font-size:0.65rem; text-transform:uppercase; letter-spacing:0.04em; margin-top:2px; }
+  .fb-recent-item { padding:0.65rem 0; border-bottom:1px solid var(--border); display:flex; gap:0.75rem; align-items:flex-start; }
+  .fb-recent-item:last-child { border-bottom:none; }
 </style>
 </head>
 <body>
@@ -275,16 +297,17 @@
     </div>
 
     <div class="tab-row">
-      <button class="tab-btn active" id="tab-add"      onclick="switchTab('add')">Add Points</button>
-      <button class="tab-btn"        id="tab-lookup"   onclick="switchTab('lookup')">Lookup</button>
-      <button class="tab-btn"        id="tab-register" onclick="switchTab('register')">Register</button>
-      <button class="tab-btn"        id="tab-queue"    onclick="switchTab('queue')">Queue</button>
-      <button class="tab-btn"        id="tab-redeem"   onclick="switchTab('redeem')">Redeem</button>
-      <button class="tab-btn"        id="tab-avail"    onclick="switchTab('avail')">Availability</button>
-      <button class="tab-btn admin-tab" id="tab-avail-log" onclick="switchTab('avail-log')" style="display:none;">Avail Log</button>
-      <button class="tab-btn admin-tab" id="tab-members"  onclick="switchTab('members')"  style="display:none;">Members</button>
-      <button class="tab-btn admin-tab" id="tab-txlog"    onclick="switchTab('txlog')"    style="display:none;">Log</button>
-      <button class="tab-btn admin-tab" id="tab-overview" onclick="switchTab('overview')" style="display:none;">Overview</button>
+      <button class="tab-btn active" id="tab-add"       onclick="switchTab('add')">Add Points</button>
+      <button class="tab-btn"        id="tab-lookup"    onclick="switchTab('lookup')">Lookup</button>
+      <button class="tab-btn"        id="tab-register"  onclick="switchTab('register')">Register</button>
+      <button class="tab-btn"        id="tab-queue"     onclick="switchTab('queue')">Queue</button>
+      <button class="tab-btn"        id="tab-redeem"    onclick="switchTab('redeem')">Redeem</button>
+      <button class="tab-btn"        id="tab-avail"     onclick="switchTab('avail')">Availability</button>
+      <button class="tab-btn admin-tab" id="tab-avail-log"  onclick="switchTab('avail-log')"  style="display:none;">Avail Log</button>
+      <button class="tab-btn admin-tab" id="tab-members"    onclick="switchTab('members')"    style="display:none;">Members</button>
+      <button class="tab-btn admin-tab" id="tab-txlog"      onclick="switchTab('txlog')"      style="display:none;">Log</button>
+      <button class="tab-btn admin-tab" id="tab-feedback"   onclick="switchTab('feedback')"   style="display:none;">Feedback</button>
+      <button class="tab-btn admin-tab" id="tab-overview"   onclick="switchTab('overview')"   style="display:none;">Overview</button>
     </div>
 
     <div class="card">
@@ -380,6 +403,21 @@
         <div id="tx-table-wrap"><div class="loading-state">Loading…</div></div>
       </div>
 
+      <!-- ADMIN: FEEDBACK -->
+      <div class="panel" id="panel-feedback">
+        <div class="search-row">
+          <input type="text" id="fb-search" placeholder="Search name, subject, message…" oninput="filterFeedback()" />
+          <select class="sort-select" id="fb-filter" onchange="filterFeedback()">
+            <option value="all">All types</option>
+            <option value="compliment">✨ Compliment</option>
+            <option value="complaint">⚠️ Complaint</option>
+            <option value="idea">💡 Idea</option>
+            <option value="other">🗣️ Other</option>
+          </select>
+        </div>
+        <div id="fb-table-wrap"><div class="loading-state">Loading…</div></div>
+      </div>
+
       <!-- ADMIN: OVERVIEW -->
       <div class="panel" id="panel-overview">
         <div class="admin-stats">
@@ -399,8 +437,18 @@
 
         <div class="section-label-sm">Points added by staff</div>
         <div id="staff-breakdown"></div>
-      </div>
 
+        <!-- ── Feedback highlight ── -->
+        <div class="section-label-sm">Customer feedback</div>
+        <div class="fb-highlight-row" id="ov-fb-counts">
+          <div class="fb-highlight-card fb-compliment"><div class="fb-highlight-num" id="ov-fb-compliment">—</div><div class="fb-highlight-label" style="color:#3B6D11;">Compliments</div></div>
+          <div class="fb-highlight-card fb-complaint"><div class="fb-highlight-num" id="ov-fb-complaint">—</div><div class="fb-highlight-label" style="color:#C0392B;">Complaints</div></div>
+          <div class="fb-highlight-card fb-idea"><div class="fb-highlight-num" id="ov-fb-idea">—</div><div class="fb-highlight-label" style="color:#8A6D00;">Ideas</div></div>
+          <div class="fb-highlight-card fb-other"><div class="fb-highlight-num" id="ov-fb-other">—</div><div class="fb-highlight-label" style="color:#7A5C46;">Other</div></div>
+        </div>
+        <div style="font-size:0.72rem;color:var(--medium-brown);margin-bottom:0.75rem;">Most recent 3</div>
+        <div id="ov-fb-recent"><div class="loading-state">Loading…</div></div>
+      </div>
 
       <!-- QUEUE -->
       <div class="panel" id="panel-queue">
@@ -469,7 +517,6 @@
         <div id="avail-log-list"><div class="loading-state">Loading…</div></div>
       </div>
 
-
     </div>
   </main>
   <footer>Teduh Dashboard · <span id="footer-role">Staff</span></footer>
@@ -508,7 +555,6 @@ const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
 let queueInterval = null;
 
-// ── Staff directory — add/edit here ──────────────────────────────────
 const STAFF_PINS = {
   '0011': { name: 'Syukri', role: 'staff' },
   '0012': { name: 'Zul',    role: 'staff' },
@@ -532,6 +578,9 @@ let currentRole = null;
 let currentStaffName = '';
 let allMembers = [];
 let allTx = [];
+let allFeedback = [];
+let fbSortCol = 'created_at';
+let fbSortDir = 'desc';
 
 // ── PIN ───────────────────────────────────────────────────────────────
 function pinPress(d) {
@@ -540,13 +589,11 @@ function pinPress(d) {
   updatePinDots();
   if (pinEntry.length === 4) checkPin();
 }
-
 function pinDel() {
   pinEntry = pinEntry.slice(0, -1);
   updatePinDots();
   document.getElementById('pin-error').textContent = '';
 }
-
 function updatePinDots() {
   for (let i = 0; i < 4; i++) {
     const d = document.getElementById('d' + i);
@@ -554,7 +601,6 @@ function updatePinDots() {
     d.classList.remove('error');
   }
 }
-
 function checkPin() {
   const staff = STAFF_PINS[pinEntry];
   if (staff) {
@@ -580,12 +626,13 @@ function unlockDashboard(role) {
   document.getElementById('footer-role').textContent    = role === 'admin' ? 'Admin · ' + currentStaffName : currentStaffName;
 
   if (role === 'admin') {
-    ['tab-avail-log','tab-members','tab-txlog','tab-overview'].forEach(id => {
+    ['tab-avail-log','tab-members','tab-txlog','tab-feedback','tab-overview'].forEach(id => {
       document.getElementById(id).style.display = '';
     });
     loadAllMembers();
     loadAllTx();
     loadOverview();
+    loadFeedback();
   }
   loadStats();
 }
@@ -598,11 +645,10 @@ function logout() {
   document.getElementById('pin-error').textContent = '';
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('pin-screen').style.display = 'flex';
-  ['tab-members','tab-txlog','tab-overview'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['tab-members','tab-txlog','tab-feedback','tab-overview'].forEach(id => document.getElementById(id).style.display = 'none');
   switchTab('add');
 }
 
-// Restore session
 const savedRole = sessionStorage.getItem('teduh_role');
 const savedName = sessionStorage.getItem('teduh_staff_name');
 if (savedRole && savedName) {
@@ -654,6 +700,7 @@ function switchTab(tab) {
   }
   if (tab === 'avail') loadAvailability();
   if (tab === 'avail-log') loadAvailLog();
+  if (tab === 'feedback') { if (!allFeedback.length) loadFeedback(); else renderFeedbackTable(getFilteredFeedback()); }
 }
 
 function showMsg(id, text, type) {
@@ -709,58 +756,35 @@ async function submitAddPoints() {
   if (!addTarget) { showMsg('add-msg', 'Customer not found. Check the phone number.', 'error'); return; }
   if (amt <= 0)   { showMsg('add-msg', 'Enter a valid bill amount.', 'error'); return; }
 
-const btn = document.getElementById('add-submit-btn');
-btn.disabled = true; btn.textContent = 'Adding…';
-console.log('addTarget phone:', addTarget.phone);
-console.log('encoded:', encodeURIComponent(addTarget.phone));
+  const btn = document.getElementById('add-submit-btn');
+  btn.disabled = true; btn.textContent = 'Adding…';
 
   try {
     const newPts   = addTarget.points + amt;
     const orderRef = 'WALKIN-' + Date.now();
     const now      = new Date().toISOString();
 
-    // Use direct fetch with return=minimal so we get a 204 on success
     const patchRes = await fetch(`${SUPABASE_URL}/rest/v1/loyalty_members?phone=eq.${encodeURIComponent(addTarget.phone)}`, {
       method: 'PATCH',
       headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=minimal'
+        'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json', 'Prefer': 'return=minimal'
       },
       body: JSON.stringify({ points: newPts, updated_at: now })
     });
 
     if (!patchRes.ok) {
       const errText = await patchRes.text();
-      console.error('PATCH failed:', patchRes.status, errText);
       showMsg('add-msg', 'Points update failed (HTTP ' + patchRes.status + '). Try again.', 'error');
-      btn.disabled = false; btn.textContent = 'Add Points';
-      return;
+      btn.disabled = false; btn.textContent = 'Add Points'; return;
     }
 
     await sbFetch('loyalty_transactions', {
       method: 'POST',
-      body: JSON.stringify({
-  phone:        addTarget.phone,
-  description:  `Walk-in RM ${amt}`,
-  points:       amt,
-  order_ref:    orderRef,
-  staff_name:   currentStaffName,
-  balance_after: newPts
-})
+      body: JSON.stringify({ phone: addTarget.phone, description: `Walk-in RM ${amt}`, points: amt, order_ref: orderRef, staff_name: currentStaffName, balance_after: newPts })
     });
 
-    showReceipt({
-      ref:          orderRef,
-      staffName:    currentStaffName,
-      customerName: addTarget.name,
-      phone:        addTarget.phone,
-      billAmt:      amt,
-      ptsAdded:     amt,
-      newBalance:   newPts,
-      timestamp:    now
-    });
+    showReceipt({ ref: orderRef, staffName: currentStaffName, customerName: addTarget.name, phone: addTarget.phone, billAmt: amt, ptsAdded: amt, newBalance: newPts, timestamp: now });
 
     document.getElementById('add-phone').value  = '';
     document.getElementById('add-amount').value = '';
@@ -769,13 +793,8 @@ console.log('encoded:', encodeURIComponent(addTarget.phone));
     addTarget = null;
     loadStats();
     if (currentRole === 'admin') { loadAllMembers(); loadAllTx(); loadOverview(); }
-
-  } catch(e) {
-    showMsg('add-msg', 'Error adding points. Try again.', 'error');
-  }
+  } catch(e) { showMsg('add-msg', 'Error adding points. Try again.', 'error'); }
   btn.disabled = false; btn.textContent = 'Add Points';
-  console.log('addTarget phone:', addTarget.phone);
-  console.log('encoded:', encodeURIComponent(addTarget.phone));
 }
 
 // ── Receipt ───────────────────────────────────────────────────────────
@@ -792,10 +811,7 @@ function showReceipt(d) {
   document.getElementById('r-bal').textContent      = `New balance: ${d.newBalance} pts`;
   document.getElementById('receipt-overlay').classList.add('active');
 }
-
-function closeReceipt() {
-  document.getElementById('receipt-overlay').classList.remove('active');
-}
+function closeReceipt() { document.getElementById('receipt-overlay').classList.remove('active'); }
 
 // ── Lookup ────────────────────────────────────────────────────────────
 async function lookupMember() {
@@ -852,15 +868,14 @@ async function registerMember() {
       showMsg('reg-msg', `Already registered — ${member.name}, ${member.points} pts.`, 'info');
       btn.disabled = false; btn.textContent = 'Register Member'; return;
     }
-const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
+    const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyalty-lookup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_KEY}` },
       body: JSON.stringify({ action: 'register', name, phone })
     });
     const data = await res.json();
     if (data.registered) {
-      const bonusMsg = ` 🎉 ${name} gets 10 free points as a welcome reward!`;
-      showMsg('reg-msg', `${name} registered successfully!${bonusMsg} (by ${currentStaffName})`, 'success');
+      showMsg('reg-msg', `${name} registered successfully! 🎉 ${name} gets 10 free points as a welcome reward! (by ${currentStaffName})`, 'success');
       document.getElementById('reg-name').value  = '';
       document.getElementById('reg-phone').value = '';
       loadStats();
@@ -871,6 +886,7 @@ const res = await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/l
   } catch(e) { showMsg('reg-msg', 'Connection error. Try again.', 'error'); }
   btn.disabled = false; btn.textContent = 'Register Member';
 }
+
 // ── ADMIN: Members ────────────────────────────────────────────────────
 async function loadAllMembers() {
   try {
@@ -911,7 +927,7 @@ function renderMembersTable(members) {
         return `<tr>
           <td style="color:var(--light-brown);font-size:0.72rem;">${i+1}</td>
           <td style="font-weight:500;">${m.name}</td>
-         <td style="color:var(--medium-brown);font-size:0.8rem;">${m.phone.slice(0,4)}****${m.phone.slice(-3)}</td>
+          <td style="color:var(--medium-brown);font-size:0.8rem;">${m.phone.slice(0,4)}****${m.phone.slice(-3)}</td>
           <td style="font-weight:500;">${m.points}</td>
           <td><span class="tier-pill ${tc[tier.name]}">${tier.name}</span></td>
           <td style="color:var(--medium-brown);font-size:0.75rem;">${fmtDate(m.joined_at)}</td>
@@ -966,17 +982,128 @@ function renderTxTable(txs) {
         <td style="white-space:nowrap;font-size:0.75rem;color:var(--medium-brown);">${fmtDateTime(t.created_at)}</td>
         <td style="font-size:0.8rem;">${allMembers.find(m => m.phone === t.phone)?.name || t.phone}</td>
         <td style="color:var(--medium-brown);font-size:0.78rem;">${t.description}</td>
-        <td>${t.staff_name
-          ? `<span class="staff-pill">${t.staff_name}</span>`
-          : `<span class="online-pill">online</span>`
-        }</td>
-       <td class="${t.points > 0 ? 'tx-earn' : 'tx-redeem'}">
-  ${t.points > 0 ? '+' : ''}${t.points}
-  ${t.balance_after != null ? `<div style="font-size:0.68rem;color:var(--medium-brown);font-weight:400;">${t.balance_after - t.points} → ${t.balance_after}</div>` : ''}
-</td>
+        <td>${t.staff_name ? `<span class="staff-pill">${t.staff_name}</span>` : `<span class="online-pill">online</span>`}</td>
+        <td class="${t.points > 0 ? 'tx-earn' : 'tx-redeem'}">
+          ${t.points > 0 ? '+' : ''}${t.points}
+          ${t.balance_after != null ? `<div style="font-size:0.68rem;color:var(--medium-brown);font-weight:400;">${t.balance_after - t.points} → ${t.balance_after}</div>` : ''}
+        </td>
       </tr>`).join('')}</tbody>
     </table>
     <div class="table-footer">${txs.length} record${txs.length!==1?'s':''}</div>`;
+}
+
+// ── ADMIN: FEEDBACK ───────────────────────────────────────────────────
+async function loadFeedback() {
+  try {
+    const data = await sbFetch('customer_feedback?select=*&order=created_at.desc', { method: 'GET' });
+    allFeedback = Array.isArray(data) ? data : [];
+    renderFeedbackTable(getFilteredFeedback());
+    renderFeedbackOverview();
+  } catch(e) {
+    document.getElementById('fb-table-wrap').innerHTML = '<div class="empty-state">Could not load feedback.</div>';
+  }
+}
+
+function getFilteredFeedback() {
+  const q      = (document.getElementById('fb-search')?.value || '').toLowerCase();
+  const filter = document.getElementById('fb-filter')?.value || 'all';
+  let f = allFeedback.filter(fb => {
+    const matchQ = !q
+      || (fb.name||'').toLowerCase().includes(q)
+      || (fb.subject||'').toLowerCase().includes(q)
+      || (fb.message||'').toLowerCase().includes(q);
+    const matchF = filter === 'all' || fb.category === filter;
+    return matchQ && matchF;
+  });
+  // sort
+  f.sort((a, b) => {
+    let va = a[fbSortCol] ?? '';
+    let vb = b[fbSortCol] ?? '';
+    if (fbSortCol === 'created_at') { va = new Date(va); vb = new Date(vb); }
+    if (va < vb) return fbSortDir === 'asc' ? -1 : 1;
+    if (va > vb) return fbSortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  return f;
+}
+
+function filterFeedback() { renderFeedbackTable(getFilteredFeedback()); }
+
+function fbSortBy(col) {
+  if (fbSortCol === col) { fbSortDir = fbSortDir === 'asc' ? 'desc' : 'asc'; }
+  else { fbSortCol = col; fbSortDir = col === 'created_at' ? 'desc' : 'asc'; }
+  renderFeedbackTable(getFilteredFeedback());
+}
+
+const FB_EMOJI = { compliment:'✨', complaint:'⚠️', idea:'💡', other:'🗣️' };
+
+function renderFeedbackTable(items) {
+  const wrap = document.getElementById('fb-table-wrap');
+  if (!items.length) { wrap.innerHTML = '<div class="empty-state">No feedback yet.</div>'; return; }
+
+  const th = (col, label) => {
+    const isSorted = fbSortCol === col;
+    const cls = isSorted ? ('sorted-' + fbSortDir) : '';
+    return `<th class="${cls}" onclick="fbSortBy('${col}')">${label}</th>`;
+  };
+
+  wrap.innerHTML = `
+    <div style="overflow-x:auto;">
+    <table class="data-table">
+      <thead><tr>
+        ${th('created_at','Date & Time')}
+        ${th('name','Name')}
+        ${th('category','Type')}
+        ${th('subject','Subject')}
+        <th>Message</th>
+      </tr></thead>
+      <tbody>${items.map((fb, i) => {
+        const cat = fb.category || 'other';
+        const msgId = 'fbmsg-' + i;
+        const shortMsg = (fb.message||'').substring(0,60) + ((fb.message||'').length > 60 ? '…' : '');
+        return `<tr>
+          <td style="white-space:nowrap;font-size:0.75rem;color:var(--medium-brown);">${fmtDateTime(fb.created_at)}</td>
+          <td style="font-weight:500;font-size:0.85rem;">${fb.name || '—'}<br><span style="font-size:0.7rem;color:var(--light-brown);font-weight:400;">${fb.email||''}</span></td>
+          <td><span class="fb-pill fb-${cat}">${FB_EMOJI[cat]||''} ${cat}</span></td>
+          <td style="font-size:0.82rem;max-width:160px;">${fb.subject||'—'}</td>
+          <td class="fb-msg-cell">
+            <div class="fb-msg-short" onclick="toggleFbMsg('${msgId}')">${shortMsg || '—'}</div>
+            <div class="fb-msg-full" id="${msgId}">${fb.message||''}</div>
+          </td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+    </div>
+    <div class="table-footer">${items.length} submission${items.length!==1?'s':''}</div>`;
+}
+
+function toggleFbMsg(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.style.display = el.style.display === 'block' ? 'none' : 'block';
+}
+
+function renderFeedbackOverview() {
+  const counts = { compliment:0, complaint:0, idea:0, other:0 };
+  allFeedback.forEach(fb => { if (counts[fb.category] !== undefined) counts[fb.category]++; else counts.other++; });
+  document.getElementById('ov-fb-compliment').textContent = counts.compliment;
+  document.getElementById('ov-fb-complaint').textContent  = counts.complaint;
+  document.getElementById('ov-fb-idea').textContent       = counts.idea;
+  document.getElementById('ov-fb-other').textContent      = counts.other;
+
+  const recent = allFeedback.slice(0, 3);
+  const recEl  = document.getElementById('ov-fb-recent');
+  if (!recent.length) { recEl.innerHTML = '<div class="empty-state" style="padding:0.5rem 0;">No feedback yet.</div>'; return; }
+  recEl.innerHTML = recent.map(fb => {
+    const cat = fb.category || 'other';
+    return `<div class="fb-recent-item">
+      <span class="fb-pill fb-${cat}" style="flex-shrink:0;">${FB_EMOJI[cat]||''} ${cat}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:0.82rem;font-weight:500;color:var(--warm-brown);">${fb.subject||'(no subject)'}</div>
+        <div style="font-size:0.75rem;color:var(--medium-brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${fb.name||'Anonymous'} · ${fmtDateTime(fb.created_at)}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── ADMIN: Overview ───────────────────────────────────────────────────
@@ -1003,7 +1130,6 @@ async function loadOverview() {
     document.getElementById('ov-online').textContent       = online.length;
     document.getElementById('ov-walkin').textContent       = walkin.length;
 
-    // Tier breakdown
     const tierCount = { Regular:0, Silver:0, Gold:0, Platinum:0 };
     members.forEach(m => tierCount[getTier(m.points).name]++);
     const tc = { Regular:'#E2D9CE', Silver:'#D3D1C7', Gold:'#FAC775', Platinum:'#3D2B1F' };
@@ -1014,7 +1140,6 @@ async function loadOverview() {
         <div style="font-size:0.65rem;color:${tt[n]};text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">${n}</div>
       </div>`).join('');
 
-    // Top 5 members
     const top5   = [...members].sort((a,b) => b.points - a.points).slice(0,5);
     const maxPts = top5[0]?.points || 1;
     document.getElementById('top-members').innerHTML = top5.map((m,i) => `
@@ -1029,7 +1154,6 @@ async function loadOverview() {
         <div style="font-size:0.85rem;font-weight:500;color:var(--warm-brown);min-width:50px;text-align:right;">${m.points} pts</div>
       </div>`).join('');
 
-    // Staff breakdown
     const staffMap = {};
     walkin.forEach(t => {
       const n = t.staff_name || 'Unknown';
@@ -1055,7 +1179,6 @@ async function loadOverview() {
 
 // ── LOYVERSE ──────────────────────────────────────────────────────────
 const LOYVERSE_TOKEN = '5f56ff3b1e7c4d2ab0376499be53a744';
-const LOYVERSE_API   = 'https://api.loyverse.com/v1.0';
 
 // ── WALK-IN REDEEM ────────────────────────────────────────────────────
 const WALKIN_ITEMS = [
@@ -1129,13 +1252,12 @@ async function confirmWalkinRedeem(item, ptsCost) {
   try {
     const newPts = redeemMember.points - ptsCost;
     await sbFetch('loyalty_members?phone=eq.' + encodeURIComponent(redeemMember.phone), { method: 'PATCH', body: JSON.stringify({ points: newPts, updated_at: new Date().toISOString() }) });
-    await sbFetch('loyalty_transactions', { method: 'POST', body: JSON.stringify({ phone: redeemMember.phone, description: 'Walk-in redeem: ' + item.name, points: -ptsCost, order_ref: 'WALKIN-' + Date.now(), staff_name: currentStaffName, balance_after: newPts  }) });
+    await sbFetch('loyalty_transactions', { method: 'POST', body: JSON.stringify({ phone: redeemMember.phone, description: 'Walk-in redeem: ' + item.name, points: -ptsCost, order_ref: 'WALKIN-' + Date.now(), staff_name: currentStaffName, balance_after: newPts }) });
     redeemMember.points = newPts;
     document.getElementById('rm-pts').textContent = newPts;
     buildWalkinRedeemItems(newPts);
     msgEl.textContent = '✓ Done! ' + item.name + ' redeemed. New balance: ' + newPts + ' pts.';
     msgEl.className = 'msg success';
-    // Loyverse via edge function
     try {
       await fetch('https://nazkkichtnanodrgdyff.supabase.co/functions/v1/loyverse-redeem', {
         method: 'POST',
@@ -1185,13 +1307,10 @@ const PROD_NAMES = {
 let availState = {};
 
 async function loadAvailability() {
-  // Render immediately with defaults so categories always show
   Object.keys(MENU_CATEGORIES).forEach(function(cat) {
     MENU_CATEGORIES[cat].forEach(function(k) { if (!(k in availState)) availState[k] = true; });
   });
   renderAvailCategories();
-
-  // Then update from Supabase
   try {
     const statusData = await sbFetch('shop_status?id=eq.1&select=is_open', { method: 'GET' });
     const isOpen = statusData[0] ? statusData[0].is_open : true;
@@ -1224,10 +1343,7 @@ async function toggleShopStatus(isOpen) {
 function renderAvailCategories() {
   const el = document.getElementById('avail-categories');
   if (!el) return;
-  // Always ensure all keys initialized
-  Object.values(MENU_CATEGORIES).flat().forEach(function(k) {
-    if (!(k in availState)) availState[k] = true;
-  });
+  Object.values(MENU_CATEGORIES).flat().forEach(function(k) { if (!(k in availState)) availState[k] = true; });
   let html = '';
   Object.entries(MENU_CATEGORIES).forEach(function(entry) {
     const cat = entry[0]; const items = entry[1];
@@ -1284,7 +1400,6 @@ async function saveAvailability() {
   } catch(e) { console.error('Save error:', e); msgEl.textContent = e.message || 'Error saving.'; msgEl.className = 'msg error'; }
 }
 
-// ── AVAILABILITY LOG ──────────────────────────────────────────────────
 async function logAvailabilityChange(changes) {
   if (!changes.length) return;
   const rows = changes.map(function(c) { return { staff_name: currentStaffName, action: c.available ? 'marked available' : 'marked unavailable', item_id: c.item_id, item_name: c.item_name, available: c.available, created_at: new Date().toISOString() }; });
@@ -1353,8 +1468,6 @@ function toggleAvailLogDetail(id) {
   }
 }
 
-
-
 // ── QUEUE ─────────────────────────────────────────────────────────────
 let allQueue = [];
 let queueFilter = 'all';
@@ -1393,21 +1506,13 @@ function renderQueue() {
     var typeClass = isPU ? 'pickup' : 'delivery';
     var timeStr = new Date(o.created_at).toLocaleTimeString('en-MY', { hour:'2-digit', minute:'2-digit' });
     var status = o.status || 'pending';
-
-    // Parse items
     var itemsHtml = '';
     if (o.items) {
       var itemList = o.items.split(',').map(function(i) { return i.trim(); });
-      itemsHtml = '<div class="qc-items">' + itemList.map(function(i) {
-        return '<div class="qc-item-row">· ' + i + '</div>';
-      }).join('') + '</div>';
+      itemsHtml = '<div class="qc-items">' + itemList.map(function(i) { return '<div class="qc-item-row">· ' + i + '</div>'; }).join('') + '</div>';
     }
-
-    // Status badge
     var badgeClass = 'badge-' + status;
     var badgeLabel = status === 'delivering' ? 'Out for delivery' : status.charAt(0).toUpperCase() + status.slice(1);
-
-    // Action buttons
     var actions = '';
     if (status === 'pending') {
       actions = '<button class="qc-btn prepare-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">Start preparing</button>';
@@ -1430,18 +1535,12 @@ function renderQueue() {
     } else if (status === 'done') {
       actions = '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩ Reopen</button>';
     }
-
-    // Address line for delivery
     var metaLine = typeLabel + ' · ' + timeStr;
     if (!isPU && o.address) metaLine += ' · ' + o.address.substring(0, 40);
     if (o.notes) metaLine += ' · Note: ' + o.notes;
-
     return '<div class="queue-card status-' + status + '">' +
       '<div class="qc-header">' +
-        '<div>' +
-          '<div class="qc-number">' + (o.queue_number || '—') + '</div>' +
-          '<span class="qc-type ' + typeClass + '">' + typeLabel + '</span>' +
-        '</div>' +
+        '<div><div class="qc-number">' + (o.queue_number || '—') + '</div><span class="qc-type ' + typeClass + '">' + typeLabel + '</span></div>' +
         '<span class="qc-status-badge ' + badgeClass + '">' + badgeLabel + '</span>' +
       '</div>' +
       '<div class="qc-customer">' + o.customer_name + ' · ' + o.phone + '</div>' +
@@ -1454,11 +1553,7 @@ function renderQueue() {
 
 async function updateQueueStatus(id, status) {
   try {
-    await sbFetch('queue_orders?id=eq.' + id, {
-      method: 'PATCH',
-      headers: { 'Prefer': 'return=minimal' },
-      body: JSON.stringify({ status: status })
-    });
+    await sbFetch('queue_orders?id=eq.' + id, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ status: status }) });
     var idx = allQueue.findIndex(function(o) { return o.id === id; });
     if (idx > -1) allQueue[idx].status = status;
     renderQueue();
@@ -1473,8 +1568,6 @@ function waOrderReady(queueNum, phone, name, type) {
     : 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sedang dalam perjalanan ke alamat anda. Rider kami akan tiba tidak lama lagi. Terima kasih kerana memesan di Teduh!';
   window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
 }
-
-
 </script>
 </body>
 </html>

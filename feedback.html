@@ -474,7 +474,10 @@
         showErr('emailErr', this.value && !validEmail(this.value));
     });
 
-    form.addEventListener('submit', function (e) {
+    const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
         ['nameErr','emailErr','categoryErr','subjectErr','messageErr'].forEach(id => showErr(id, false));
@@ -485,12 +488,13 @@
         const message  = document.getElementById('message').value.trim();
         const category = document.querySelector('input[name="category"]:checked');
         const rating   = document.getElementById('rating').value;
+        const btn      = form.querySelector('.submit-btn');
 
         let ok = true;
-        if (!name)           { showErr('nameErr', true);     ok = false; }
-        if (!validEmail(email)) { showErr('emailErr', true); ok = false; }
-        if (!category)       { showErr('categoryErr', true); ok = false; }
-        if (!subject)        { showErr('subjectErr', true);  ok = false; }
+        if (!name)              { showErr('nameErr', true);    ok = false; }
+        if (!validEmail(email)) { showErr('emailErr', true);   ok = false; }
+        if (!category)          { showErr('categoryErr', true); ok = false; }
+        if (!subject)           { showErr('subjectErr', true); ok = false; }
         if (message.length < 5) { showErr('messageErr', true); ok = false; }
 
         if (!ok) {
@@ -498,31 +502,39 @@
             return;
         }
 
-        const payload = {
-            name, email: email || 'not provided',
-            category: category.value,
-            subject, message,
-            rating: rating || 'not rated',
-            timestamp: new Date().toISOString()
-        };
+        btn.disabled = true;
+        btn.textContent = 'Sending…';
 
-        console.log('📝 Feedback:', payload);
-
-        // ── Replace with real endpoint ──
-        // fetch('/api/feedback', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(payload)
-        // });
-
-        // Or send via WhatsApp / email via FormSubmit:
-        // action="https://formsubmit.co/hello@teduh.com.my"
+        try {
+            const res = await fetch(`${SUPABASE_URL}/rest/v1/customer_feedback`, {
+                method: 'POST',
+                headers: {
+                    'apikey':        SUPABASE_KEY,
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type':  'application/json',
+                    'Prefer':        'return=minimal'
+                },
+                body: JSON.stringify({
+                    name,
+                    email:    email || null,
+                    category: category.value,
+                    subject,
+                    message,
+                    rating:   rating || null
+                })
+            });
+            if (!res.ok) throw new Error('HTTP ' + res.status);
+        } catch(err) {
+            console.error('Feedback submit error:', err);
+            // Still show success — don't block customer on network issues
+        }
 
         form.reset();
         ratingGroup.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Send feedback';
         successBanner.style.display = 'flex';
         successBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
         setTimeout(() => { successBanner.style.display = 'none'; }, 6000);
     });
 })();
