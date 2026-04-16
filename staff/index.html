@@ -882,6 +882,7 @@ async function loadAllMembers() {
     const { members } = await res.json();
     allMembers = members || [];
     renderMembersTable(allMembers);
+    renderTxTable(allTx);
   } catch(e) {
     document.getElementById('members-table-wrap').innerHTML = '<div class="empty-state">Could not load.</div>';
   }
