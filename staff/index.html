@@ -585,6 +585,8 @@ let fbSortDir = 'desc';
 // ── PIN ───────────────────────────────────────────────────────────────
 function pinPress(d) {
   if (pinEntry.length >= 4) return;
+  // Unlock audio on first PIN tap
+  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch(e) {}
   pinEntry += d;
   updatePinDots();
   if (pinEntry.length === 4) checkPin();
@@ -618,6 +620,7 @@ function checkPin() {
 }
 
 function unlockDashboard(role) {
+  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch(e) {}
   document.getElementById('dashboard').style.display = 'block';
   const badge = document.getElementById('role-badge');
   badge.textContent = role === 'admin' ? 'Admin' : 'Staff';
