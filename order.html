@@ -1515,7 +1515,10 @@ async function submitOrder() {
 
   // ── Store order details for WhatsApp notification on thank-you page ──
   const itemLines = Object.keys(cart).map(k => `  - ${PRODUCTS[k].name} x${cart[k]} (RM ${(PRODUCTS[k].price * cart[k]).toFixed(2)})`).join('\n');
-  const itemsSimple = Object.keys(cart).map(k => `${PRODUCTS[k].name} ×${cart[k]}`).join(', ');
+  const itemsSimple = Object.keys(cart).map(k => {
+  const temp = tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : '';
+  return `${PRODUCTS[k].name}${temp} ×${cart[k]}`;
+}).join(', ');
   sessionStorage.setItem('teduh_pending_order', JSON.stringify({
     orderRef,
     name,
