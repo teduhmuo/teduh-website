@@ -502,6 +502,20 @@
             </label>
           </div>
         </div>
+
+        <div class="avail-shop-toggle" style="margin-bottom:1.25rem;">
+          <div>
+            <div class="avail-shop-label">Delivery</div>
+            <div class="avail-shop-sub">Turn OFF to disable delivery option</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="avail-status-badge" id="delivery-status-badge">Loading…</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="delivery-toggle" onchange="toggleDeliveryStatus(this.checked)">
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
         <div style="font-size:0.72rem;color:var(--medium-brown);margin-bottom:1rem;opacity:0.7;">Toggle categories or individual items. Unchecked = sold out today.</div>
         <div id="avail-categories"></div>
         <button onclick="saveAvailability()" style="width:100%;margin-top:0.5rem;padding:0.85rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:8px;font-family:var(--font-display);font-size:0.95rem;cursor:pointer;">Save availability</button>
@@ -1333,10 +1347,15 @@ async function loadAvailability() {
   });
   renderAvailCategories();
   try {
-    const statusData = await sbFetch('shop_status?id=eq.1&select=is_open', { method: 'GET' });
+    const statusData = await sbFetch('shop_status?id=eq.1&select=is_open,delivery_enabled', { method: 'GET' });
     const isOpen = statusData[0] ? statusData[0].is_open : true;
     document.getElementById('shop-open-toggle').checked = isOpen;
     updateShopBadge(isOpen);
+    const isDelivery = statusData[0]?.delivery_enabled !== false;
+    document.getElementById('delivery-toggle').checked = isDelivery;
+    const db = document.getElementById('delivery-status-badge');
+    db.textContent = isDelivery ? 'OPEN' : 'CLOSED';
+    db.className = 'avail-status-badge ' + (isDelivery ? 'open' : 'closed');
   } catch(e) { console.warn('Status load:', e); }
   try {
     const items = await sbFetch('item_availability?select=item_id,available', { method: 'GET' });
@@ -1352,7 +1371,18 @@ function updateShopBadge(isOpen) {
   badge.textContent = isOpen ? 'OPEN' : 'CLOSED';
   badge.className = 'avail-status-badge ' + (isOpen ? 'open' : 'closed');
 }
-
+async function toggleDeliveryStatus(isEnabled) {
+  const badge = document.getElementById('delivery-status-badge');
+  badge.textContent = isEnabled ? 'OPEN' : 'CLOSED';
+  badge.className = 'avail-status-badge ' + (isEnabled ? 'open' : 'closed');
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/shop_status?id=eq.1`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ delivery_enabled: isEnabled, updated_at: new Date().toISOString(), updated_by: currentStaffName })
+    });
+  } catch(e) { console.warn('Delivery toggle error:', e); }
+}
 async function toggleShopStatus(isOpen) {
   updateShopBadge(isOpen);
   try {
