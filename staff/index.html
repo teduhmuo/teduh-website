@@ -620,7 +620,14 @@ function checkPin() {
 }
 
 function unlockDashboard(role) {
-  try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); audioCtx.resume(); } catch(e) {}
+  // Unlock audio on first user tap anywhere
+  document.body.addEventListener('click', function unlockAudio() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      audioCtx.resume();
+    } catch(e) {}
+    document.body.removeEventListener('click', unlockAudio);
+  }, { once: true });
   document.getElementById('dashboard').style.display = 'block';
   const badge = document.getElementById('role-badge');
   badge.textContent = role === 'admin' ? 'Admin' : 'Staff';
