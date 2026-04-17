@@ -624,7 +624,13 @@ function unlockDashboard(role) {
   document.body.addEventListener('click', function unlockAudio() {
     try {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      audioCtx.resume();
+      audioCtx.resume().then(function() {
+        const buf = audioCtx.createBuffer(1, 1, 22050);
+        const src = audioCtx.createBufferSource();
+        src.buffer = buf;
+        src.connect(audioCtx.destination);
+        src.start(0);
+      });
     } catch(e) {}
     document.body.removeEventListener('click', unlockAudio);
   }, { once: true });
