@@ -630,6 +630,11 @@ function unlockDashboard(role) {
         src.buffer = buf;
         src.connect(audioCtx.destination);
         src.start(0);
+        // Restart chime if pending orders already waiting
+        if (pendingNewOrders.size > 0) {
+          stopChimeLoop();
+          startChimeLoop();
+        }
       });
     } catch(e) {}
     document.body.removeEventListener('click', unlockAudio);
@@ -1351,7 +1356,11 @@ function updateShopBadge(isOpen) {
 async function toggleShopStatus(isOpen) {
   updateShopBadge(isOpen);
   try {
-    await sbFetch('shop_status?id=eq.1', { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName }) });
+    await fetch(`${SUPABASE_URL}/rest/v1/shop_status?id=eq.1`, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ is_open: isOpen, updated_at: new Date().toISOString(), updated_by: currentStaffName })
+    });
     logShopToggle(isOpen);
   } catch(e) { console.warn('Toggle error:', e); }
 }
