@@ -1266,7 +1266,7 @@ function renderCart() {
     const s = (p._activePrice !== undefined ? p._activePrice : p.price) * cart[k];
     return `<div class="cart-item">
       <div>
-        <div class="cart-item-name">${p.name}</div>
+        <div class="cart-item-name">${p.name}${tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : ''}</div>
         <div class="cart-item-qty">× ${cart[k]} @ RM ${p.price.toFixed(2)}</div>
       </div>
       <div class="cart-item-price">RM ${s.toFixed(2)}</div>
@@ -1473,7 +1473,10 @@ function validate() {
 }
 
 function buildOrderDesc() {
-  const lines = Object.keys(cart).map(k => `${PRODUCTS[k].name} ×${cart[k]}`);
+  const lines = Object.keys(cart).map(k => {
+    const temp = tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : '';
+    return `${PRODUCTS[k].name}${temp} ×${cart[k]}`;
+  });
   if (redeemItem) lines.push(`[REDEEM: ${redeemItem.name}]`);
   return lines.join(', ');
 }
