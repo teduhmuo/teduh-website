@@ -1790,8 +1790,9 @@ async function sbQuery(path) {
 
 async function checkShopStatus() {
   try {
-    const data = await sbQuery('shop_status?id=eq.1&select=is_open');
+    const data = await sbQuery('shop_status?id=eq.1&select=is_open,delivery_enabled');
     shopIsOpen = Array.isArray(data) && data.length > 0 ? data[0].is_open : true;
+    const deliveryEnabled = Array.isArray(data) && data.length > 0 ? data[0].delivery_enabled !== false : true;
 
     const banner = document.getElementById('closed-banner');
     const payBtn = document.getElementById('pay-btn');
@@ -1801,6 +1802,14 @@ async function checkShopStatus() {
     } else {
       banner.style.display = 'none';
       if (payBtn) { payBtn.disabled = false; payBtn.textContent = 'Proceed to Payment'; }
+    }
+
+    const deliveryOpt = document.getElementById('opt-delivery');
+    if (!deliveryEnabled) {
+      deliveryOpt.style.display = 'none';
+      if (fulfillment === 'delivery') selectFulfillment('pickup');
+    } else {
+      deliveryOpt.style.display = '';
     }
   } catch(e) { console.warn('Status check error:', e); }
 
