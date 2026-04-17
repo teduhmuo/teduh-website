@@ -297,6 +297,21 @@ async function creditPoints(pending) {
 
 // ── Main ─────────────────────────────────────────────────────────────
 async function onLoad() {
+  // Check Bayarcash payment status from URL params
+  const params = new URLSearchParams(window.location.search);
+  const status = params.get('status') || params.get('transaction_status') || '';
+  
+  // If payment was not successful, show cancelled message
+  if (status && status !== '3' && status !== 'success' && status !== 'successful') {
+    sessionStorage.removeItem('teduh_pending_loyalty');
+    sessionStorage.removeItem('teduh_pending_order');
+    document.querySelector('.check-circle').textContent = '✕';
+    document.querySelector('.check-circle').style.background = '#C0392B';
+    document.querySelector('h1').textContent = 'Payment cancelled';
+    document.getElementById('processing-msg').textContent = 'Your order was not placed. No payment was taken.';
+    return;
+  }
+
   const loyaltyRaw = sessionStorage.getItem('teduh_pending_loyalty');
   const orderRaw   = sessionStorage.getItem('teduh_pending_order');
 
