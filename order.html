@@ -1806,10 +1806,14 @@ async function checkShopStatus() {
 
     const deliveryOpt = document.getElementById('opt-delivery');
     if (!deliveryEnabled) {
-      deliveryOpt.style.display = 'none';
+      deliveryOpt.style.pointerEvents = 'none';
+      deliveryOpt.style.opacity = '0.5';
+      deliveryOpt.querySelector('.fo-sub').textContent = '⏳ Coming soon — not available right now';
       if (fulfillment === 'delivery') selectFulfillment('pickup');
     } else {
-      deliveryOpt.style.display = '';
+      deliveryOpt.style.pointerEvents = '';
+      deliveryOpt.style.opacity = '';
+      deliveryOpt.querySelector('.fo-sub').textContent = 'Lalamove for Muar area, courier for outside Muar';
     }
   } catch(e) { console.warn('Status check error:', e); }
 
