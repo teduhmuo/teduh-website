@@ -1535,7 +1535,7 @@ async function loadQueue() {
   try {
     const today = new Date();
     today.setHours(0,0,0,0);
-    const data = await sbFetch('queue_orders?select=*&order=created_at.asc&created_at=gte.' + today.toISOString());
+    const data = await sbFetch('queue_orders?select=*&order=created_at.desc&created_at=gte.' + today.toISOString());
     allQueue = Array.isArray(data) ? data : [];
 
     allQueue.forEach(function(o) {
