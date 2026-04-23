@@ -1601,8 +1601,9 @@ function onPostcodeInput() {
   addressTimer = setTimeout(() => {
     const city  = document.getElementById('field-city').value.trim();
     const state = document.getElementById('field-state').value;
-    const addr  = postcode + ' ' + city + ' ' + state;
-    estimateDelivery(addr);
+    const line  = document.getElementById('field-address-line').value.trim();
+const addr  = (line ? line + ', ' : '') + postcode + ' ' + city + ' ' + state;
+estimateDelivery(addr);
   }, 800);
 }
 
@@ -1662,14 +1663,8 @@ async function estimateDelivery(addr) {
     let custLat = null, custLng = null, areaName = '';
 
     const postcode = extractPostcode(addr);
-    if (postcode && MY_POSTCODES[postcode]) {
-      const pc = MY_POSTCODES[postcode];
-      custLat  = pc.lat;
-      custLng  = pc.lng;
-      areaName = pc.area;
-    }
 
-    if (!custLat) {
+if (!custLat) {
       const queries = [];
       if (postcode) queries.push(postcode + ', Malaysia');
       const areaKw = addr.match(/(taman [\w\s]+|kg\.?\s+[\w]+|kampung [\w]+|parit [\w]+|jalan [\w]+|bakri|muar town|pagoh|ledang|tangkak)/i);
