@@ -936,7 +936,7 @@
         <span>Total</span>
         <span id="total-amount">RM 0.00</span>
       </div>
-      <p class="delivery-note" id="delivery-fee-note">+ Delivery fee will be calculated by Lalamove and charged separately.</p>
+      <p class="delivery-note" id="delivery-fee-note">Delivery fee shown above is a Lalamove estimate. Final fee may vary slightly.</p>
       <div class="points-earn-note" id="points-earn-note"></div>
     </div>
 
@@ -1094,6 +1094,9 @@ const PRODUCTS = {
 const cart = {};
 let fulfillment = 'delivery';
 let deliveryFee = 0;
+let lalamoveQuotation = null; // { quotationId, senderStopId, recipientStopId, totalFee }
+let deliveryLat = null;
+let deliveryLng = null;
 let loyaltyMember = null;   // { phone, name, points }
 let redeemItem = null;      // { name, pts } or null
 
@@ -1468,6 +1471,7 @@ function validate() {
     if (!line)     { showError('Please enter your street address.'); return false; }
     if (!postcode) { showError('Please enter your postcode.'); return false; }
     if (!city)     { showError('Please enter your city / area.'); return false; }
+    if (!lalamoveQuotation) { showError('Please wait for the delivery fee to be calculated before proceeding.'); return false; }
   }
   return true;
 }
@@ -1532,7 +1536,10 @@ async function submitOrder() {
     notes: notes || '',
     redeemItem: redeemItem ? redeemItem.name : null,
     loyaltyPhone: loyaltyMember ? loyaltyMember.phone : null,
-    total: total.toFixed(2)
+    total: total.toFixed(2),
+    lalamoveQuotation: lalamoveQuotation,
+    deliveryLat: deliveryLat,
+    deliveryLng: deliveryLng
   }));
   const description = `${buildOrderDesc()} | ${fulfillmentNote}${notes ? ' | Note: ' + notes : ''}`;
 
@@ -1576,7 +1583,6 @@ async function submitOrder() {
 // ── Delivery fee estimator (OpenStreetMap Nominatim) ──────────────────
 const TEDUH_LAT = 2.0461;
 const TEDUH_LNG = 102.5621;
-const MAX_KM    = 10;
 
 let addressTimer = null;
 
@@ -1643,15 +1649,18 @@ async function estimateDelivery(addr) {
   const text   = document.getElementById('delivery-fee-text');
   const amount = document.getElementById('delivery-fee-amount');
 
+  lalamoveQuotation = null;
+  deliveryFee = 0;
+  renderCart();
+
   box.className = 'delivery-fee-box loading';
   box.style.display = 'block';
-  text.textContent = 'Calculating delivery fee...';
+  text.textContent = 'Getting Lalamove quote…';
   amount.textContent = '';
 
   try {
     let custLat = null, custLng = null, areaName = '';
 
-    // 1. Try postcode lookup first (most reliable for Malaysia)
     const postcode = extractPostcode(addr);
     if (postcode && MY_POSTCODES[postcode]) {
       const pc = MY_POSTCODES[postcode];
@@ -1660,15 +1669,12 @@ async function estimateDelivery(addr) {
       areaName = pc.area;
     }
 
-    // 2. If no postcode, try Nominatim with postcode query
     if (!custLat) {
-      // Build smart query — try postcode first via Nominatim
       const queries = [];
       if (postcode) queries.push(postcode + ', Malaysia');
-      // Extract area keywords
       const areaKw = addr.match(/(taman [\w\s]+|kg\.?\s+[\w]+|kampung [\w]+|parit [\w]+|jalan [\w]+|bakri|muar town|pagoh|ledang|tangkak)/i);
       if (areaKw) queries.push(areaKw[0] + ', Muar, Johor, Malaysia');
-      queries.push('Muar, Johor, Malaysia'); // final fallback
+      queries.push('Muar, Johor, Malaysia');
 
       for (const q of queries) {
         const url = 'https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(q) + '&limit=1&countrycodes=my';
@@ -1686,76 +1692,54 @@ async function estimateDelivery(addr) {
 
     if (!custLat) {
       box.className = 'delivery-fee-box error';
-      text.textContent = 'Could not find your location. Please include your postcode (e.g. 84000) in the address.';
+      text.textContent = 'Could not find your location. Please include your postcode (e.g. 84000).';
       return;
     }
 
-    const km = haversineKm(TEDUH_LAT, TEDUH_LNG, custLat, custLng);
+    deliveryLat = custLat;
+    deliveryLng = custLng;
 
-    if (km > MAX_KM) {
-      deliveryFee = 0;
-      renderCart();
+    // Call Lalamove quote edge function
+    const res = await fetch(SUPABASE_URL + '/functions/v1/lalamove-quote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        lat: String(custLat),
+        lng: String(custLng),
+        address: addr
+      })
+    });
+
+    const quote = await res.json();
+
+    if (!res.ok || quote.error) {
       box.className = 'delivery-fee-box error';
-      const distLabel = (areaName ? areaName : 'Your area') + ' (~' + km.toFixed(1) + 'km)';
-      text.innerHTML = distLabel + ' is outside our 10km delivery zone.<br><button onclick="waOutsideDelivery()" style="margin-top:0.5rem;padding:0.5rem 1rem;background:var(--warm-brown);color:var(--cream);border:none;border-radius:6px;font-family:var(--font-body);font-size:0.82rem;cursor:pointer;">WhatsApp us to arrange →</button>';
-      amount.textContent = '';
-    } else {
-      const fee = calcFee(km);
-      deliveryFee = fee;
-      box.className = 'delivery-fee-box success';
-      text.textContent = (areaName || 'Your area') + ' · approx. ' + km.toFixed(1) + 'km from Teduh · Estimated Lalamove fee:';
-      amount.textContent = 'RM ' + fee.toFixed(2);
-      renderCart();
+      text.innerHTML = 'Could not get delivery quote. <a href="https://wa.me/601170264828" target="_blank" style="color:var(--error);">WhatsApp us</a> to arrange.';
+      return;
     }
+
+    lalamoveQuotation = {
+      quotationId:    quote.quotationId,
+      senderStopId:   quote.senderStopId,
+      recipientStopId: quote.recipientStopId,
+      totalFee:       parseFloat(quote.totalFee)
+    };
+
+    deliveryFee = parseFloat(quote.totalFee);
+    const distKm = quote.distance ? (parseInt(quote.distance) / 1000).toFixed(1) : '?';
+
+    box.className = 'delivery-fee-box success';
+    text.textContent = (areaName || 'Your area') + ' · approx. ' + distKm + 'km · Lalamove delivery fee:';
+    amount.textContent = 'RM ' + deliveryFee.toFixed(2);
+    renderCart();
+
   } catch(e) {
     box.className = 'delivery-fee-box error';
-    text.textContent = 'Could not estimate. Please check your connection and try again.';
+    text.textContent = 'Could not get quote. Please check your connection and try again.';
   }
-}
-
-function haversineKm(lat1, lng1, lat2, lng2) {
-  const R    = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLng = (lng2 - lng1) * Math.PI / 180;
-  const a    = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLng/2)**2;
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function calcFee(km) {
-  if (km < 3)  return 6.50;
-  if (km < 7)  return 8.50;
-  return 11.00;
-}
-
-
-function waOutsideDelivery() {
-  const name     = document.getElementById('field-name').value.trim() || '—';
-  const phone    = document.getElementById('field-phone').value.trim() || '—';
-  const line     = document.getElementById('field-address-line') ? document.getElementById('field-address-line').value.trim() : '';
-  const postcode = document.getElementById('field-postcode') ? document.getElementById('field-postcode').value.trim() : '';
-  const city     = document.getElementById('field-city') ? document.getElementById('field-city').value.trim() : '';
-  const state    = document.getElementById('field-state') ? document.getElementById('field-state').value : '';
-  const fullAddr = [line, postcode, city, state].filter(Boolean).join(', ') || '—';
-
-  const cartItems = Object.keys(cart).map(k => '  - ' + PRODUCTS[k].name + ' x' + cart[k] + ' (RM ' + (PRODUCTS[k].price * cart[k]).toFixed(2) + ')').join('\n') || '  (no items selected yet)';
-  const subtotal  = getSubtotal();
-
-  const msg = [
-    '⚠️ *Saya berada di luar kawasan penghantaran Teduh (>10km)*',
-    '',
-    'Boleh saya tanya kos penghantaran ke alamat saya?',
-    '',
-    '👤 Nama: ' + name,
-    '📱 No. telefon: ' + phone,
-    '📍 Alamat: ' + fullAddr,
-    '',
-    '🧾 *Pesanan saya:*',
-    cartItems,
-    '',
-    '💰 Subtotal: RM ' + subtotal.toFixed(2),
-  ].join('\n');
-
-  window.open('https://wa.me/601170264828?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function syncLoyaltyPhone() {
