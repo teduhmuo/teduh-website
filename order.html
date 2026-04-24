@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Order — Teduh</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -370,6 +372,38 @@
   .delivery-fee-box.error   { background: #fdf0ef; color: var(--error); border-color: #f5c6c6; }
   .delivery-fee-box.loading { background: var(--cream); color: var(--medium-brown); }
   .fee-amount { font-size: 1.1rem; font-weight: 500; margin-top: 0.25rem; }
+
+  .map-picker-wrap {
+  margin-top: 0.75rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.map-picker-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--medium-brown);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  display: block;
+}
+.map-picker-hint {
+  font-size: 0.75rem;
+  color: var(--medium-brown);
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+#delivery-map {
+  height: 260px;
+  width: 100%;
+}
+.map-pin-confirmed {
+  font-size: 0.78rem;
+  color: var(--accent);
+  margin-top: 0.4rem;
+  display: none;
+}
 
   /* ── Loyalty section ── */
   .loyalty-section {
@@ -871,6 +905,14 @@
           </div>
         </div>
       </div>
+      <div style="margin-top:0.75rem;">
+  <span class="map-picker-label">📍 Drop a pin at your location</span>
+  <p class="map-picker-hint">Tap or click on the map to place your delivery pin. Drag to adjust.</p>
+  <div class="map-picker-wrap">
+    <div id="delivery-map"></div>
+  </div>
+  <div class="map-pin-confirmed" id="map-pin-confirmed">✅ Pin placed — delivery fee updated</div>
+</div>
     </div>
 
     <div class="form-row">
@@ -1103,13 +1145,19 @@ let redeemItem = null;      // { name, pts } or null
 // ── Fulfillment toggle ─────────────────────────────────────────────
 function selectFulfillment(type) {
   fulfillment = type;
-  if (type === 'pickup') { deliveryFee = 0; }
+  if (type === 'pickup') { deliveryFee = 0; lalamoveQuotation = null; }
   document.getElementById('opt-delivery').classList.toggle('selected', type === 'delivery');
   document.getElementById('opt-pickup').classList.toggle('selected', type === 'pickup');
   document.getElementById('delivery-fields').style.display = type === 'delivery' ? 'block' : 'none';
   document.getElementById('pickup-note').style.display = type === 'pickup' ? 'block' : 'none';
   document.getElementById('delivery-fee-note').style.display = type === 'delivery' ? 'block' : 'none';
   renderCart();
+  if (type === 'delivery') {
+    setTimeout(() => {
+      initDeliveryMap();
+      if (deliveryMap) deliveryMap.invalidateSize();
+    }, 100);
+  }
 }
 
 // ── Category tabs ──────────────────────────────────────────────────
@@ -1755,7 +1803,11 @@ function syncLoyaltyPhone() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => { buildMenuGrid(); checkShopStatus(); });
+document.addEventListener('DOMContentLoaded', () => {
+  buildMenuGrid();
+  checkShopStatus();
+  setTimeout(() => { initDeliveryMap(); }, 300);
+});
 // ── Shop status & availability check ─────────────────────────────────
 let shopIsOpen = true;
 let itemAvailability = {};
@@ -1848,6 +1900,112 @@ function applyStaticAvailability() {
   });
 }
 
+// ── Map pin picker ─────────────────────────────────────────────────
+let deliveryMap = null;
+let deliveryMarker = null;
+
+function initDeliveryMap() {
+  if (deliveryMap) return; // already initialized
+
+  deliveryMap = L.map('delivery-map').setView([2.0461, 102.5621], 14);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors',
+    maxZoom: 19
+  }).addTo(deliveryMap);
+
+  // Custom pin icon
+  const pinIcon = L.divIcon({
+    html: '<div style="font-size:2rem;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3));">📍</div>',
+    className: '',
+    iconAnchor: [16, 32]
+  });
+
+  deliveryMap.on('click', function(e) {
+    const { lat, lng } = e.latlng;
+
+    if (deliveryMarker) {
+      deliveryMarker.setLatLng([lat, lng]);
+    } else {
+      deliveryMarker = L.marker([lat, lng], { icon: pinIcon, draggable: true }).addTo(deliveryMap);
+      deliveryMarker.on('dragend', function() {
+        const pos = deliveryMarker.getLatLng();
+        onPinPlaced(pos.lat, pos.lng);
+      });
+    }
+
+    onPinPlaced(lat, lng);
+  });
+}
+
+function onPinPlaced(lat, lng) {
+  deliveryLat = lat;
+  deliveryLng = lng;
+
+  document.getElementById('map-pin-confirmed').style.display = 'block';
+
+  // Reset old quote
+  lalamoveQuotation = null;
+  deliveryFee = 0;
+  renderCart();
+
+  // Get fresh Lalamove quote with pin coordinates
+  const address = getFullAddress() || 'Pin location, Muar, Johor';
+  fetchQuoteFromPin(lat, lng, address);
+}
+
+async function fetchQuoteFromPin(lat, lng, address) {
+  const box    = document.getElementById('delivery-fee-box');
+  const text   = document.getElementById('delivery-fee-text');
+  const amount = document.getElementById('delivery-fee-amount');
+
+  box.className = 'delivery-fee-box loading';
+  box.style.display = 'block';
+  text.textContent = 'Getting Lalamove quote…';
+  amount.textContent = '';
+
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/lalamove-quote', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + SUPABASE_KEY
+      },
+      body: JSON.stringify({
+        lat: String(lat),
+        lng: String(lng),
+        address: address
+      })
+    });
+
+    const quote = await res.json();
+
+    if (!res.ok || quote.error) {
+      box.className = 'delivery-fee-box error';
+      text.innerHTML = 'Could not get delivery quote. <a href="https://wa.me/601170264828" target="_blank" style="color:var(--error);">WhatsApp us</a> to arrange.';
+      return;
+    }
+
+    lalamoveQuotation = {
+      quotationId:     quote.quotationId,
+      senderStopId:    quote.senderStopId,
+      recipientStopId: quote.recipientStopId,
+      totalFee:        parseFloat(quote.totalFee)
+    };
+
+    deliveryFee = parseFloat(quote.totalFee);
+    const distKm = quote.distance ? (parseInt(quote.distance) / 1000).toFixed(1) : '?';
+
+    box.className = 'delivery-fee-box success';
+    text.textContent = 'Pin location · approx. ' + distKm + 'km · Lalamove delivery fee:';
+    amount.textContent = 'RM ' + deliveryFee.toFixed(2);
+    renderCart();
+
+  } catch(e) {
+    box.className = 'delivery-fee-box error';
+    text.textContent = 'Could not get quote. Please check your connection.';
+  }
+}
 </script>
 </body>
 </html>
