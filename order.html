@@ -1750,10 +1750,10 @@ if (!custLat) {
         'Authorization': 'Bearer ' + SUPABASE_KEY
       },
       body: JSON.stringify({
-        lat: String(custLat),
-        lng: String(custLng),
-        address: addr
-      })
+  lat: lat.toFixed(6),
+  lng: lng.toFixed(6),
+  address: address
+    })
     });
 
     const quote = await res.json();
@@ -1939,8 +1939,8 @@ function initDeliveryMap() {
 }
 
 function onPinPlaced(lat, lng) {
-  deliveryLat = lat;
-  deliveryLng = lng;
+  deliveryLat = parseFloat(lat.toFixed(6));
+  deliveryLng = parseFloat(lng.toFixed(6));
 
   document.getElementById('map-pin-confirmed').style.display = 'block';
 
