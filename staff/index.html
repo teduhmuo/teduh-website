@@ -753,7 +753,7 @@ function onAddPhoneInput() {
   document.getElementById('add-member-preview').style.display = 'none';
   document.getElementById('add-pts-preview').style.display    = 'none';
   document.getElementById('add-msg').className = 'msg';
-  const phone = document.getElementById('add-phone').value.trim().replace(/[\s\-]/g,'');
+  const phone = normalizePhone(document.getElementById('add-phone').value);
   if (phone.length < 9) return;
   addPhoneTimer = setTimeout(() => autoLookupAdd(phone), 600);
 }
@@ -785,7 +785,7 @@ function updateAddPreview() {
 }
 
 async function submitAddPoints() {
-  const phone = document.getElementById('add-phone').value.trim().replace(/[\s\-]/g,'');
+  const phone = normalizePhone(document.getElementById('add-phone').value);
   const amt   = parseInt(document.getElementById('add-amount').value) || 0;
   if (!phone)     { showMsg('add-msg', 'Enter customer phone number.', 'error'); return; }
   if (!addTarget) { showMsg('add-msg', 'Customer not found. Check the phone number.', 'error'); return; }
@@ -850,7 +850,7 @@ function closeReceipt() { document.getElementById('receipt-overlay').classList.r
 
 // ── Lookup ────────────────────────────────────────────────────────────
 async function lookupMember() {
-  const phone = document.getElementById('lookup-phone').value.trim().replace(/[\s\-]/g,'');
+  const phone = normalizePhone(document.getElementById('lookup-phone').value);
   const card  = document.getElementById('lookup-card');
   if (!phone) { showMsg('lookup-msg', 'Enter a phone number.', 'error'); return; }
   card.style.display = 'none';
@@ -887,7 +887,7 @@ async function lookupMember() {
 // ── Register ──────────────────────────────────────────────────────────
 async function registerMember() {
   const name  = document.getElementById('reg-name').value.trim();
-  const phone = document.getElementById('reg-phone').value.trim().replace(/[\s\-]/g,'');
+  const phone = normalizePhone(document.getElementById('reg-phone').value);
   if (!name)  { showMsg('reg-msg', 'Enter customer name.', 'error'); return; }
   if (!phone) { showMsg('reg-msg', 'Enter phone number.', 'error'); return; }
   const btn = document.querySelector('#panel-register .submit-btn');
@@ -1236,7 +1236,7 @@ function onRedeemPhoneInput() {
 }
 
 async function lookupRedeemMember() {
-  const phone  = document.getElementById('redeem-phone').value.trim().replace(/[\s\-]/g,'');
+  const phone = normalizePhone(document.getElementById('redeem-phone').value);
   const msgEl  = document.getElementById('redeem-lookup-msg');
   const card   = document.getElementById('redeem-member-card');
   msgEl.textContent = ''; card.style.display = 'none'; redeemMember = null;
@@ -1266,8 +1266,6 @@ function buildWalkinRedeemItems(pts) {
   const list = document.getElementById('redeem-items-list');
   let html = ''; let added = 0;
   WALKIN_ITEMS.forEach(item => {
-    const ptsCost = Math.round(item.price / 0.08);
-    if (pts < ptsCost) return;
     added++;
     html += '<button style="display:flex;justify-content:space-between;align-items:center;width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:0.5rem;cursor:pointer;font-family:var(--font-body);color:var(--cream);text-align:left;" onclick="confirmWalkinRedeem(' + JSON.stringify(item).replace(/"/g, "&quot;") + ',' + ptsCost + ')">' +
       '<span style="font-size:0.85rem;font-weight:500;">' + item.name + '</span>' +
