@@ -1543,7 +1543,7 @@ async function submitOrder() {
   loadingMsg.textContent = 'Preparing your payment…';
 
   const name    = document.getElementById('field-name').value.trim();
-  const phone   = document.getElementById('field-phone').value.trim().replace(/[\s\-]/g,'');
+  const phone   = normalizePhone(document.getElementById('field-phone').value);
   const email   = document.getElementById('field-email').value.trim();
   const notes   = document.getElementById('field-notes').value.trim();
   const address = fulfillment === 'delivery' ? getFullAddress() : '';
@@ -1750,10 +1750,10 @@ if (!custLat) {
         'Authorization': 'Bearer ' + SUPABASE_KEY
       },
       body: JSON.stringify({
-  lat: lat.toFixed(6),
-  lng: lng.toFixed(6),
-  address: address
-    })
+  lat: custLat.toFixed(6),
+  lng: custLng.toFixed(6),
+  address: addr
+})
     });
 
     const quote = await res.json();
@@ -1786,7 +1786,7 @@ if (!custLat) {
 }
 
 function syncLoyaltyPhone() {
-  const phone = document.getElementById('field-phone').value.trim();
+ const phone = normalizePhone(document.getElementById('field-phone').value);
   const loyInput = document.getElementById('loyalty-phone-input');
   loyInput.value = phone;
   // Auto-lookup when phone number looks complete (10-11 digits)
@@ -2005,6 +2005,11 @@ async function fetchQuoteFromPin(lat, lng, address) {
     box.className = 'delivery-fee-box error';
     text.textContent = 'Could not get quote. Please check your connection.';
   }
+}function normalizePhone(phone) {
+  let p = phone.trim().replace(/[\s\-]/g, '');
+  if (p.startsWith('0')) p = '+60' + p.slice(1);
+  else if (p.startsWith('60') && !p.startsWith('+')) p = '+' + p;
+  return p;
 }
 </script>
 </body>
