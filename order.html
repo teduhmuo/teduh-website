@@ -1445,15 +1445,6 @@ function buildRedeemOptions(pts) {
   const sel = document.getElementById('redeem-select');
   sel.innerHTML = '<option value="">— Do not redeem —</option>';
 
-  // Must have at least 150 points
-  if (pts < 150) {
-    const inf = document.createElement('option');
-    inf.disabled = true;
-    inf.textContent = 'Need 150 pts minimum (you have ' + pts + ')';
-    sel.appendChild(inf);
-    return;
-  }
-
   // Only show items that are in the cart AND price >= RM8
   let added = 0;
   Object.keys(cart).forEach(k => {
@@ -1472,7 +1463,7 @@ function buildRedeemOptions(pts) {
     }
   });
 
-  if (added === 0 && pts >= 150) {
+  if (added === 0) {
     const inf = document.createElement('option');
     inf.disabled = true;
     inf.textContent = 'No items in cart qualify (need more pts or add eligible items)';
