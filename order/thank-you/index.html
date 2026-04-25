@@ -333,20 +333,22 @@ async function onLoad() {
   try {
     const queueNum = await generateQueueNumber(order.fulfillmentType || 'pickup');
 
-    await sbFetch('queue_orders', {
-      method: 'POST',
-      body: JSON.stringify({
-        queue_number:     queueNum,
-        order_ref:        order.orderRef,
-        customer_name:    order.name,
-        phone:            order.phone,
-        items:            order.itemsSimple || order.items,
-        fulfillment_type: order.fulfillmentType || 'pickup',
-        address:          order.address  || '',
-        notes:            order.notes    || '',
-        status:           'pending'
-      })
-    });
+   await sbFetch('queue_orders', {
+  method: 'POST',
+  body: JSON.stringify({
+    queue_number:     queueNum,
+    order_ref:        order.orderRef,
+    customer_name:    order.name,
+    phone:            order.phone,
+    items:            order.itemsSimple || order.items,
+    fulfillment_type: order.fulfillmentType || 'pickup',
+    address:          order.address  || '',
+    notes:            order.notes    || '',
+    status:           'pending',
+    delivery_lat:     order.deliveryLat  || null,
+    delivery_lng:     order.deliveryLng  || null,
+  })
+});
 
     // Show queue ticket
     document.getElementById('processing-msg').style.display = 'none';
