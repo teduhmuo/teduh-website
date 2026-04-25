@@ -1711,6 +1711,13 @@ async function dispatchLalamove(orderId, customerName, customerPhone, deliveryLa
     btn.disabled = false; btn.textContent = '🛵 Dispatch';
   }
 }
+
+function normalizePhone(phone) {
+  let p = phone.trim().replace(/[\s\-]/g, '');
+  if (p.startsWith('0')) p = '+60' + p.slice(1);
+  else if (p.startsWith('60')) p = '+' + p;
+  return p;
+}
 </script>
 </body>
 </html>
