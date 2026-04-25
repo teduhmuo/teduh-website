@@ -1628,9 +1628,14 @@ function renderQueue() {
           '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Customer Picked Up ✓</button>' +
           '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
       } else {
-        actions = '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider Picked Up</button>' +
-          '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
-      }
+  var hasCoords = o.delivery_lat && o.delivery_lng;
+  var dispatchBtn = hasCoords
+    ? '<button class="qc-btn" style="background:#FF6B35;color:white;border-color:#FF6B35;" onclick="dispatchLalamove(\'' + o.id + '\',\'' + o.customer_name + '\',\'' + o.phone + '\',' + o.delivery_lat + ',' + o.delivery_lng + ',\'' + (o.address||'').replace(/'/g,"\\'") + '\')">🛵 Dispatch</button>'
+    : '<button class="qc-btn" disabled style="opacity:0.4;" title="No coordinates saved">🛵 No coords</button>';
+  actions = dispatchBtn +
+    '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider Picked Up ✓</button>' +
+    '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
+}
     } else if (status === 'delivering') {
       actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'delivery\')">WA Customer</button>' +
         '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Delivered ✓</button>' +
@@ -1677,6 +1682,34 @@ function waOrderReady(queueNum, phone, name, type) {
     ? 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sudah sedia untuk diambil di Teduh, No 11 Jalan Sulaiman, Muar. Sila tunjukkan nombor giliran anda kepada staff. Terima kasih!'
     : 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sedang dalam perjalanan ke alamat anda. Rider kami akan tiba tidak lama lagi. Terima kasih kerana memesan di Teduh!';
   window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
+}
+
+async function dispatchLalamove(orderId, customerName, customerPhone, deliveryLat, deliveryLng, deliveryAddress) {
+  if (!confirm('Dispatch Lalamove rider for ' + customerName + '?')) return;
+  const btn = event.target;
+  btn.disabled = true; btn.textContent = '🛵 Dispatching…';
+  try {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/lalamove-dispatch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+      body: JSON.stringify({ orderId, customerName, customerPhone, deliveryLat, deliveryLng, deliveryAddress })
+    });
+    const data = await res.json();
+    if (!res.ok || data.error) {
+      alert('Dispatch failed: ' + (data.error || 'Unknown error'));
+      btn.disabled = false; btn.textContent = '🛵 Dispatch';
+      return;
+    }
+    await updateQueueStatus(orderId, 'delivering');
+    if (data.shareLink) {
+      const cleanPhone = customerPhone.replace(/[^0-9]/g,'').replace(/^0/,'60');
+      const msg = 'Hi ' + customerName + '! Rider anda sudah otw. Track di sini: ' + data.shareLink;
+      window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
+    }
+  } catch(e) {
+    alert('Network error. Try again.');
+    btn.disabled = false; btn.textContent = '🛵 Dispatch';
+  }
 }
 </script>
 </body>
