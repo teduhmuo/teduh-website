@@ -1232,7 +1232,8 @@ let redeemMember = null;
 
 function onRedeemPhoneInput() {
   const phone = document.getElementById('redeem-phone').value.trim();
-  if (phone.length === 10 || phone.length === 11) lookupRedeemMember();
+  const digits = phone.replace(/\D/g, '');
+  if (digits.length >= 10) lookupRedeemMember();
 }
 
 async function lookupRedeemMember() {
