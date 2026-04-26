@@ -1267,6 +1267,8 @@ function buildWalkinRedeemItems(pts) {
   const list = document.getElementById('redeem-items-list');
   let html = ''; let added = 0;
   WALKIN_ITEMS.forEach(item => {
+    const ptsCost = Math.round(item.price / 0.08);
+    if (pts < ptsCost) return;
     added++;
     html += '<button style="display:flex;justify-content:space-between;align-items:center;width:100%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:0.5rem;cursor:pointer;font-family:var(--font-body);color:var(--cream);text-align:left;" onclick="confirmWalkinRedeem(' + JSON.stringify(item).replace(/"/g, "&quot;") + ',' + ptsCost + ')">' +
       '<span style="font-size:0.85rem;font-weight:500;">' + item.name + '</span>' +
