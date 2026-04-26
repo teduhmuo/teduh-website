@@ -1260,7 +1260,7 @@ async function lookupRedeemMember() {
     document.getElementById('rm-tier').textContent  = tier ? tier.name + ' Member' : '';
     buildWalkinRedeemItems(member.points);
     card.style.display = 'block';
-  } catch(e) { msgEl.textContent = 'Error. Try again.'; msgEl.className = 'msg error'; }
+  } catch(e) { msgEl.textContent = 'Error: ' + e.message; msgEl.className = 'msg error'; }
 }
 
 function buildWalkinRedeemItems(pts) {
