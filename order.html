@@ -1391,7 +1391,7 @@ function onPhoneInput() {
 // ── Loyalty lookup (auto-registers new customers) ─────────────────
 async function lookupLoyalty() {
   const rawPhone = document.getElementById('loyalty-phone-input').value.trim();
-  const phone = rawPhone.replace(/[\s\-]/g, '');
+  const phone = normalizePhone(rawPhone);
   const msgEl = document.getElementById('loyalty-msg');
   const memberBox = document.getElementById('loyalty-member-box');
 
