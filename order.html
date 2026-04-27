@@ -1569,17 +1569,6 @@ async function submitOrder() {
   return { sku, name: p.name, qty: cart[k], price: p._activePrice !== undefined ? p._activePrice : p.price };
 });
 
-    fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
-    fulfillmentType: fulfillment,
-    address: address || '',
-    notes: notes || '',
-    redeemItem: redeemItem ? redeemItem.name : null,
-    loyaltyPhone: loyaltyMember ? loyaltyMember.phone : null,
-    total: total.toFixed(2),
-    lalamoveQuotation: lalamoveQuotation,
-    deliveryLat: deliveryLat,
-    deliveryLng: deliveryLng
-  }));
   const description = `${buildOrderDesc()} | ${fulfillmentNote}${notes ? ' | Note: ' + notes : ''}`;
 
   const payload = {
