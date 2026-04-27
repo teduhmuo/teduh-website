@@ -1569,25 +1569,6 @@ async function submitOrder() {
   return { sku, name: p.name, qty: cart[k], price: p._activePrice !== undefined ? p._activePrice : p.price };
 });
 
-sessionStorage.setItem('teduh_pending_order', JSON.stringify({
-    orderRef,
-    name,
-    phone,
-    email,
-    items: itemLines,
-    itemsSimple,
-    cartItems,
-    fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
-    fulfillmentType: fulfillment,
-    address: address || '',
-    notes: notes || '',
-    redeemItem: redeemItem ? redeemItem.name : null,
-    loyaltyPhone: loyaltyMember ? loyaltyMember.phone : null,
-    total: total.toFixed(2),
-    lalamoveQuotation: lalamoveQuotation,
-    deliveryLat: deliveryLat,
-    deliveryLng: deliveryLng
-}));
     fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
     fulfillmentType: fulfillment,
     address: address || '',
