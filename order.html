@@ -1562,13 +1562,32 @@ async function submitOrder() {
   const temp = tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : '';
   return `${PRODUCTS[k].name}${temp} ×${cart[k]}`;
 }).join(', ');
-  sessionStorage.setItem('teduh_pending_order', JSON.stringify({
+  const cartItems = Object.keys(cart).map(k => {
+  const p = PRODUCTS[k];
+  const temp = tempSelection[k];
+  const sku = temp ? `${k}-${temp}` : k;
+  return { sku, name: p.name, qty: cart[k], price: p._activePrice !== undefined ? p._activePrice : p.price };
+});
+
+sessionStorage.setItem('teduh_pending_order', JSON.stringify({
     orderRef,
     name,
     phone,
     email,
     items: itemLines,
     itemsSimple,
+    cartItems,
+    fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
+    fulfillmentType: fulfillment,
+    address: address || '',
+    notes: notes || '',
+    redeemItem: redeemItem ? redeemItem.name : null,
+    loyaltyPhone: loyaltyMember ? loyaltyMember.phone : null,
+    total: total.toFixed(2),
+    lalamoveQuotation: lalamoveQuotation,
+    deliveryLat: deliveryLat,
+    deliveryLng: deliveryLng
+}));
     fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
     fulfillmentType: fulfillment,
     address: address || '',

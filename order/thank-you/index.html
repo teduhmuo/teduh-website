@@ -351,6 +351,20 @@ async function onLoad() {
 });
 
     // Show queue ticket
+    if (order.cartItems) {
+  fetch(`${SUPABASE_URL}/functions/v1/loyverse-receipt`, {
+    method: 'POST',
+    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      cartItems: order.cartItems,
+      deliveryFee: order.fulfillmentType === 'delivery' ? parseFloat(order.total) - 1 : 0,
+      orderRef: order.orderRef,
+      customerName: order.name,
+      customerPhone: order.phone,
+      fulfillmentType: order.fulfillmentType
+    })
+  }).catch(e => console.warn('Loyverse receipt error:', e));
+}
     document.getElementById('processing-msg').style.display = 'none';
     const ticket = document.getElementById('queue-ticket');
     ticket.style.display = 'block';
