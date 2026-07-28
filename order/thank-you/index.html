@@ -364,7 +364,8 @@ async function onLoad() {
       customerName: order.name,
       customerPhone: order.phone,
       fulfillmentType: order.fulfillmentType,
-      redeemItem: order.redeemItem || null
+      redeemItem: order.redeemItem || null,
+      total: order.total
     })
   }).catch(e => console.warn('Loyverse receipt error:', e));
 }
