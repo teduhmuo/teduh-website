@@ -745,38 +745,7 @@
 
     <!-- Coffee Beans -->
     <div class="category-section" id="cat-beans">
-      <div class="products-grid">
-        <div class="product-card" id="pc-bean-250">
-          <div class="product-name">House Blend · 250g</div>
-          <div class="product-desc">Brazil Mogiana, medium-dark. Notes of dark chocolate and walnut.</div>
-          <div class="product-price">RM 35.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('bean-250', -1)">−</button>
-            <span class="qty-value" id="qty-bean-250">0</span>
-            <button class="qty-btn" onclick="changeQty('bean-250', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-bean-500">
-          <div class="product-name">House Blend · 500g</div>
-          <div class="product-desc">Brazil Mogiana, medium-dark. Notes of dark chocolate and walnut.</div>
-          <div class="product-price">RM 60.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('bean-500', -1)">−</button>
-            <span class="qty-value" id="qty-bean-500">0</span>
-            <button class="qty-btn" onclick="changeQty('bean-500', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-bean-1kg">
-          <div class="product-name">House Blend · 1kg</div>
-          <div class="product-desc">Brazil Mogiana, medium-dark. Best value for home or office.</div>
-          <div class="product-price">RM 105.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('bean-1kg', -1)">−</button>
-            <span class="qty-value" id="qty-bean-1kg">0</span>
-            <button class="qty-btn" onclick="changeQty('bean-1kg', 1)">+</button>
-          </div>
-        </div>
-      </div>
+      <div class="products-grid" id="beans-grid"></div>
     </div>
 
     <!-- Drip Bags -->
@@ -1060,10 +1029,11 @@ async function sbUpdate(table, match, updates) {
 const PRODUCTS = {
   // ── Café Menu ──────────────────────────────────────────────────────
   // Coffee Essential
-  'esp':        { name: 'Espresso',                    price: 9,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Bold & concentrated single shot' },
-  'lb':         { name: 'Long Black',                  price: 9,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso over hot water, clean & strong' },
+  'esp':        { name: 'Espresso',                    price: 8,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Bold & concentrated single shot' },
+  'lb':         { name: 'Long Black',                  price: 8,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso over hot water, clean & strong' },
   'latte':      { name: 'Café Latte',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso with velvety steamed milk' },
   'cap':        { name: 'Cappuccino',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso, steamed milk & thick foam' },
+  'dirty-cafe-latte': { name: 'Dirty Café Latte',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Coffee Essential', desc: 'Espresso shot on top of cold milk', skuHot: '10032', skuIce: '10033' },
   // Flavoured Coffee
   'lb-lem':     { name: 'Long Black Lemon',            price: 10, hotPrice: 9,  cat: 'menu', sub: 'Flavoured Coffee', desc: 'Bright espresso with a citrus twist' },
   'latte-gm':   { name: 'Café Latte Gula Melaka',     price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte sweetened with palm sugar' },
@@ -1074,15 +1044,19 @@ const PRODUCTS = {
   'latte-asi':  { name: 'Café Latte Asian',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with a local Asian-inspired blend' },
   'latte-mac':  { name: 'Café Latte Caramel Machiato', price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Layered latte with caramel drizzle' },
   'latte-moc':  { name: 'Café Latte Mocha',            price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte blended with dark chocolate' },
+  'espressoda-normal': { name: 'Espressoda (Normal)',  price: 11, hotPrice: null, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Sparkling espresso soda', sku: '10041' },
+  'espressoda-lemon':  { name: 'Espressoda (Lemon)',   price: 12, hotPrice: null, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Sparkling espresso soda with lemon', sku: '10042' },
   // Chocolate
   'choc':       { name: 'Chocolate',                   price: 11, hotPrice: 10, cat: 'menu', sub: 'Chocolate',        desc: 'Rich & creamy Belgian chocolate drink' },
   'choc-mint':  { name: 'Chocolate Mint',              price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with a cool mint finish' },
   'choc-gm':    { name: 'Chocolate Gula Melaka',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with palm sugar depth' },
+  'nutty-chocolate': { name: 'Nutty Chocolate',        price: 12, hotPrice: null, cat: 'menu', sub: 'Chocolate',      desc: '', sku: '10023' },
   // Matcha
   'mat':        { name: 'Matcha Latte',                price: 11, hotPrice: 10, cat: 'menu', sub: 'Matcha',           desc: 'Japanese ceremonial matcha with milk' },
   'mat-str':    { name: 'Matcha Latte Strawberry',     price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with strawberry swirl' },
   'mat-man':    { name: 'Matcha Latte Mango',          price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with tropical mango' },
   'mat-lem':    { name: 'Matcha Lemonade',             price: 11, hotPrice: null, cat: 'menu', sub: 'Matcha',         desc: 'Refreshing matcha with zesty lemonade' },
+  'dirrrty-matcha-latte': { name: 'Dirrrty Matcha Latte', price: 14, hotPrice: 13, cat: 'menu', sub: 'Matcha', desc: 'Espresso shot on top of matcha latte', skuHot: '10014', skuIce: '10015' },
   // Refresher
   'ref-vm':     { name: 'Sparkling Vanilla Mint',      price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Fizzy vanilla with cool mint' },
   'ref-vp':     { name: 'Sparkling Vanilla Peach',     price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Sparkling vanilla with juicy peach' },
@@ -1093,6 +1067,12 @@ const PRODUCTS = {
   'frp-car':    { name: 'Caramel Café Frappe',         price: 16, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Coffee frappe with caramel drizzle' },
   'frp-moc':    { name: 'Mocha Choco Chip Frappe',     price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Mocha frappe loaded with choco chips' },
   'frp-dbl':    { name: 'Double Choco Chip Frappe',    price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Extra chocolatey chip frappe' },
+  // Filter Coffee
+  'filter-eth-alo':      { name: 'Filter Coffee: Ethiopia Alo Bacha Natural',      price: 17, hotPrice: 16, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10000', skuIce: '10009' },
+  'filter-eth-sidamo':   { name: 'Filter Coffee: Ethiopia Sidamo Anaerobic',       price: 17, hotPrice: 16, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10006', skuIce: '10010' },
+  'filter-liberica':     { name: 'Filter Coffee: Liberica',                       price: 18, hotPrice: 17, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10005', skuIce: '10011' },
+  'filter-colombia':     { name: 'Filter Coffee: Colombia Granja El Paraiso 92',  price: 19, hotPrice: 18, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10019', skuIce: '10020' },
+  'filter-nicaragua':    { name: 'Filter Coffee: Nicaragua Matagalpa Zaragoza',   price: 17, hotPrice: 16, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10039', skuIce: '10040' },
   // Neapolitan Pizza
   'piz-mar':    { name: 'Margherita Pizza',            price: 25, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Classic tomato, mozzarella & basil' },
   'piz-pep':    { name: 'Beef Pepperoni Pizza',        price: 32, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Loaded with savoury beef pepperoni' },
@@ -1106,22 +1086,74 @@ const PRODUCTS = {
   'hpiz-bstf':  { name: 'Beef Sliced & Creamy Truffle',    price: 41, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'Best of beef & truffle combined' },
   'hpiz-wpgc':  { name: 'White Pepperoni & Garlic Chicken',price: 34, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'White sauce meets garlic chicken' },
   'hpiz-wptf':  { name: 'White Pepperoni & Truffle Beef',  price: 40, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: 'White pepperoni with truffle indulgence' },
+  'double-pepperoni': { name: 'Double Pepperoni',          price: 35, hotPrice: null, cat: 'menu', sub: 'Half-Half Pizza', desc: '', sku: '10027' },
   // Pasta
   'pas-ao':     { name: 'Aglio e Oglio',               price: 13, hotPrice: null, cat: 'menu', sub: 'Pasta',           desc: 'Classic garlic & olive oil pasta' },
   'pas-aogc':   { name: 'Aglio e Oglio Garlic Chicken',price: 16, hotPrice: null, cat: 'menu', sub: 'Pasta',           desc: 'Aglio pasta with juicy garlic chicken' },
   'pas-aosd':   { name: 'Aglio e Oglio Smoked Duck',   price: 18, hotPrice: null, cat: 'menu', sub: 'Pasta',           desc: 'Aglio pasta with premium smoked duck' },
   // Snack/Pastry
-  'snk-cro':    { name: 'Plain Croissant',             price: 6.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Buttery flaky croissant, baked fresh' },
+  'snk-cro':    { name: 'Plain Croissant',             price: 6.8, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Buttery flaky croissant, baked fresh' },
   'snk-chcro':  { name: 'Chocolate Roll',              price: 8.9, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Soft roll filled with chocolate cream' },
-  'snk-tart':   { name: 'Mini Egg Tart',               price: 4,   hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Silky egg custard in buttery pastry' },
+  'snk-tart':   { name: 'Mini Egg Tart',               price: 4.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Silky egg custard in buttery pastry' },
   'snk-ban':    { name: 'Banana Bar',                  price: 8.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Moist banana cake bar, homestyle' },
   'snk-egg':    { name: 'Egg Mayo Croissant',          price: 9.2, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Creamy egg mayo in flaky croissant' },
   'snk-tuna':   { name: 'Tuna Mayo Croissant',         price: 9.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: 'Tuna mayo filling in buttery croissant' },
+  'brownies':   { name: 'Brownies',                    price: 5.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: '', sku: '10025' },
+  'classic-tiramisu': { name: 'Classic Tiramisu',      price: 17,  hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: '', sku: '10029' },
+  'mee-siput':  { name: 'Mee Siput',                   price: 3.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: '', sku: '10022' },
+  'red-bean-croissant': { name: 'Red Bean Croissant',  price: 8.9, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: '', sku: '10026' },
 
-  // ── Coffee Beans ───────────────────────────────────────────────────
-  'bean-250':   { name: 'House Blend 250g',  price: 35,  hotPrice: null, cat: 'beans', sub: 'Retail Beans' },
-  'bean-500':   { name: 'House Blend 500g',  price: 60,  hotPrice: null, cat: 'beans', sub: 'Retail Beans' },
-  'bean-1kg':   { name: 'House Blend 1kg',   price: 105, hotPrice: null, cat: 'beans', sub: 'Retail Beans' },
+  // ── Coffee Beans (each bean has multiple weight tiers, picked via weight selector) ──
+  'bean-kelam-manis': {
+    name: 'Kelam Manis Blend', cat: 'beans', sub: 'Retail Beans',
+    desc: 'Brazil Mogiana medium-dark blend with Ethiopia Sidamo Anaerobic',
+    weights: [
+      { key: '250g',  price: 35,  sku: '10016' },
+      { key: '1000g', price: 93,  sku: '10017' },
+      { key: '5000gm',price: 435, sku: '10037' },
+      { key: '6000gm',price: 522, sku: '10038' }
+    ]
+  },
+  'bean-brazil-mogiana': {
+    name: 'Brazil Mogiana', cat: 'beans', sub: 'Retail Beans',
+    desc: 'Medium-dark roast single origin',
+    weights: [
+      { key: '250gm',  price: 33, sku: '10028' },
+      { key: '1000gm', price: 93, sku: '10035' }
+    ]
+  },
+  'bean-brazil-santos': {
+    name: 'Brazil Santos', cat: 'beans', sub: 'Retail Beans',
+    desc: 'Single origin coffee beans',
+    weights: [
+      { key: '250gm',  price: 33, sku: '10013' },
+      { key: '500gm',  price: 60, sku: '10044' },
+      { key: '1000gm', price: 93, sku: '10034' }
+    ]
+  },
+  'bean-colombia': {
+    name: 'Colombia Granja El Paraiso', cat: 'beans', sub: 'Retail Beans',
+    desc: 'Single origin coffee beans',
+    weights: [
+      { key: '250gm', price: 45, sku: '10030' }
+    ]
+  },
+  'bean-ethiopia-sidamo': {
+    name: 'Ethiopia Sidamo Anaerobic', cat: 'beans', sub: 'Retail Beans',
+    desc: 'Light to medium roast, anaerobic fermentation',
+    weights: [
+      { key: '250gm', price: 40, sku: '10031' }
+    ]
+  },
+  'bean-nicaragua': {
+    name: 'Nicaragua Matagalpa Zaragoza', cat: 'beans', sub: 'Retail Beans',
+    desc: 'Single origin coffee beans',
+    weights: [
+      { key: '250gm',  price: 37,  sku: '10018' },
+      { key: '500gm',  price: 66,  sku: '10043' },
+      { key: '1000gm', price: 100, sku: '10036' }
+    ]
+  },
 
   // ── Drip Bags ──────────────────────────────────────────────────────
   'drip-5':     { name: 'Drip Bags ×5',      price: 25,  hotPrice: null, cat: 'drip', sub: 'Drip Bags' },
@@ -1171,10 +1203,41 @@ function showSubCat(sub, btn) {
 
 // ── Build dynamic menu grid ─────────────────────────────────────────
 const MENU_SUBS = [
-  'Coffee Essential', 'Flavoured Coffee', 'Chocolate', 'Matcha',
+  'Coffee Essential', 'Flavoured Coffee', 'Filter Coffee', 'Chocolate', 'Matcha',
   'Refresher', 'Frappe Series', 'Neapolitan Pizza', 'Half-Half Pizza',
   'Pasta', 'Snack & Pastry'
 ];
+
+// Subs eligible for the drink add-on selector (Extra Shot / Oat Milk / Whipped Cream)
+const ADDON_ELIGIBLE_SUBS = ['Coffee Essential', 'Flavoured Coffee', 'Filter Coffee', 'Chocolate', 'Matcha'];
+const ADDONS = [
+  { key: 'extraShot', label: 'Extra Shot',    price: 4.00, sku: '10002' },
+  { key: 'oatMilk',   label: 'Oat Milk',      price: 2.00, sku: '10001' },
+  { key: 'whip',      label: 'Whipped Cream', price: 2.50, sku: '10003' }
+];
+const addonState = {}; // key -> { extraShot: bool, oatMilk: bool, whip: bool }
+
+function getAddonSurcharge(key) {
+  const st = addonState[key];
+  if (!st) return 0;
+  return ADDONS.reduce((sum, a) => sum + (st[a.key] ? a.price : 0), 0);
+}
+
+function getActiveAddons(key) {
+  const st = addonState[key];
+  if (!st) return [];
+  return ADDONS.filter(a => st[a.key]);
+}
+
+function toggleAddon(key, addonKey) {
+  if (!addonState[key]) addonState[key] = {};
+  addonState[key][addonKey] = !addonState[key][addonKey];
+  const p = PRODUCTS[key];
+  const base = tempSelection[key] === 'hot' ? p.hotPrice : p.price;
+  p._activePrice = base + getAddonSurcharge(key);
+  buildMenuGrid();
+  renderCart();
+}
 
 // Track selected temperature per product
 const tempSelection = {};
@@ -1225,6 +1288,18 @@ function buildMenuGrid() {
         '</div>';
     }
 
+    if (ADDON_ELIGIBLE_SUBS.includes(activeMenuSub)) {
+      const st = addonState[key] || {};
+      html += '<div class="menu-item-addons" style="display:flex;flex-wrap:wrap;gap:8px;margin:0.4rem 0;">' +
+        ADDONS.map(a =>
+          '<label style="font-size:0.72rem;color:var(--medium-brown);display:flex;align-items:center;gap:3px;cursor:pointer;">' +
+            '<input type="checkbox" ' + (st[a.key] ? 'checked' : '') + ' onchange="toggleAddon(\'' + key + '\',\'' + a.key + '\')" style="margin:0;">' +
+            a.label + ' +RM' + a.price.toFixed(2) +
+          '</label>'
+        ).join('') +
+        '</div>';
+    }
+
     html += '<div class="menu-item-bottom">';
     if (!hasTemp) html += '<span class="menu-item-price">RM ' + p.price.toFixed(2) + '</span>';
     else html += '<span></span>';
@@ -1239,12 +1314,54 @@ function buildMenuGrid() {
   grid.innerHTML = html;
 }
 
+// ── Coffee Beans grid (weight-tier selector, same pattern as temp selector) ──
+const weightSelection = {};
+
+function buildBeansGrid() {
+  const grid = document.getElementById('beans-grid');
+  if (!grid) return;
+  const beanEntries = Object.entries(PRODUCTS).filter(([k, v]) => v.cat === 'beans');
+
+  let html = '';
+  beanEntries.forEach(([key, p]) => {
+    if (!weightSelection[key]) weightSelection[key] = p.weights[0].key;
+    const activeWeight = p.weights.find(w => w.key === weightSelection[key]) || p.weights[0];
+    p._activePrice = activeWeight.price;
+    p._activeSku = activeWeight.sku;
+
+    const soldOut = !shopIsOpen || itemAvailability[key] === false;
+    html += '<div class="product-card' + (soldOut ? ' sold-out' : '') + (cart[key] ? ' in-cart' : '') + '" id="pc-' + key + '">';
+    const itemLabel = (!shopIsOpen || soldOut) ? (' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· ' + getItemLabel() + '</span>') : '';
+    html += '<div class="product-name">' + p.name + itemLabel + '</div>';
+    if (p.desc) html += '<div class="product-desc">' + p.desc + '</div>';
+
+    html += '<div class="menu-item-temp" style="margin:0.5rem 0;">' +
+      p.weights.map(w =>
+        '<button class="temp-btn ' + (weightSelection[key] === w.key ? 'selected' : '') + '" onclick="setWeight(\'' + key + '\',\'' + w.key + '\')">' + w.key + ' RM ' + w.price.toFixed(2) + '</button>'
+      ).join('') +
+      '</div>';
+
+    html += '<div class="qty-control">' +
+      '<button class="qty-btn" onclick="changeQty(\'' + key + '\', -1)">−</button>' +
+      '<span class="qty-value" id="qty-' + key + '">' + (cart[key] || 0) + '</span>' +
+      '<button class="qty-btn" onclick="changeQty(\'' + key + '\', 1)">+</button>' +
+      '</div></div>';
+  });
+  grid.innerHTML = html;
+}
+
+function setWeight(key, weightKey) {
+  weightSelection[key] = weightKey;
+  buildBeansGrid();
+  renderCart();
+}
+
 function setTemp(key, temp) {
   tempSelection[key] = temp;
   // Update price in PRODUCTS so cart uses correct price
   const p = PRODUCTS[key];
-  if (temp === 'hot') p._activePrice = p.hotPrice;
-  else p._activePrice = p.price;
+  const base = (temp === 'hot') ? p.hotPrice : p.price;
+  p._activePrice = base + getAddonSurcharge(key);
   buildMenuGrid();
   renderCart();
 }
@@ -1314,11 +1431,18 @@ function renderCart() {
   const subtotal = getSubtotal();
   items.innerHTML = keys.map(k => {
     const p = PRODUCTS[k];
-    const s = (p._activePrice !== undefined ? p._activePrice : p.price) * cart[k];
+    const unitPrice = p._activePrice !== undefined ? p._activePrice : p.price;
+    const s = unitPrice * cart[k];
+    let label = '';
+    if (tempSelection[k] === 'hot') label = ' (Hot)';
+    else if (tempSelection[k] === 'ice') label = ' (Ice)';
+    else if (weightSelection[k]) label = ' (' + weightSelection[k] + ')';
+    const addonNames = getActiveAddons(k).map(a => a.label).join(', ');
+    if (addonNames) label += ' +' + addonNames;
     return `<div class="cart-item">
       <div>
-        <div class="cart-item-name">${p.name}${tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : ''}</div>
-        <div class="cart-item-qty">× ${cart[k]} @ RM ${p.price.toFixed(2)}</div>
+        <div class="cart-item-name">${p.name}${label}</div>
+        <div class="cart-item-qty">× ${cart[k]} @ RM ${unitPrice.toFixed(2)}</div>
       </div>
       <div class="cart-item-price">RM ${s.toFixed(2)}</div>
     </div>`;
@@ -1557,17 +1681,40 @@ async function submitOrder() {
   const fulfillmentNote = fulfillment === 'delivery' ? `[DELIVERY] ${address}` : '[PICKUP at Teduh]';
 
   // ── Store order details for WhatsApp notification on thank-you page ──
-  const itemLines = Object.keys(cart).map(k => `  - ${PRODUCTS[k].name} x${cart[k]} (RM ${(PRODUCTS[k].price * cart[k]).toFixed(2)})`).join('\n');
-  const itemsSimple = Object.keys(cart).map(k => {
-  const temp = tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : '';
-  return `${PRODUCTS[k].name}${temp} ×${cart[k]}`;
-}).join(', ');
+  function lineLabel(k) {
+    const p = PRODUCTS[k];
+    let label = '';
+    if (tempSelection[k] === 'hot') label = ' (Hot)';
+    else if (tempSelection[k] === 'ice') label = ' (Ice)';
+    else if (weightSelection[k]) label = ' (' + weightSelection[k] + ')';
+    const addonNames = getActiveAddons(k).map(a => a.label).join(', ');
+    if (addonNames) label += ' +' + addonNames;
+    return label;
+  }
+  function lineSku(k) {
+    const p = PRODUCTS[k];
+    const temp = tempSelection[k];
+    if (temp) return temp === 'hot' ? (p.skuHot || `${k}-hot`) : (p.skuIce || `${k}-ice`);
+    if (p._activeSku) return p._activeSku; // beans (weight tier)
+    return p.sku || k;
+  }
+  const itemLines = Object.keys(cart).map(k => {
+    const p = PRODUCTS[k];
+    const unitPrice = p._activePrice !== undefined ? p._activePrice : p.price;
+    return `  - ${p.name}${lineLabel(k)} x${cart[k]} (RM ${(unitPrice * cart[k]).toFixed(2)})`;
+  }).join('\n');
+  const itemsSimple = Object.keys(cart).map(k => `${PRODUCTS[k].name}${lineLabel(k)} ×${cart[k]}`).join(', ');
   const cartItems = Object.keys(cart).map(k => {
-  const p = PRODUCTS[k];
-  const temp = tempSelection[k];
-  const sku = temp ? `${k}-${temp}` : k;
-  return { sku, name: p.name, qty: cart[k], price: p._activePrice !== undefined ? p._activePrice : p.price };
-});
+    const p = PRODUCTS[k];
+    const addons = getActiveAddons(k).map(a => ({ sku: a.sku, name: a.label, price: a.price }));
+    return {
+      sku: lineSku(k),
+      name: p.name + lineLabel(k),
+      qty: cart[k],
+      price: p._activePrice !== undefined ? p._activePrice : p.price,
+      addons
+    };
+  });
 sessionStorage.setItem('teduh_pending_order', JSON.stringify({
     orderRef,
     name,
@@ -1803,6 +1950,7 @@ function syncLoyaltyPhone() {
 
 document.addEventListener('DOMContentLoaded', () => {
   buildMenuGrid();
+  buildBeansGrid();
   checkShopStatus();
   setTimeout(() => { initDeliveryMap(); }, 300);
 });
@@ -1852,6 +2000,7 @@ async function checkShopStatus() {
       data.forEach(r => { itemAvailability[r.item_id] = r.available; });
     }
     buildMenuGrid();
+    buildBeansGrid();
     applyStaticAvailability();
   } catch(e) { console.warn('Availability check error:', e); }
 }
@@ -1865,9 +2014,6 @@ function applyStaticAvailability() {
   const staticMap = {
     'pc-drip-5':   'drip-5',
     'pc-drip-10':  'drip-10',
-    'pc-bean-250': 'bean-250',
-    'pc-bean-500': 'bean-500',
-    'pc-bean-1kg': 'bean-1kg',
     'pc-mug':      'mug',
     'pc-tote':     'tote',
   };
