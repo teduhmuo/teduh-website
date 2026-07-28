@@ -163,6 +163,7 @@
     <div class="os-row"><span class="ol">Name</span><span class="ov" id="os-name"></span></div>
     <div class="os-row"><span class="ol">Phone</span><span class="ov" id="os-phone"></span></div>
     <div class="os-row"><span class="ol">Fulfillment</span><span class="ov" id="os-fulfillment"></span></div>
+    <div class="os-row" id="os-pickup-time-row" style="display:none;"><span class="ol">Pickup Time</span><span class="ov" id="os-pickup-time"></span></div>
     <div class="os-row" id="os-address-row" style="display:none;"><span class="ol">Address</span><span class="ov" id="os-address"></span></div>
     <div class="os-row"><span class="ol">Total paid</span><span class="ov" id="os-total"></span></div>
     <div class="os-items">
@@ -347,6 +348,7 @@ async function onLoad() {
     status:           'pending',
     delivery_lat:     order.deliveryLat  || null,
     delivery_lng:     order.deliveryLng  || null,
+    pickup_time:      order.pickupTime   || null,
   })
 });
 
@@ -370,7 +372,7 @@ async function onLoad() {
     const ticket = document.getElementById('queue-ticket');
     ticket.style.display = 'block';
     document.getElementById('ticket-number').textContent = queueNum;
-    document.getElementById('ticket-type').textContent   = order.fulfillmentType === 'delivery' ? 'Delivery Order' : 'Pickup Order';
+    document.getElementById('ticket-type').textContent   = (order.fulfillmentType === 'delivery' ? 'Delivery Order' : 'Pickup Order') + (order.pickupTime ? ' · ' + order.pickupTime : '');
     document.getElementById('ticket-name').textContent   = order.name;
     document.getElementById('ticket-total').textContent  = `RM ${order.total}`;
     const itemsList = document.getElementById('ticket-items-list');
@@ -384,6 +386,10 @@ async function onLoad() {
     document.getElementById('os-phone').textContent       = order.phone;
     document.getElementById('os-fulfillment').textContent = order.fulfillmentType === 'delivery' ? 'Delivery' : 'Self-Pickup';
     document.getElementById('os-total').textContent       = `RM ${order.total}`;
+    if (order.pickupTime) {
+      document.getElementById('os-pickup-time-row').style.display = 'flex';
+      document.getElementById('os-pickup-time').textContent = order.pickupTime;
+    }
     if (order.address) {
       document.getElementById('os-address-row').style.display = 'flex';
       document.getElementById('os-address').textContent = order.address;
@@ -405,6 +411,10 @@ async function onLoad() {
       document.getElementById('os-phone').textContent       = order.phone;
       document.getElementById('os-fulfillment').textContent = order.fulfillmentType === 'delivery' ? 'Delivery' : 'Self-Pickup';
       document.getElementById('os-total').textContent       = `RM ${order.total}`;
+      if (order.pickupTime) {
+        document.getElementById('os-pickup-time-row').style.display = 'flex';
+        document.getElementById('os-pickup-time').textContent = order.pickupTime;
+      }
       if (order.address) {
         document.getElementById('os-address-row').style.display = 'flex';
         document.getElementById('os-address').textContent = order.address;
