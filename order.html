@@ -726,6 +726,13 @@
     </div>
     <div id="pickup-note" class="pickup-info" style="display:none;">
       📍 Teduh Coffee Roastery, Muar, Johor — We'll WhatsApp you when your order is ready.
+      <div class="form-group" style="margin-top:0.75rem;">
+        <label for="pickup-time">Pickup Time</label>
+        <select id="pickup-time" onchange="clearError(); const n=document.getElementById('pickup-time-notice'); if(n) n.style.display='none';">
+          <option value="">Select a pickup time…</option>
+        </select>
+        <div id="pickup-time-notice" style="font-size:0.75rem;color:var(--accent);margin-top:0.35rem;display:none;"></div>
+      </div>
     </div>
   </div>
 
@@ -1029,44 +1036,44 @@ async function sbUpdate(table, match, updates) {
 const PRODUCTS = {
   // ── Café Menu ──────────────────────────────────────────────────────
   // Coffee Essential
-  'esp':        { name: 'Espresso',                    price: 8,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Bold & concentrated single shot' },
-  'lb':         { name: 'Long Black',                  price: 8,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso over hot water, clean & strong' },
-  'latte':      { name: 'Café Latte',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso with velvety steamed milk' },
-  'cap':        { name: 'Cappuccino',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso, steamed milk & thick foam' },
-  'dirty-cafe-latte': { name: 'Dirty Café Latte',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Coffee Essential', desc: 'Espresso shot on top of cold milk', skuHot: '10032', skuIce: '10033' },
+  'esp':        { name: 'Espresso',                    price: 8,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Bold & concentrated single shot' , addons: ['extraShot'] },
+  'lb':         { name: 'Long Black',                  price: 8,  hotPrice: 8,  cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso over hot water, clean & strong' , addons: ['extraShot'] },
+  'latte':      { name: 'Café Latte',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso with velvety steamed milk' , addons: ['extraShot','oatMilk','whip'] },
+  'cap':        { name: 'Cappuccino',                  price: 11, hotPrice: 10, cat: 'menu', sub: 'Coffee Essential',  desc: 'Espresso, steamed milk & thick foam' , addons: ['extraShot','oatMilk','whip'] },
+  'dirty-cafe-latte': { name: 'Dirty Café Latte',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Coffee Essential', desc: 'Espresso shot on top of cold milk', skuHot: '10032', skuIce: '10033' , addons: ['extraShot','oatMilk','whip'] },
   // Flavoured Coffee
-  'lb-lem':     { name: 'Long Black Lemon',            price: 10, hotPrice: 9,  cat: 'menu', sub: 'Flavoured Coffee', desc: 'Bright espresso with a citrus twist' },
-  'latte-gm':   { name: 'Café Latte Gula Melaka',     price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte sweetened with palm sugar' },
-  'latte-van':  { name: 'Café Latte Vanilla',          price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Smooth latte with vanilla sweetness' },
-  'latte-car':  { name: 'Café Latte Caramel',          price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with rich buttery caramel' },
-  'latte-nut':  { name: 'Café Latte Nutty',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with toasted hazelnut flavour' },
-  'latte-str':  { name: 'Café Latte Strawberry',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Fruity latte with strawberry syrup' },
-  'latte-asi':  { name: 'Café Latte Asian',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with a local Asian-inspired blend' },
-  'latte-mac':  { name: 'Café Latte Caramel Machiato', price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Layered latte with caramel drizzle' },
-  'latte-moc':  { name: 'Café Latte Mocha',            price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte blended with dark chocolate' },
-  'espressoda-normal': { name: 'Espressoda (Normal)',  price: 11, hotPrice: null, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Sparkling espresso soda', sku: '10041' },
-  'espressoda-lemon':  { name: 'Espressoda (Lemon)',   price: 12, hotPrice: null, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Sparkling espresso soda with lemon', sku: '10042' },
+  'lb-lem':     { name: 'Long Black Lemon',            price: 10, hotPrice: 9,  cat: 'menu', sub: 'Flavoured Coffee', desc: 'Bright espresso with a citrus twist' , addons: ['extraShot'] },
+  'latte-gm':   { name: 'Café Latte Gula Melaka',     price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte sweetened with palm sugar' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-van':  { name: 'Café Latte Vanilla',          price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Smooth latte with vanilla sweetness' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-car':  { name: 'Café Latte Caramel',          price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with rich buttery caramel' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-nut':  { name: 'Café Latte Nutty',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with toasted hazelnut flavour' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-str':  { name: 'Café Latte Strawberry',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Fruity latte with strawberry syrup' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-asi':  { name: 'Café Latte Asian',            price: 12, hotPrice: 11, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte with a local Asian-inspired blend' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-mac':  { name: 'Café Latte Caramel Machiato', price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Layered latte with caramel drizzle' , addons: ['extraShot','oatMilk','whip'] },
+  'latte-moc':  { name: 'Café Latte Mocha',            price: 13, hotPrice: 12, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Latte blended with dark chocolate' , addons: ['extraShot','oatMilk','whip'] },
+  'espressoda-normal': { name: 'Espressoda (Normal)',  price: 11, hotPrice: null, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Sparkling espresso soda', sku: '10041' , addons: ['extraShot'] },
+  'espressoda-lemon':  { name: 'Espressoda (Lemon)',   price: 12, hotPrice: null, cat: 'menu', sub: 'Flavoured Coffee', desc: 'Sparkling espresso soda with lemon', sku: '10042' , addons: ['extraShot'] },
   // Chocolate
-  'choc':       { name: 'Chocolate',                   price: 11, hotPrice: 10, cat: 'menu', sub: 'Chocolate',        desc: 'Rich & creamy Belgian chocolate drink' },
-  'choc-mint':  { name: 'Chocolate Mint',              price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with a cool mint finish' },
-  'choc-gm':    { name: 'Chocolate Gula Melaka',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with palm sugar depth' },
-  'nutty-chocolate': { name: 'Nutty Chocolate',        price: 12, hotPrice: null, cat: 'menu', sub: 'Chocolate',      desc: '', sku: '10023' },
+  'choc':       { name: 'Chocolate',                   price: 11, hotPrice: 10, cat: 'menu', sub: 'Chocolate',        desc: 'Rich & creamy Belgian chocolate drink' , addons: ['oatMilk','whip'] },
+  'choc-mint':  { name: 'Chocolate Mint',              price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with a cool mint finish' , addons: ['oatMilk','whip'] },
+  'choc-gm':    { name: 'Chocolate Gula Melaka',       price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',        desc: 'Chocolate with palm sugar depth' , addons: ['oatMilk','whip'] },
+  'nutty-chocolate': { name: 'Nutty Chocolate',        price: 12, hotPrice: 11, cat: 'menu', sub: 'Chocolate',      desc: '', skuHot: '10023', skuIce: '10023', addons: ['oatMilk','whip'] },
   // Matcha
-  'mat':        { name: 'Matcha Latte',                price: 11, hotPrice: 10, cat: 'menu', sub: 'Matcha',           desc: 'Japanese ceremonial matcha with milk' },
-  'mat-str':    { name: 'Matcha Latte Strawberry',     price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with strawberry swirl' },
-  'mat-man':    { name: 'Matcha Latte Mango',          price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with tropical mango' },
-  'mat-lem':    { name: 'Matcha Lemonade',             price: 11, hotPrice: null, cat: 'menu', sub: 'Matcha',         desc: 'Refreshing matcha with zesty lemonade' },
-  'dirrrty-matcha-latte': { name: 'Dirrrty Matcha Latte', price: 14, hotPrice: 13, cat: 'menu', sub: 'Matcha', desc: 'Espresso shot on top of matcha latte', skuHot: '10014', skuIce: '10015' },
+  'mat':        { name: 'Matcha Latte',                price: 11, hotPrice: 10, cat: 'menu', sub: 'Matcha',           desc: 'Japanese ceremonial matcha with milk' , addons: ['oatMilk','whip'] },
+  'mat-str':    { name: 'Matcha Latte Strawberry',     price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with strawberry swirl' , addons: ['oatMilk','whip'] },
+  'mat-man':    { name: 'Matcha Latte Mango',          price: 13, hotPrice: 12, cat: 'menu', sub: 'Matcha',           desc: 'Matcha latte with tropical mango' , addons: ['oatMilk','whip'] },
+  'mat-lem':    { name: 'Matcha Lemonade',             price: 11, hotPrice: null, cat: 'menu', sub: 'Matcha',         desc: 'Refreshing matcha with zesty lemonade' , addons: ['oatMilk','whip'] },
+  'dirrrty-matcha-latte': { name: 'Dirrrty Matcha Latte', price: 14, hotPrice: 13, cat: 'menu', sub: 'Matcha', desc: 'Espresso shot on top of matcha latte', skuHot: '10014', skuIce: '10015' , addons: ['oatMilk','whip'] },
   // Refresher
   'ref-vm':     { name: 'Sparkling Vanilla Mint',      price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Fizzy vanilla with cool mint' },
   'ref-vp':     { name: 'Sparkling Vanilla Peach',     price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Sparkling vanilla with juicy peach' },
   'ref-lem':    { name: 'Sparkling Lemonade',          price: 10, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Crisp fizzy lemonade, perfectly tart' },
   'ref-sem':    { name: 'Semangka Laici',              price: 13, hotPrice: null, cat: 'menu', sub: 'Refresher',      desc: 'Watermelon & lychee sparkling blend' },
   // Frappe
-  'frp-str':    { name: 'Strawberry Frappe',           price: 13, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Blended strawberry cream frappe' },
-  'frp-car':    { name: 'Caramel Café Frappe',         price: 16, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Coffee frappe with caramel drizzle' },
-  'frp-moc':    { name: 'Mocha Choco Chip Frappe',     price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Mocha frappe loaded with choco chips' },
-  'frp-dbl':    { name: 'Double Choco Chip Frappe',    price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Extra chocolatey chip frappe' },
+  'frp-str':    { name: 'Strawberry Frappe',           price: 13, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Blended strawberry cream frappe' , addons: ['extraShot','oatMilk'] },
+  'frp-car':    { name: 'Caramel Café Frappe',         price: 16, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Coffee frappe with caramel drizzle' , addons: ['extraShot','oatMilk'] },
+  'frp-moc':    { name: 'Mocha Choco Chip Frappe',     price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Mocha frappe loaded with choco chips' , addons: ['extraShot','oatMilk'] },
+  'frp-dbl':    { name: 'Double Choco Chip Frappe',    price: 17, hotPrice: null, cat: 'menu', sub: 'Frappe Series',  desc: 'Extra chocolatey chip frappe' , addons: ['extraShot','oatMilk'] },
   // Filter Coffee
   'filter-eth-alo':      { name: 'Filter Coffee: Ethiopia Alo Bacha Natural',      price: 17, hotPrice: 16, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10000', skuIce: '10009' },
   'filter-eth-sidamo':   { name: 'Filter Coffee: Ethiopia Sidamo Anaerobic',       price: 17, hotPrice: 16, cat: 'menu', sub: 'Filter Coffee', desc: '', skuHot: '10006', skuIce: '10010' },
@@ -1103,23 +1110,19 @@ const PRODUCTS = {
   'mee-siput':  { name: 'Mee Siput',                   price: 3.5, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: '', sku: '10022' },
   'red-bean-croissant': { name: 'Red Bean Croissant',  price: 8.9, hotPrice: null, cat: 'menu', sub: 'Snack & Pastry', desc: '', sku: '10026' },
 
-  // ── Coffee Beans (each bean has multiple weight tiers, picked via weight selector) ──
+  // ── Coffee Beans (each bean has weight tiers, picked via weight selector — capped at 250gm/500gm for online orders) ──
   'bean-kelam-manis': {
     name: 'Kelam Manis Blend', cat: 'beans', sub: 'Retail Beans',
     desc: 'Brazil Mogiana medium-dark blend with Ethiopia Sidamo Anaerobic',
     weights: [
-      { key: '250g',  price: 35,  sku: '10016' },
-      { key: '1000g', price: 93,  sku: '10017' },
-      { key: '5000gm',price: 435, sku: '10037' },
-      { key: '6000gm',price: 522, sku: '10038' }
+      { key: '250g',  price: 35,  sku: '10016' }
     ]
   },
   'bean-brazil-mogiana': {
     name: 'Brazil Mogiana', cat: 'beans', sub: 'Retail Beans',
     desc: 'Medium-dark roast single origin',
     weights: [
-      { key: '250gm',  price: 33, sku: '10028' },
-      { key: '1000gm', price: 93, sku: '10035' }
+      { key: '250gm',  price: 33, sku: '10028' }
     ]
   },
   'bean-brazil-santos': {
@@ -1127,8 +1130,7 @@ const PRODUCTS = {
     desc: 'Single origin coffee beans',
     weights: [
       { key: '250gm',  price: 33, sku: '10013' },
-      { key: '500gm',  price: 60, sku: '10044' },
-      { key: '1000gm', price: 93, sku: '10034' }
+      { key: '500gm',  price: 60, sku: '10044' }
     ]
   },
   'bean-colombia': {
@@ -1150,8 +1152,7 @@ const PRODUCTS = {
     desc: 'Single origin coffee beans',
     weights: [
       { key: '250gm',  price: 37,  sku: '10018' },
-      { key: '500gm',  price: 66,  sku: '10043' },
-      { key: '1000gm', price: 100, sku: '10036' }
+      { key: '500gm',  price: 66,  sku: '10043' }
     ]
   },
 
@@ -1165,7 +1166,8 @@ const PRODUCTS = {
 }
 
 // ── State ──────────────────────────────────────────────────────────
-const cart = {};
+const cart = {};      // lineId -> qty
+const cartMeta = {};  // lineId -> { productKey, label, unitPrice, sku, name, addons }
 let fulfillment = 'delivery';
 let deliveryFee = 0;
 let lalamoveQuotation = null; // { quotationId, senderStopId, recipientStopId, totalFee }
@@ -1177,7 +1179,7 @@ let redeemItem = null;      // { name, pts } or null
 // ── Fulfillment toggle ─────────────────────────────────────────────
 function selectFulfillment(type) {
   fulfillment = type;
-  if (type === 'pickup') { deliveryFee = 0; lalamoveQuotation = null; }
+  if (type === 'pickup') { deliveryFee = 0; lalamoveQuotation = null; buildPickupTimeOptions(); }
   document.getElementById('opt-delivery').classList.toggle('selected', type === 'delivery');
   document.getElementById('opt-pickup').classList.toggle('selected', type === 'pickup');
   document.getElementById('delivery-fields').style.display = type === 'delivery' ? 'block' : 'none';
@@ -1208,8 +1210,8 @@ const MENU_SUBS = [
   'Pasta', 'Snack & Pastry'
 ];
 
-// Subs eligible for the drink add-on selector (Extra Shot / Oat Milk / Whipped Cream)
-const ADDON_ELIGIBLE_SUBS = ['Coffee Essential', 'Flavoured Coffee', 'Filter Coffee', 'Chocolate', 'Matcha'];
+// Each product declares its own eligible addons via `addons: [...]` (see PRODUCTS above).
+// Items with no `addons` field get no add-on selector at all (e.g. Filter Coffee, pizza, beans).
 const ADDONS = [
   { key: 'extraShot', label: 'Extra Shot',    price: 4.00, sku: '10002' },
   { key: 'oatMilk',   label: 'Oat Milk',      price: 2.00, sku: '10001' },
@@ -1217,26 +1219,138 @@ const ADDONS = [
 ];
 const addonState = {}; // key -> { extraShot: bool, oatMilk: bool, whip: bool }
 
-function getAddonSurcharge(key) {
-  const st = addonState[key];
-  if (!st) return 0;
-  return ADDONS.reduce((sum, a) => sum + (st[a.key] ? a.price : 0), 0);
-}
-
-function getActiveAddons(key) {
-  const st = addonState[key];
-  if (!st) return [];
-  return ADDONS.filter(a => st[a.key]);
+function eligibleAddons(key) {
+  const p = PRODUCTS[key];
+  const allowed = (p && p.addons) || [];
+  return ADDONS.filter(a => allowed.includes(a.key));
 }
 
 function toggleAddon(key, addonKey) {
   if (!addonState[key]) addonState[key] = {};
   addonState[key][addonKey] = !addonState[key][addonKey];
-  const p = PRODUCTS[key];
-  const base = tempSelection[key] === 'hot' ? p.hotPrice : p.price;
-  p._activePrice = base + getAddonSurcharge(key);
   buildMenuGrid();
+}
+
+// ── Cart line engine ──────────────────────────────────────────────
+// Each distinct combination of product + temp + weight + addons gets its own
+// cart line, so e.g. "iced latte with extra shot" and "iced latte plain" can
+// both sit in the cart at once instead of overwriting each other.
+function lineIdFor(productKey, opts) {
+  let id = productKey;
+  if (opts.temp) id += '|' + opts.temp;
+  if (opts.weight) id += '|' + opts.weight;
+  if (opts.addonKeys && opts.addonKeys.length) id += '|' + opts.addonKeys.slice().sort().join(',');
+  return id;
+}
+
+function computeLineMeta(productKey, opts) {
+  const p = PRODUCTS[productKey];
+  let base, sku, label = '';
+  if (opts.weight) {
+    const w = p.weights.find(x => x.key === opts.weight) || p.weights[0];
+    base = w.price; sku = w.sku; label = ' (' + w.key + ')';
+  } else if (opts.temp) {
+    base = opts.temp === 'hot' ? p.hotPrice : p.price;
+    sku  = opts.temp === 'hot' ? (p.skuHot || `${productKey}-hot`) : (p.skuIce || `${productKey}-ice`);
+    label = opts.temp === 'hot' ? ' (Hot)' : ' (Ice)';
+  } else {
+    base = p.price;
+    sku = p.sku || productKey;
+  }
+  const addonKeys = opts.addonKeys || [];
+  const addons = addonKeys.map(ak => ADDONS.find(a => a.key === ak)).filter(Boolean);
+  const surcharge = addons.reduce((s, a) => s + a.price, 0);
+  if (addons.length) label += ' +' + addons.map(a => a.label).join(', ');
+  return {
+    productKey,
+    label,
+    unitPrice: base + surcharge,
+    sku,
+    name: p.name,
+    addons: addons.map(a => ({ sku: a.sku, name: a.label, price: a.price }))
+  };
+}
+
+function totalQtyForProduct(key) {
+  let sum = 0;
+  Object.keys(cart).forEach(id => { if (id === key || id.startsWith(key + '|')) sum += cart[id]; });
+  return sum;
+}
+
+function isPizzaProduct(key) {
+  const p = PRODUCTS[key];
+  return !!p && p.cat === 'menu' && (p.sub === 'Neapolitan Pizza' || p.sub === 'Half-Half Pizza');
+}
+
+function cartHasPizza() {
+  return Object.keys(cart).some(id => cartMeta[id] && isPizzaProduct(cartMeta[id].productKey));
+}
+
+function bumpPickupTimeForPizza() {
+  if (fulfillment !== 'pickup') return;
+  const sel = document.getElementById('pickup-time');
+  const notice = document.getElementById('pickup-time-notice');
+  if (!sel || !sel.value) return; // nothing selected yet — nothing to bump
+
+  const currentMin = timeLabelToMinutes(sel.value);
+  if (currentMin === null) return;
+  const nextMin = currentMin + 30;
+
+  buildPickupTimeOptions(); // refresh in case time has since passed
+  if (nextMin > PICKUP_END_MIN) {
+    if (notice) {
+      notice.style.display = 'block';
+      notice.textContent = 'Pizza needs extra prep time — your selected slot may be tight. Consider an earlier order or contact us for late pickup.';
+    }
+    return;
+  }
+  const nextLabel = minutesToTimeLabel(nextMin);
+  const opt = Array.from(sel.options).find(o => o.value === nextLabel && !o.disabled);
+  if (opt) {
+    sel.value = nextLabel;
+    if (notice) {
+      notice.style.display = 'block';
+      notice.textContent = 'Pickup time moved to ' + nextLabel + ' to allow extra prep time for pizza.';
+    }
+  }
+}
+
+function addLine(productKey, opts) {
+  const hadPizzaBefore = cartHasPizza();
+  const id = lineIdFor(productKey, opts);
+  cart[id] = (cart[id] || 0) + 1;
+  cartMeta[id] = computeLineMeta(productKey, opts);
+  if (!hadPizzaBefore && isPizzaProduct(productKey)) {
+    bumpPickupTimeForPizza();
+  }
+  buildMenuGrid();
+  buildBeansGrid();
   renderCart();
+  if (loyaltyMember) buildRedeemOptions(loyaltyMember.points);
+}
+
+function changeLineQty(id, delta) {
+  cart[id] = Math.max(0, (cart[id] || 0) + delta);
+  if (cart[id] === 0) { delete cart[id]; delete cartMeta[id]; }
+  buildMenuGrid();
+  buildBeansGrid();
+  renderCart();
+  if (loyaltyMember) buildRedeemOptions(loyaltyMember.points);
+}
+
+function addMenuLine(key) {
+  const p = PRODUCTS[key];
+  const hasTemp = p.hotPrice !== null && p.hotPrice !== undefined;
+  const temp = hasTemp ? (tempSelection[key] || 'ice') : null;
+  const addonKeys = eligibleAddons(key)
+    .filter(a => addonState[key] && addonState[key][a.key])
+    .map(a => a.key);
+  addLine(key, { temp, addonKeys });
+}
+
+function addBeanLine(key) {
+  const weight = weightSelection[key] || PRODUCTS[key].weights[0].key;
+  addLine(key, { weight });
 }
 
 // Track selected temperature per product
@@ -1288,10 +1402,11 @@ function buildMenuGrid() {
         '</div>';
     }
 
-    if (ADDON_ELIGIBLE_SUBS.includes(activeMenuSub)) {
+    const itemAddons = eligibleAddons(key);
+    if (itemAddons.length) {
       const st = addonState[key] || {};
       html += '<div class="menu-item-addons" style="display:flex;flex-wrap:wrap;gap:8px;margin:0.4rem 0;">' +
-        ADDONS.map(a =>
+        itemAddons.map(a =>
           '<label style="font-size:0.72rem;color:var(--medium-brown);display:flex;align-items:center;gap:3px;cursor:pointer;">' +
             '<input type="checkbox" ' + (st[a.key] ? 'checked' : '') + ' onchange="toggleAddon(\'' + key + '\',\'' + a.key + '\')" style="margin:0;">' +
             a.label + ' +RM' + a.price.toFixed(2) +
@@ -1300,14 +1415,26 @@ function buildMenuGrid() {
         '</div>';
     }
 
+    const configurable = hasTemp || itemAddons.length > 0;
+    const inCartQty = configurable ? totalQtyForProduct(key) : 0;
+
     html += '<div class="menu-item-bottom">';
     if (!hasTemp) html += '<span class="menu-item-price">RM ' + p.price.toFixed(2) + '</span>';
     else html += '<span></span>';
-    html += '<div class="menu-qty-row">' +
-      '<button class="menu-qty-btn" onclick="menuChangeQty(\'' + key + '\',-1)">−</button>' +
-      '<span class="menu-qty-num" id="mqty-' + key + '">' + (cart[key] || 0) + '</span>' +
-      '<button class="menu-qty-btn" onclick="menuChangeQty(\'' + key + '\',1)">+</button>' +
-      '</div></div></div>';
+    if (configurable) {
+      html += '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 12px;" onclick="addMenuLine(\'' + key + '\')">+ Add</button>';
+    } else {
+      html += '<div class="menu-qty-row">' +
+        '<button class="menu-qty-btn" onclick="menuChangeQty(\'' + key + '\',-1)">−</button>' +
+        '<span class="menu-qty-num" id="mqty-' + key + '">' + (cart[key] || 0) + '</span>' +
+        '<button class="menu-qty-btn" onclick="menuChangeQty(\'' + key + '\',1)">+</button>' +
+        '</div>';
+    }
+    html += '</div>';
+    if (configurable && inCartQty > 0) {
+      html += '<div style="font-size:0.72rem;color:var(--accent);margin-top:4px;">' + inCartQty + ' in cart — adjust in order summary below</div>';
+    }
+    html += '</div>';
   });
 
   html += '</div>';
@@ -1325,12 +1452,10 @@ function buildBeansGrid() {
   let html = '';
   beanEntries.forEach(([key, p]) => {
     if (!weightSelection[key]) weightSelection[key] = p.weights[0].key;
-    const activeWeight = p.weights.find(w => w.key === weightSelection[key]) || p.weights[0];
-    p._activePrice = activeWeight.price;
-    p._activeSku = activeWeight.sku;
+    const inCartQty = totalQtyForProduct(key);
 
     const soldOut = !shopIsOpen || itemAvailability[key] === false;
-    html += '<div class="product-card' + (soldOut ? ' sold-out' : '') + (cart[key] ? ' in-cart' : '') + '" id="pc-' + key + '">';
+    html += '<div class="product-card' + (soldOut ? ' sold-out' : '') + (inCartQty ? ' in-cart' : '') + '" id="pc-' + key + '">';
     const itemLabel = (!shopIsOpen || soldOut) ? (' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· ' + getItemLabel() + '</span>') : '';
     html += '<div class="product-name">' + p.name + itemLabel + '</div>';
     if (p.desc) html += '<div class="product-desc">' + p.desc + '</div>';
@@ -1342,10 +1467,12 @@ function buildBeansGrid() {
       '</div>';
 
     html += '<div class="qty-control">' +
-      '<button class="qty-btn" onclick="changeQty(\'' + key + '\', -1)">−</button>' +
-      '<span class="qty-value" id="qty-' + key + '">' + (cart[key] || 0) + '</span>' +
-      '<button class="qty-btn" onclick="changeQty(\'' + key + '\', 1)">+</button>' +
-      '</div></div>';
+      '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 14px;" onclick="addBeanLine(\'' + key + '\')">+ Add to cart</button>' +
+      '</div>';
+    if (inCartQty > 0) {
+      html += '<div style="font-size:0.72rem;color:var(--accent);margin-top:4px;">' + inCartQty + ' in cart — adjust in order summary below</div>';
+    }
+    html += '</div>';
   });
   grid.innerHTML = html;
 }
@@ -1353,25 +1480,16 @@ function buildBeansGrid() {
 function setWeight(key, weightKey) {
   weightSelection[key] = weightKey;
   buildBeansGrid();
-  renderCart();
 }
 
 function setTemp(key, temp) {
   tempSelection[key] = temp;
-  // Update price in PRODUCTS so cart uses correct price
-  const p = PRODUCTS[key];
-  const base = (temp === 'hot') ? p.hotPrice : p.price;
-  p._activePrice = base + getAddonSurcharge(key);
   buildMenuGrid();
-  renderCart();
 }
 
 function menuChangeQty(key, delta) {
-  cart[key] = Math.max(0, (cart[key] || 0) + delta);
-  if (cart[key] === 0) delete cart[key];
-  document.getElementById('mqty-' + key).textContent = cart[key] || 0;
-  renderCart();
-  if (loyaltyMember) buildRedeemOptions(loyaltyMember.points);
+  if (delta > 0) { addLine(key, {}); return; }
+  changeLineQty(key, delta);
 }
 
 function showCategory(cat, btn) {
@@ -1383,18 +1501,12 @@ function showCategory(cat, btn) {
 
 // ── Cart logic ─────────────────────────────────────────────────────
 function changeQty(id, delta) {
-  cart[id] = Math.max(0, (cart[id] || 0) + delta);
-  if (cart[id] === 0) delete cart[id];
-  document.getElementById('qty-' + id).textContent = cart[id] || 0;
-  document.getElementById('pc-' + id).classList.toggle('in-cart', !!cart[id]);
-  renderCart();
+  if (delta > 0) { addLine(id, {}); return; }
+  changeLineQty(id, delta);
 }
 
 function getSubtotal() {
-  return Object.keys(cart).reduce((sum, k) => {
-    const p = PRODUCTS[k];
-    return sum + (p._activePrice !== undefined ? p._activePrice : p.price) * cart[k];
-  }, 0);
+  return Object.keys(cart).reduce((sum, id) => sum + cartMeta[id].unitPrice * cart[id], 0);
 }
 
 function getRedeemDiscount() {
@@ -1429,20 +1541,17 @@ function renderCart() {
   payBtn.disabled = false;
 
   const subtotal = getSubtotal();
-  items.innerHTML = keys.map(k => {
-    const p = PRODUCTS[k];
-    const unitPrice = p._activePrice !== undefined ? p._activePrice : p.price;
-    const s = unitPrice * cart[k];
-    let label = '';
-    if (tempSelection[k] === 'hot') label = ' (Hot)';
-    else if (tempSelection[k] === 'ice') label = ' (Ice)';
-    else if (weightSelection[k]) label = ' (' + weightSelection[k] + ')';
-    const addonNames = getActiveAddons(k).map(a => a.label).join(', ');
-    if (addonNames) label += ' +' + addonNames;
+  items.innerHTML = keys.map(id => {
+    const m = cartMeta[id];
+    const s = m.unitPrice * cart[id];
     return `<div class="cart-item">
       <div>
-        <div class="cart-item-name">${p.name}${label}</div>
-        <div class="cart-item-qty">× ${cart[k]} @ RM ${unitPrice.toFixed(2)}</div>
+        <div class="cart-item-name">${m.name}${m.label}</div>
+        <div class="cart-item-qty" style="display:flex;align-items:center;gap:6px;">
+          <button class="qty-btn" style="width:20px;height:20px;font-size:0.85rem;" onclick="changeLineQty('${id}',-1)">−</button>
+          <span>× ${cart[id]} @ RM ${m.unitPrice.toFixed(2)}</span>
+          <button class="qty-btn" style="width:20px;height:20px;font-size:0.85rem;" onclick="changeLineQty('${id}',1)">+</button>
+        </div>
       </div>
       <div class="cart-item-price">RM ${s.toFixed(2)}</div>
     </div>`;
@@ -1569,19 +1678,19 @@ function buildRedeemOptions(pts) {
   const sel = document.getElementById('redeem-select');
   sel.innerHTML = '<option value="">— Do not redeem —</option>';
 
-  // Only show items that are in the cart AND price >= RM8
+  // Only show lines that are in the cart AND price >= RM8
   let added = 0;
-  Object.keys(cart).forEach(k => {
-    const product = PRODUCTS[k];
-    if (product.price < 8) return; // skip items under RM8
-    const ptsCost = Math.round(product.price / 0.08);
+  Object.keys(cart).forEach(id => {
+    const m = cartMeta[id];
+    if (m.unitPrice < 8) return; // skip items under RM8
+    const ptsCost = Math.round(m.unitPrice / 0.08);
     if (pts >= ptsCost) {
       const opt = document.createElement('option');
-      opt.value = k;
-      opt.textContent = product.name + ' — free! (' + ptsCost + ' pts · RM' + product.price.toFixed(2) + ' value)';
-      opt.dataset.name  = product.name;
+      opt.value = id;
+      opt.textContent = m.name + m.label + ' — free! (' + ptsCost + ' pts · RM' + m.unitPrice.toFixed(2) + ' value)';
+      opt.dataset.name  = m.name + m.label;
       opt.dataset.pts   = ptsCost;
-      opt.dataset.price = product.price;
+      opt.dataset.price = m.unitPrice;
       sel.appendChild(opt);
       added++;
     }
@@ -1636,13 +1745,17 @@ function validate() {
     if (!city)     { showError('Please enter your city / area.'); return false; }
     if (!lalamoveQuotation) { showError('Please wait for the delivery fee to be calculated before proceeding.'); return false; }
   }
+  if (fulfillment === 'pickup') {
+    const pickupTime = document.getElementById('pickup-time').value;
+    if (!pickupTime) { showError('Please select a pickup time.'); return false; }
+  }
   return true;
 }
 
 function buildOrderDesc() {
-  const lines = Object.keys(cart).map(k => {
-    const temp = tempSelection[k] === 'hot' ? ' (Hot)' : tempSelection[k] === 'ice' ? ' (Ice)' : '';
-    return `${PRODUCTS[k].name}${temp} ×${cart[k]}`;
+  const lines = Object.keys(cart).map(id => {
+    const m = cartMeta[id];
+    return `${m.name}${m.label} ×${cart[id]}`;
   });
   if (redeemItem) lines.push(`[REDEEM: ${redeemItem.name}]`);
   return lines.join(', ');
@@ -1678,41 +1791,26 @@ async function submitOrder() {
     }));
   }
 
-  const fulfillmentNote = fulfillment === 'delivery' ? `[DELIVERY] ${address}` : '[PICKUP at Teduh]';
+  const pickupTime = fulfillment === 'pickup' ? document.getElementById('pickup-time').value : '';
+  const fulfillmentNote = fulfillment === 'delivery' ? `[DELIVERY] ${address}` : `[PICKUP at Teduh — ${pickupTime}]`;
 
   // ── Store order details for WhatsApp notification on thank-you page ──
-  function lineLabel(k) {
-    const p = PRODUCTS[k];
-    let label = '';
-    if (tempSelection[k] === 'hot') label = ' (Hot)';
-    else if (tempSelection[k] === 'ice') label = ' (Ice)';
-    else if (weightSelection[k]) label = ' (' + weightSelection[k] + ')';
-    const addonNames = getActiveAddons(k).map(a => a.label).join(', ');
-    if (addonNames) label += ' +' + addonNames;
-    return label;
-  }
-  function lineSku(k) {
-    const p = PRODUCTS[k];
-    const temp = tempSelection[k];
-    if (temp) return temp === 'hot' ? (p.skuHot || `${k}-hot`) : (p.skuIce || `${k}-ice`);
-    if (p._activeSku) return p._activeSku; // beans (weight tier)
-    return p.sku || k;
-  }
-  const itemLines = Object.keys(cart).map(k => {
-    const p = PRODUCTS[k];
-    const unitPrice = p._activePrice !== undefined ? p._activePrice : p.price;
-    return `  - ${p.name}${lineLabel(k)} x${cart[k]} (RM ${(unitPrice * cart[k]).toFixed(2)})`;
+  const itemLines = Object.keys(cart).map(id => {
+    const m = cartMeta[id];
+    return `  - ${m.name}${m.label} x${cart[id]} (RM ${(m.unitPrice * cart[id]).toFixed(2)})`;
   }).join('\n');
-  const itemsSimple = Object.keys(cart).map(k => `${PRODUCTS[k].name}${lineLabel(k)} ×${cart[k]}`).join(', ');
-  const cartItems = Object.keys(cart).map(k => {
-    const p = PRODUCTS[k];
-    const addons = getActiveAddons(k).map(a => ({ sku: a.sku, name: a.label, price: a.price }));
+  const itemsSimple = Object.keys(cart).map(id => {
+    const m = cartMeta[id];
+    return `${m.name}${m.label} ×${cart[id]}`;
+  }).join(', ');
+  const cartItems = Object.keys(cart).map(id => {
+    const m = cartMeta[id];
     return {
-      sku: lineSku(k),
-      name: p.name + lineLabel(k),
-      qty: cart[k],
-      price: p._activePrice !== undefined ? p._activePrice : p.price,
-      addons
+      sku: m.sku,
+      name: m.name + m.label,
+      qty: cart[id],
+      price: m.unitPrice,
+      addons: m.addons
     };
   });
 sessionStorage.setItem('teduh_pending_order', JSON.stringify({
@@ -1725,6 +1823,7 @@ sessionStorage.setItem('teduh_pending_order', JSON.stringify({
     cartItems,
     fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
     fulfillmentType: fulfillment,
+    pickupTime: pickupTime || null,
     address: address || '',
     notes: notes || '',
     redeemItem: redeemItem ? redeemItem.name : null,
@@ -1948,9 +2047,58 @@ function syncLoyaltyPhone() {
   }
 }
 
+// ── Pickup time slots (every 30 min, 10:30am – 10:30pm) ──────────────
+const PICKUP_START_MIN = 10 * 60 + 30;  // 10:30am
+const PICKUP_END_MIN   = 22 * 60 + 30;  // 10:30pm
+
+function minutesToTimeLabel(m) {
+  let h = Math.floor(m / 60);
+  const min = m % 60;
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  let h12 = h % 12; if (h12 === 0) h12 = 12;
+  return h12 + ':' + (min === 0 ? '00' : min) + ' ' + ampm;
+}
+
+function timeLabelToMinutes(label) {
+  const m = /^(\d+):(\d+)\s*(AM|PM)$/.exec(label || '');
+  if (!m) return null;
+  let h = parseInt(m[1], 10);
+  const min = parseInt(m[2], 10);
+  if (m[3] === 'PM' && h !== 12) h += 12;
+  if (m[3] === 'AM' && h === 12) h = 0;
+  return h * 60 + min;
+}
+
+function buildPickupTimeOptions() {
+  const sel = document.getElementById('pickup-time');
+  if (!sel) return;
+  const now = new Date();
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  const prevValue = sel.value;
+  let html = '<option value="">Select a pickup time…</option>';
+  let anyEnabled = false;
+  for (let m = PICKUP_START_MIN; m <= PICKUP_END_MIN; m += 30) {
+    const label = minutesToTimeLabel(m);
+    const isPast = m < nowMin;
+    if (!isPast) anyEnabled = true;
+    html += '<option value="' + label + '"' + (isPast ? ' disabled' : '') + '>' + label + (isPast ? ' (passed)' : '') + '</option>';
+  }
+  if (!anyEnabled) {
+    html += '<option value="" disabled>No more pickup slots today — please order tomorrow</option>';
+  }
+  sel.innerHTML = html;
+  // Keep the previous selection if it's still valid/enabled after rebuilding
+  if (prevValue) {
+    const opt = Array.from(sel.options).find(o => o.value === prevValue && !o.disabled);
+    if (opt) sel.value = prevValue;
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   buildMenuGrid();
   buildBeansGrid();
+  buildPickupTimeOptions();
   checkShopStatus();
   setTimeout(() => { initDeliveryMap(); }, 300);
 });
