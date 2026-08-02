@@ -1350,6 +1350,7 @@ function addMenuLine(key) {
 
 function addBeanLine(key) {
   const weight = weightSelection[key] || PRODUCTS[key].weights[0].key;
+  if (!shopIsOpen || itemAvailability[key + '-' + weight] === false) return; // sold out — ignore
   addLine(key, { weight });
 }
 
@@ -1452,23 +1453,45 @@ function buildBeansGrid() {
   let html = '';
   beanEntries.forEach(([key, p]) => {
     if (!weightSelection[key]) weightSelection[key] = p.weights[0].key;
-    const inCartQty = totalQtyForProduct(key);
 
-    const soldOut = !shopIsOpen || itemAvailability[key] === false;
-    html += '<div class="product-card' + (soldOut ? ' sold-out' : '') + (inCartQty ? ' in-cart' : '') + '" id="pc-' + key + '">';
-    const itemLabel = (!shopIsOpen || soldOut) ? (' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· ' + getItemLabel() + '</span>') : '';
+    // Availability is tracked per weight tier (e.g. "bean-brazil-santos-250gm")
+    // so a bean can be sold out in one weight but still available in another.
+    const weightAvail = p.weights.map(w => ({
+      ...w,
+      soldOut: !shopIsOpen || itemAvailability[key + '-' + w.key] === false
+    }));
+    const allSoldOut = weightAvail.every(w => w.soldOut);
+
+    // If the currently-selected weight just went sold out, jump to the next
+    // available one so "+ Add to cart" doesn't silently add a dead option.
+    const currentStillOk = weightAvail.find(w => w.key === weightSelection[key] && !w.soldOut);
+    if (!currentStillOk) {
+      const firstAvailable = weightAvail.find(w => !w.soldOut);
+      if (firstAvailable) weightSelection[key] = firstAvailable.key;
+    }
+
+    const inCartQty = totalQtyForProduct(key);
+    html += '<div class="product-card' + (allSoldOut ? ' sold-out' : '') + (inCartQty ? ' in-cart' : '') + '" id="pc-' + key + '">';
+    const itemLabel = allSoldOut ? (' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· ' + getItemLabel() + '</span>') : '';
     html += '<div class="product-name">' + p.name + itemLabel + '</div>';
     if (p.desc) html += '<div class="product-desc">' + p.desc + '</div>';
 
     html += '<div class="menu-item-temp" style="margin:0.5rem 0;">' +
-      p.weights.map(w =>
-        '<button class="temp-btn ' + (weightSelection[key] === w.key ? 'selected' : '') + '" onclick="setWeight(\'' + key + '\',\'' + w.key + '\')">' + w.key + ' RM ' + w.price.toFixed(2) + '</button>'
-      ).join('') +
+      weightAvail.map(w => {
+        if (w.soldOut) {
+          return '<button class="temp-btn" disabled style="opacity:0.4;cursor:not-allowed;text-decoration:line-through;">' + w.key + ' RM ' + w.price.toFixed(2) + '</button>';
+        }
+        return '<button class="temp-btn ' + (weightSelection[key] === w.key ? 'selected' : '') + '" onclick="setWeight(\'' + key + '\',\'' + w.key + '\')">' + w.key + ' RM ' + w.price.toFixed(2) + '</button>';
+      }).join('') +
       '</div>';
 
-    html += '<div class="qty-control">' +
-      '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 14px;" onclick="addBeanLine(\'' + key + '\')">+ Add to cart</button>' +
-      '</div>';
+    if (allSoldOut) {
+      html += '<div class="qty-control"><button class="menu-qty-btn" disabled style="opacity:0.5;cursor:not-allowed;">' + getItemLabel() + '</button></div>';
+    } else {
+      html += '<div class="qty-control">' +
+        '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 14px;" onclick="addBeanLine(\'' + key + '\')">+ Add to cart</button>' +
+        '</div>';
+    }
     if (inCartQty > 0) {
       html += '<div style="font-size:0.72rem;color:var(--accent);margin-top:4px;">' + inCartQty + ' in cart — adjust in order summary below</div>';
     }
