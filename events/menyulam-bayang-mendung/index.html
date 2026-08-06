@@ -105,7 +105,22 @@
   @media (max-width: 480px){ .flyer-grid{ grid-template-columns: 1fr; } }
   .flyer-grid img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 22px rgba(26,22,20,0.1); }
   .flyer-grid.small { margin-bottom: 1.25rem; }
-  .flyer-grid.small img { max-height: 150px; width: 100%; object-fit: cover; object-position: top; }
+  .flyer-grid.small img { width: 100%; height: auto; cursor: zoom-in; transition: transform 0.2s ease; }
+  .flyer-grid.small img:hover { transform: scale(1.02); }
+
+  #lightbox {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(13,11,10,0.92);
+    align-items: center; justify-content: center;
+    padding: 2rem; cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  #lightbox-close {
+    position: absolute; top: 1.25rem; right: 1.5rem;
+    color: #F5EBE0; font-size: 1.8rem; background: none; border: none; cursor: pointer;
+    line-height: 1;
+  }
 
   /* Bands */
   .band-card { display: flex; gap: 0.9rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
@@ -174,8 +189,8 @@
   <!-- TICKETS -->
   <div class="tabpanel active" id="tab-tickets">
     <div class="flyer-grid small">
-      <img src="/images/flyers/menyulam-bayang-mendung-1.jpg" alt="Menyulam Bayang Mendung flyer front">
-      <img src="/images/flyers/menyulam-bayang-mendung-2.jpg" alt="Menyulam Bayang Mendung flyer back">
+      <img src="/images/flyers/menyulam-bayang-mendung-1.jpg" alt="Menyulam Bayang Mendung flyer front" onclick="openLightbox(this.src)">
+      <img src="/images/flyers/menyulam-bayang-mendung-2.jpg" alt="Menyulam Bayang Mendung flyer back" onclick="openLightbox(this.src)">
     </div>
 
     <div class="section-label">Choose your ticket</div>
@@ -295,7 +310,21 @@
   <p style="margin-top:0.35rem;"><a href="/events">Back to all events</a></p>
 </footer>
 
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Flyer, enlarged">
+</div>
+
 <script>
+  function openLightbox(src){
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+
   const MAX_QTY = 10;
   let ticketQty = 0;
   const tierCard = document.querySelector('.tier-card');
