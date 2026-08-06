@@ -103,22 +103,9 @@
   /* Flyers */
   .flyer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.5rem; }
   @media (max-width: 480px){ .flyer-grid{ grid-template-columns: 1fr; } }
-  .flyer-grid img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 22px rgba(26,22,20,0.1); cursor: zoom-in; transition: transform 0.2s ease; }
-  .flyer-grid img:hover { transform: scale(1.02); }
-
-  #lightbox {
-    display: none; position: fixed; inset: 0; z-index: 100;
-    background: rgba(13,11,10,0.92);
-    align-items: center; justify-content: center;
-    padding: 2rem; cursor: zoom-out;
-  }
-  #lightbox.open { display: flex; }
-  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
-  #lightbox-close {
-    position: absolute; top: 1.25rem; right: 1.5rem;
-    color: #F5EBE0; font-size: 1.8rem; background: none; border: none; cursor: pointer;
-    line-height: 1;
-  }
+  .flyer-grid img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 22px rgba(26,22,20,0.1); }
+  .flyer-grid.small { margin-bottom: 1.25rem; }
+  .flyer-grid.small img { max-height: 150px; width: 100%; object-fit: cover; object-position: top; }
 
   /* Bands */
   .band-card { display: flex; gap: 0.9rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
@@ -130,6 +117,8 @@
     font-family: var(--font-display); color: var(--white); font-size: 0.65rem;
     object-fit: cover;
   }
+  .band-ig.unavailable { color: var(--border); pointer-events: none; text-decoration: line-through; }
+  .band-ig.unavailable::before { content: none; }
   .band-info { flex: 1; }
   .band-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.15rem; }
   .band-ig { font-size: 0.8rem; color: var(--ink-dim); text-decoration: none; }
@@ -184,6 +173,11 @@
 
   <!-- TICKETS -->
   <div class="tabpanel active" id="tab-tickets">
+    <div class="flyer-grid small">
+      <img src="/images/flyers/menyulam-bayang-mendung-1.jpg" alt="Menyulam Bayang Mendung flyer front">
+      <img src="/images/flyers/menyulam-bayang-mendung-2.jpg" alt="Menyulam Bayang Mendung flyer back">
+    </div>
+
     <div class="section-label">Choose your ticket</div>
     <div class="section-note">Prices in MYR. One ticket admits one person. Max 10 tickets per checkout.</div>
 
@@ -223,34 +217,28 @@
 
   <!-- EVENT DETAILS -->
   <div class="tabpanel" id="tab-details">
-    <div class="section-label">Flyers</div>
-    <div class="flyer-grid">
-      <img src="/images/flyers/menyulam-bayang-mendung-1.jpg" alt="Menyulam Bayang Mendung flyer front" onclick="openLightbox(this.src)">
-      <img src="/images/flyers/menyulam-bayang-mendung-2.jpg" alt="Menyulam Bayang Mendung flyer back" onclick="openLightbox(this.src)">
-    </div>
-
     <div class="section-label">The lineup</div>
-    <div class="section-note">Photos and Instagram links below are placeholders — swap for real assets when ready.</div>
+    <div class="section-note">Tap Instagram links to visit each band's profile.</div>
 
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info"><div class="band-name">Halal</div><a class="band-ig" href="#" target="_blank" rel="noopener">halal</a></div>
+      <img class="band-photo" src="/images/bands/halal.jpg" alt="Halal">
+      <div class="band-info"><div class="band-name">Halal</div><a class="band-ig" href="https://instagram.com/halalskramz" target="_blank" rel="noopener">halalskramz</a></div>
     </div>
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info"><div class="band-name">Bury Me In Black</div><a class="band-ig" href="#" target="_blank" rel="noopener">burymeinblack</a></div>
+      <img class="band-photo" src="/images/bands/bury-me-in-black.jpg" alt="Bury Me In Black">
+      <div class="band-info"><div class="band-name">Bury Me In Black</div><a class="band-ig" href="https://instagram.com/burymeinblackband" target="_blank" rel="noopener">burymeinblackband</a></div>
     </div>
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info"><div class="band-name">Morír En Past</div><a class="band-ig" href="#" target="_blank" rel="noopener">morirenpast</a></div>
+      <img class="band-photo" src="/images/bands/morir-en-past.jpg" alt="Morír En Past">
+      <div class="band-info"><div class="band-name">Morír En Past</div><a class="band-ig" href="https://instagram.com/morirenpast" target="_blank" rel="noopener">morirenpast</a></div>
     </div>
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info"><div class="band-name">Crhura</div><a class="band-ig" href="#" target="_blank" rel="noopener">crhura</a></div>
+      <img class="band-photo" src="/images/bands/crhura.jpg" alt="Crhura">
+      <div class="band-info"><div class="band-name">Crhura</div><a class="band-ig" href="https://instagram.com/crhura" target="_blank" rel="noopener">crhura</a></div>
     </div>
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info"><div class="band-name">Sephia</div><a class="band-ig" href="#" target="_blank" rel="noopener">sephia</a></div>
+      <img class="band-photo" src="/images/bands/sephia.jpg" alt="Sephia">
+      <div class="band-info"><div class="band-name">Sephia</div><span class="band-ig unavailable">not available</span></div>
     </div>
 
     <div class="section-label" style="margin-top:1.75rem;">Listen before the show</div>
@@ -285,11 +273,12 @@
     <div class="section-label">Presented by</div>
 
     <div class="organiser-card">
-      <div class="organiser-mark">BK</div>
+      <img class="organiser-mark" src="/images/organisers/balai-ketiga.jpg" alt="Balai Ketiga">
       <div>
         <div class="organiser-name">Balai Ketiga</div>
         <div class="organiser-role">Organiser · Muar</div>
         <div class="organiser-blurb">Independent event organiser, new to the Teduh ticketing platform.</div>
+        <a class="band-ig" href="https://instagram.com/balaiketiga" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.4rem;">balaiketiga</a>
       </div>
     </div>
 
@@ -306,21 +295,7 @@
   <p style="margin-top:0.35rem;"><a href="/events">Back to all events</a></p>
 </footer>
 
-<div id="lightbox" onclick="closeLightbox()">
-  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
-  <img id="lightbox-img" src="" alt="Flyer, enlarged">
-</div>
-
 <script>
-  function openLightbox(src){
-    document.getElementById('lightbox-img').src = src;
-    document.getElementById('lightbox').classList.add('open');
-  }
-  function closeLightbox(){
-    document.getElementById('lightbox').classList.remove('open');
-  }
-  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
-
   const MAX_QTY = 10;
   let ticketQty = 0;
   const tierCard = document.querySelector('.tier-card');
