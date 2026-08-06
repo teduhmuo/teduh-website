@@ -103,20 +103,36 @@
   /* Flyers */
   .flyer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1.5rem; }
   @media (max-width: 480px){ .flyer-grid{ grid-template-columns: 1fr; } }
-  .flyer-grid img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 22px rgba(26,22,20,0.1); }
+  .flyer-grid img { width: 100%; height: auto; display: block; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 10px 22px rgba(26,22,20,0.1); cursor: zoom-in; transition: transform 0.2s ease; }
+  .flyer-grid img:hover { transform: scale(1.02); }
+
+  #lightbox {
+    display: none; position: fixed; inset: 0; z-index: 100;
+    background: rgba(13,11,10,0.92);
+    align-items: center; justify-content: center;
+    padding: 2rem; cursor: zoom-out;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img { max-width: 100%; max-height: 100%; border-radius: 6px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  #lightbox-close {
+    position: absolute; top: 1.25rem; right: 1.5rem;
+    color: #F5EBE0; font-size: 1.8rem; background: none; border: none; cursor: pointer;
+    line-height: 1;
+  }
 
   /* Bands */
   .band-card { display: flex; gap: 0.9rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
   .band-card:first-of-type { border-top: 1px solid var(--border); }
   .band-photo {
-    width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+    width: 76px; height: 76px; border-radius: 50%; flex-shrink: 0;
     background: linear-gradient(155deg, var(--red), #8a1428);
     display: flex; align-items: center; justify-content: center;
     font-family: var(--font-display); color: var(--white); font-size: 0.65rem;
+    object-fit: cover;
   }
   .band-info { flex: 1; }
-  .band-name { font-family: var(--font-display); font-weight: 700; font-size: 1rem; }
-  .band-ig { font-size: 0.78rem; color: var(--ink-dim); text-decoration: none; }
+  .band-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.15rem; }
+  .band-ig { font-size: 0.8rem; color: var(--ink-dim); text-decoration: none; }
   .band-ig::before { content: "@ "; }
 
   .yt-widget { border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; border: 1px solid var(--border); }
@@ -134,7 +150,7 @@
 
   /* Organiser */
   .organiser-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; margin-bottom: 0.9rem; display: flex; gap: 0.9rem; align-items: flex-start; }
-  .organiser-mark { width: 42px; height: 42px; border-radius: 50%; background: var(--red-light); color: var(--red); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; flex-shrink: 0; border: 1px solid rgba(215,38,61,0.3); }
+  .organiser-mark { width: 56px; height: 56px; border-radius: 50%; background: var(--red-light); color: var(--red); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; flex-shrink: 0; border: 1px solid rgba(215,38,61,0.3); object-fit: cover; }
   .organiser-name { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
   .organiser-role { font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--red); margin-bottom: 0.4rem; }
   .organiser-blurb { font-size: 0.8rem; color: var(--ink-dim); line-height: 1.5; }
@@ -209,8 +225,8 @@
   <div class="tabpanel" id="tab-details">
     <div class="section-label">Flyers</div>
     <div class="flyer-grid">
-      <img src="/images/flyers/menyulam-bayang-mendung-1.jpg" alt="Menyulam Bayang Mendung flyer front">
-      <img src="/images/flyers/menyulam-bayang-mendung-2.jpg" alt="Menyulam Bayang Mendung flyer back">
+      <img src="/images/flyers/menyulam-bayang-mendung-1.jpg" alt="Menyulam Bayang Mendung flyer front" onclick="openLightbox(this.src)">
+      <img src="/images/flyers/menyulam-bayang-mendung-2.jpg" alt="Menyulam Bayang Mendung flyer back" onclick="openLightbox(this.src)">
     </div>
 
     <div class="section-label">The lineup</div>
@@ -290,7 +306,21 @@
   <p style="margin-top:0.35rem;"><a href="/events">Back to all events</a></p>
 </footer>
 
+<div id="lightbox" onclick="closeLightbox()">
+  <button id="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Flyer, enlarged">
+</div>
+
 <script>
+  function openLightbox(src){
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('open');
+  }
+  document.addEventListener('keydown', e => { if(e.key === 'Escape') closeLightbox(); });
+
   const MAX_QTY = 10;
   let ticketQty = 0;
   const tierCard = document.querySelector('.tier-card');
