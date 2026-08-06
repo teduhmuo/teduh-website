@@ -130,7 +130,7 @@
     background: linear-gradient(155deg, var(--red), #8a1428);
     display: flex; align-items: center; justify-content: center;
     font-family: var(--font-display); color: var(--white); font-size: 0.65rem;
-    object-fit: cover;
+    object-fit: cover; cursor: zoom-in;
   }
   .band-ig.unavailable { color: var(--border); pointer-events: none; text-decoration: line-through; }
   .band-ig.unavailable::before { content: none; }
@@ -138,6 +138,7 @@
   .band-name { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; margin-bottom: 0.15rem; }
   .band-ig { font-size: 0.8rem; color: var(--ink-dim); text-decoration: none; }
   .band-ig::before { content: "@ "; }
+  .band-ig.no-at::before { content: none; }
 
   .yt-widget { border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; border: 1px solid var(--border); }
   .yt-widget iframe { width: 100%; height: 200px; border: none; display: block; }
@@ -236,31 +237,31 @@
     <div class="section-note">Tap Instagram links to visit each band's profile.</div>
 
     <div class="band-card">
-      <img class="band-photo" src="/images/bands/halal.jpg" alt="Halal">
+      <img class="band-photo" src="/images/bands/halal.jpg" alt="Halal" onclick="openLightbox(this.src)">
       <div class="band-info"><div class="band-name">Halal</div><a class="band-ig" href="https://instagram.com/halalskramz" target="_blank" rel="noopener">halalskramz</a></div>
     </div>
     <div class="band-card">
-      <img class="band-photo" src="/images/bands/bury-me-in-black.jpg" alt="Bury Me In Black">
+      <img class="band-photo" src="/images/bands/bury-me-in-black.jpg" alt="Bury Me In Black" onclick="openLightbox(this.src)">
       <div class="band-info"><div class="band-name">Bury Me In Black</div><a class="band-ig" href="https://instagram.com/burymeinblackband" target="_blank" rel="noopener">burymeinblackband</a></div>
     </div>
     <div class="band-card">
-      <img class="band-photo" src="/images/bands/morir-en-past.jpg" alt="Morír En Past">
+      <img class="band-photo" src="/images/bands/morir-en-past.jpg" alt="Morír En Past" onclick="openLightbox(this.src)">
       <div class="band-info"><div class="band-name">Morír En Past</div><a class="band-ig" href="https://instagram.com/morirenpast" target="_blank" rel="noopener">morirenpast</a></div>
     </div>
     <div class="band-card">
-      <img class="band-photo" src="/images/bands/crhura.jpg" alt="Crhura">
+      <img class="band-photo" src="/images/bands/crhura.jpg" alt="Crhura" onclick="openLightbox(this.src)">
       <div class="band-info"><div class="band-name">Crhura</div><a class="band-ig" href="https://instagram.com/crhura" target="_blank" rel="noopener">crhura</a></div>
     </div>
     <div class="band-card">
-      <img class="band-photo" src="/images/bands/sephia.jpg" alt="Sephia">
-      <div class="band-info"><div class="band-name">Sephia</div><span class="band-ig unavailable">not available</span></div>
+      <img class="band-photo" src="/images/bands/sephia.jpg" alt="Sephia" onclick="openLightbox(this.src)">
+      <div class="band-info"><div class="band-name">Sephia</div><a class="band-ig" href="https://instagram.com/sephia.emo" target="_blank" rel="noopener">sephia.emo</a></div>
     </div>
 
     <div class="section-label" style="margin-top:1.75rem;">Listen before the show</div>
-    <div class="section-note">One song per band, queued back to back — replace the placeholder video IDs with real ones once the playlist is ready.</div>
+    <div class="section-note">One song per band, queued back to back.</div>
     <div class="yt-widget">
-      <iframe src="https://www.youtube.com/embed/videoseries?list=PLPLACEHOLDER_REPLACE_WITH_REAL_PLAYLIST_ID" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      <div class="yt-caption">Playlist: Halal → Bury Me In Black → Morír En Past → Crhura → Sephia (placeholder — create a real YouTube playlist and paste its ID above)</div>
+      <iframe src="https://www.youtube.com/embed/vsy14zQQnGk?playlist=XyhmHrOWZpA,AURxdfkBDFo,lD5l_IgWpTo,cfv4e7F9ya4" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div class="yt-caption">Playlist: Halal → Bury Me In Black → Morír En Past → Crhura → Sephia</div>
     </div>
 
     <div class="section-label">Venue</div>
@@ -292,14 +293,14 @@
       <div>
         <div class="organiser-name">Balai Ketiga</div>
         <div class="organiser-role">Organiser · Muar</div>
-        <div class="organiser-blurb">Independent event organiser, new to the Teduh ticketing platform.</div>
-        <a class="band-ig" href="https://instagram.com/balaiketiga" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.4rem;">balaiketiga</a>
+        <div class="organiser-blurb">Muar Underground Peer Networks</div>
+        <a class="band-ig no-at" href="https://t.me/balaiketiganetwork" target="_blank" rel="noopener" style="display:inline-block; margin-top:0.4rem;">t.me/balaiketiganetwork</a>
       </div>
     </div>
 
     <div class="section-label" style="margin-top:1.5rem;">Supported by</div>
     <div class="supporters-list">
-      Lorong Belakang · QC Records · Studio 83 · NADA Bunyi &amp; Sistem · Azab.Lensa · Myth Negative · Klubb Haus Lazyyard · 101 Space
+      Lorong Belakang · Quiet Collapse Record · SX3 Records · Nada Bunyi Sistem · Azab Lensa · Myth Negative · Lazy Yard · 101 Space
     </div>
   </div>
 
