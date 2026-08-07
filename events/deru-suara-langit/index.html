@@ -5,160 +5,525 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deru: Suara Langit — Teduh Events</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --cream: #F7F3EE;
-    --warm-brown: #3D2B1F;
-    --medium-brown: #7A5C46;
-    --light-brown: #C4A882;
-    --accent: #5B7E5A;
-    --accent-light: #EAF0E9;
-    --border: #E2D9CE;
+    --bg-offwhite: #FAF7F2;
+    --sunset-coral: #f06553;
+    --sunset-glow: #FFECE8;
+    --twilight-dark: #120F18;
+    --dusk-purple: #2A2135;
+    --black: #000000;
+    --muted-text: #686270;
     --white: #FFFFFF;
-    --error: #C0392B;
     --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-body: 'Space Grotesk', sans-serif;
   }
 
-  body { font-family: var(--font-body); background: var(--cream); color: var(--warm-brown); min-height: 100vh; }
+  body { 
+    font-family: var(--font-body); 
+    background-color: var(--bg-offwhite); 
+    color: var(--twilight-dark); 
+    min-height: 100vh;
+    line-height: 1.5;
+  }
 
   header {
-    background: var(--warm-brown);
-    padding: 1.25rem 2rem;
-    display: flex; align-items: center; justify-content: space-between;
+    background: var(--bg-offwhite);
+    padding: 1.25rem 1.5rem;
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    border-bottom: 2.5px solid var(--black);
   }
-  header .logo { font-family: var(--font-display); font-size: 1.3rem; color: var(--cream); text-decoration: none; }
-  header .back { font-size: 0.75rem; color: var(--light-brown); text-decoration: none; }
+  header .logo { 
+    font-family: var(--font-display); 
+    font-size: 1.5rem; 
+    font-weight: 700;
+    color: var(--sunset-coral); 
+    text-decoration: none; 
+    text-shadow: 2px 2px 0px var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  header .back { 
+    font-size: 0.8rem; 
+    font-weight: 700;
+    color: var(--twilight-dark); 
+    text-decoration: none; 
+    border: 2px solid var(--black);
+    padding: 0.35rem 0.85rem;
+    background: var(--white);
+    box-shadow: 2.5px 2.5px 0px var(--black);
+    border-radius: 6px;
+    transition: transform 0.1s;
+  }
+  header .back:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 0px var(--black);
+  }
 
-  .hero { background: var(--warm-brown); padding: 2rem 1.5rem 2.5rem; text-align: center; }
-  .hero-eyebrow { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light-brown); margin-bottom: 0.6rem; }
-  .hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 2.6rem); color: var(--cream); font-weight: 500; margin-bottom: 0.6rem; }
-  .hero-meta { color: var(--light-brown); font-size: 0.85rem; line-height: 1.7; }
-  .hero-lineup { color: var(--cream); font-family: var(--font-display); font-size: 1.05rem; margin-top: 0.6rem; }
+  /* Hero Section */
+  .hero-container {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  .presents-label {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--twilight-dark);
+    margin: 1.25rem 0;
+  }
+  .hero { 
+    background: linear-gradient(175deg, #f06553 0%, #3B2848 55%, #120F18 100%); 
+    padding: 3rem 1.5rem 2.5rem; 
+    text-align: center; 
+    border: 2.5px solid var(--black);
+    border-radius: 12px;
+    box-shadow: 6px 6px 0px var(--black);
+    color: var(--white);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--black);
+    color: var(--sunset-coral);
+    padding: 0.3rem 0.75rem;
+    border-radius: 20px;
+    margin-bottom: 1.2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  .hero h1 { 
+    font-family: var(--font-display); 
+    color: var(--white); 
+    font-weight: 700; 
+    font-style: italic;
+    margin-bottom: 1.2rem; 
+    text-shadow: 3px 3px 0px var(--black);
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+  }
+  .hero h1 .title-main {
+    display: block;
+    font-size: clamp(2.5rem, 8vw, 3.8rem);
+    text-transform: uppercase;
+    font-style: normal;
+  }
+  .hero h1 .title-sub {
+    display: block;
+    font-size: clamp(2rem, 6.5vw, 3rem);
+  }
+  .hero-meta { 
+    color: rgba(255, 255, 255, 0.9); 
+    font-size: 0.88rem; 
+    font-weight: 500;
+    line-height: 1.6; 
+  }
+  .hero-lineup { 
+    margin-top: 1.5rem; 
+    padding-top: 1.2rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .lineup-headliner {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--white);
+    text-shadow: 3px 3px 0px var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.1rem;
+  }
+  .lineup-support {
+    display: block;
+    font-family: var(--font-display);
+    font-size: clamp(0.95rem, 3vw, 1.25rem);
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
 
-  /* Tabs */
+  /* Navigation Tabs */
   .tabnav {
-    display: flex; overflow-x: auto;
-    max-width: 560px; margin: 0 auto;
-    border-bottom: 1px solid var(--border);
-    background: var(--cream);
+    display: flex; 
+    overflow-x: auto;
+    max-width: 560px; 
+    margin: 1.5rem auto 0;
+    padding: 0 1.25rem;
+    gap: 0.5rem;
   }
   .tabbtn {
-    flex: 1; white-space: nowrap;
-    background: none; border: none;
-    font-family: var(--font-body); font-size: 0.78rem; letter-spacing: 0.03em; text-transform: uppercase;
-    color: var(--medium-brown);
-    padding: 0.9rem 0.5rem;
+    flex: 1; 
+    white-space: nowrap;
+    background: var(--white); 
+    border: 2px solid var(--black);
+    border-radius: 8px;
+    font-family: var(--font-body); 
+    font-size: 0.78rem; 
+    font-weight: 700;
+    letter-spacing: 0.04em; 
+    text-transform: uppercase;
+    color: var(--twilight-dark);
+    padding: 0.75rem 0.5rem;
     cursor: pointer;
-    border-bottom: 2px solid transparent;
+    box-shadow: 3px 3px 0px var(--black);
+    transition: all 0.1s ease;
   }
-  .tabbtn.active { color: var(--warm-brown); border-bottom-color: var(--light-brown); font-weight: 500; }
+  .tabbtn.active { 
+    background: var(--sunset-coral); 
+    color: var(--white); 
+    text-shadow: 1px 1px 0px var(--black);
+  }
+  .tabbtn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px var(--black);
+  }
   .tabpanel { display: none; }
   .tabpanel.active { display: block; }
 
   main { max-width: 560px; margin: 0 auto 3rem; padding: 1.5rem 1.25rem 0; }
 
-  .section-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--medium-brown); margin-bottom: 0.4rem; }
-  .section-note { font-size: 0.8rem; color: var(--medium-brown); margin-bottom: 1.25rem; }
-
-  /* Ticket tiers */
-  .tier-card { position: relative; }
-  .tier-card.inactive { opacity: 0.6; cursor: not-allowed; }
-  .tier-card.inactive .tier-price { display: none; }
-  .tier-card.inactive .tier-radio { display: none; }
-  .tier-unavailable { font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--medium-brown); font-style: italic; }
-  .tier-card {
-    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
-    padding: 1rem 1.15rem; margin-bottom: 0.9rem;
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: pointer;
+  .section-label { 
+    font-size: 0.78rem; 
+    font-weight: 700;
+    letter-spacing: 0.12em; 
+    text-transform: uppercase; 
+    color: var(--sunset-coral); 
+    margin-bottom: 0.3rem; 
   }
-  .tier-card.selected { border-color: var(--light-brown); box-shadow: 0 0 0 1px var(--light-brown); }
-  .tier-name { font-family: var(--font-display); font-size: 1.05rem; margin-bottom: 0.2rem; }
-  .tier-avail { font-size: 0.72rem; color: var(--medium-brown); }
-  .tier-price { font-family: var(--font-display); font-size: 1.15rem; }
-  .tier-radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border); margin-left: 0.9rem; flex-shrink: 0; }
-  .tier-card.selected .tier-radio { border-color: var(--accent); background: radial-gradient(circle, var(--accent) 40%, transparent 42%); }
+
+  /* Ticket Tiers */
+  .tier-card {
+    background: var(--white); 
+    border: 2.5px solid var(--black); 
+    border-radius: 10px;
+    padding: 1.15rem; 
+    margin-bottom: 1rem;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    box-shadow: 4px 4px 0px var(--black);
+  }
+  .tier-card.active-selected { 
+    background: var(--sunset-glow); 
+  }
+  .tier-card.inactive { 
+    opacity: 0.55; 
+    box-shadow: none;
+    background: #EAE6DF;
+  }
+  .tier-card.inactive .tier-right { display: none; }
+  .tier-unavailable { 
+    font-size: 0.75rem; 
+    font-weight: 700;
+    letter-spacing: 0.04em; 
+    text-transform: uppercase; 
+    color: var(--muted-text); 
+  }
+  
+  .tier-name { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; font-style: italic; }
+  .tier-price { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--twilight-dark); margin-right: 0.75rem; }
   .tier-right { display: flex; align-items: center; }
 
-  /* Merch */
+  /* Merchandise & Ticket Quantities */
   .merch-item {
-    background: var(--white); border: 1px solid var(--border); border-radius: 10px;
-    padding: 1rem 1.15rem; margin-bottom: 0.9rem;
-    display: flex; justify-content: space-between; align-items: center;
+    background: var(--white); 
+    border: 2.5px solid var(--black); 
+    border-radius: 10px;
+    padding: 1.15rem; 
+    margin-bottom: 1rem;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    box-shadow: 4px 4px 0px var(--black);
   }
-  .merch-name { font-family: var(--font-display); font-size: 1.02rem; margin-bottom: 0.2rem; }
-  .merch-price { font-size: 0.78rem; color: var(--medium-brown); }
+  .merch-name { font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; font-style: italic; margin-bottom: 0.2rem; }
+  .merch-price { font-size: 0.85rem; font-weight: 700; color: var(--muted-text); }
   .qty-control { display: flex; align-items: center; gap: 0.7rem; }
-  .qty-btn { width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); background: var(--cream); color: var(--warm-brown); font-size: 0.9rem; cursor: pointer; }
+  .qty-btn { 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 6px; 
+    border: 2px solid var(--black); 
+    background: var(--bg-offwhite); 
+    color: var(--twilight-dark); 
+    font-weight: 700;
+    font-size: 1rem; 
+    cursor: pointer; 
+    box-shadow: 2px 2px 0px var(--black);
+  }
+  .qty-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px var(--black);
+  }
+  .qty-val { font-weight: 700; min-width: 18px; text-align: center; }
 
-  /* Shared cart */
-  .cart-box { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.15rem; margin-top: 1.5rem; }
-  .cart-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+  /* Cart & Checkout Box */
+  .cart-box { 
+    background: var(--white); 
+    border: 2.5px solid var(--black); 
+    border-radius: 12px; 
+    padding: 1.25rem; 
+    margin-top: 2rem; 
+    box-shadow: 5px 5px 0px var(--black);
+  }
+  .cart-row { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 0.55rem 0; border-bottom: 1px dashed var(--bg-offwhite); font-weight: 500; }
   .cart-row:last-of-type { border-bottom: none; }
-  .cart-empty { color: var(--medium-brown); font-size: 0.85rem; }
-  .buyer-form { margin-top: 0.9rem; display: flex; flex-direction: column; gap: 0.6rem; }
+  .cart-empty { color: var(--muted-text); font-size: 0.85rem; font-style: italic; }
+  .buyer-form { margin: 1.25rem 0; display: flex; flex-direction: column; gap: 0.75rem; }
   .buyer-form input {
-    border: 1px solid var(--border); border-radius: 6px; padding: 0.7rem 0.85rem;
-    font-family: var(--font-body); font-size: 0.85rem; background: var(--cream); color: var(--warm-brown);
+    border: 2px solid var(--black); 
+    border-radius: 8px; 
+    padding: 0.8rem 0.9rem;
+    font-family: var(--font-body); 
+    font-size: 0.85rem; 
+    background: var(--bg-offwhite); 
+    color: var(--twilight-dark);
+    font-weight: 500;
   }
-  .subtotal-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.9rem; padding-top: 0.9rem; border-top: 1px solid var(--border); }
-  .subtotal-amt { font-family: var(--font-display); font-size: 1.35rem; color: var(--warm-brown); }
-  .cta-btn { width: 100%; margin-top: 1rem; padding: 0.9rem; background: var(--warm-brown); color: var(--cream); border: none; border-radius: 6px; font-size: 0.9rem; font-weight: 500; cursor: pointer; }
-  .cta-note { text-align: center; font-size: 0.7rem; color: var(--medium-brown); margin-top: 0.6rem; }
-
-  /* Event details */
-  .flyer-note {
-    background: var(--accent-light); color: var(--medium-brown);
-    font-size: 0.78rem; border-radius: 8px; padding: 0.8rem 1rem; margin-bottom: 1.25rem;
+  .buyer-form input:focus {
+    outline: none;
+    background: var(--white);
+    box-shadow: 3px 3px 0px var(--black);
   }
+  .subtotal-line { display: flex; justify-content: space-between; align-items: baseline; margin-top: 1rem; padding-top: 1rem; border-top: 2.5px solid var(--black); font-weight: 700; }
+  .subtotal-amt { font-family: var(--font-display); font-size: 1.6rem; color: var(--sunset-coral); font-style: italic; text-shadow: 1px 1px 0px var(--black); }
+  .cta-btn { 
+    width: 100%; 
+    margin-top: 1.25rem; 
+    padding: 1rem; 
+    background: var(--sunset-coral); 
+    color: var(--white); 
+    border: 2.5px solid var(--black); 
+    border-radius: 8px; 
+    font-size: 1rem; 
+    font-weight: 700; 
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer; 
+    box-shadow: 4px 4px 0px var(--black);
+    transition: transform 0.1s ease;
+  }
+  .cta-btn:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--black);
+  }
+  .cta-btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px var(--black);
+  }
+  .cta-note { text-align: center; font-size: 0.75rem; color: var(--muted-text); margin-top: 0.75rem; }
 
-  .band-card { display: flex; gap: 0.9rem; align-items: center; padding: 0.9rem 0; border-bottom: 1px solid var(--border); }
-  .band-card:first-of-type { border-top: 1px solid var(--border); }
+  .band-card { 
+    display: flex; 
+    gap: 1rem; 
+    align-items: center; 
+    padding: 1rem; 
+    background: var(--white);
+    border: 2.5px solid var(--black);
+    border-radius: 10px;
+    margin-bottom: 0.85rem;
+    box-shadow: 4px 4px 0px var(--black);
+  }
   .band-photo {
-    width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
-    background: linear-gradient(155deg, var(--light-brown), var(--medium-brown));
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); color: var(--white); font-size: 0.7rem;
+    width: 58px; 
+    height: 58px; 
+    border-radius: 50%; 
+    flex-shrink: 0;
+    border: 2px solid var(--black);
+    background: linear-gradient(135deg, var(--sunset-coral), var(--dusk-purple));
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    font-family: var(--font-display); 
+    color: var(--white); 
+    font-weight: 700;
+    font-size: 0.75rem;
   }
   .band-info { flex: 1; }
-  .band-name { font-family: var(--font-display); font-size: 1.05rem; }
-  .band-genre { font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--accent); margin: 0.15rem 0 0.3rem; }
-  .band-ig { font-size: 0.78rem; color: var(--medium-brown); text-decoration: none; }
-  .band-ig::before { content: "@ "; }
+  .band-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; }
+  .band-genre { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sunset-coral); margin: 0.15rem 0 0.2rem; }
+  .band-ig { font-size: 0.8rem; color: var(--muted-text); text-decoration: none; font-weight: 500; }
+  .band-ig::before { content: "@"; }
 
-  .yt-widget { border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; border: 1px solid var(--border); }
-  .yt-widget iframe { width: 100%; height: 200px; border: none; display: block; }
-  .yt-caption { font-size: 0.75rem; color: var(--medium-brown); padding: 0.7rem 0.9rem; background: var(--white); }
-
-  .size-row { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
-  .size-btn {
-    width: 34px; height: 30px; border-radius: 6px; border: 1px solid var(--border);
-    background: var(--cream); color: var(--warm-brown); font-size: 0.75rem; cursor: pointer;
+  /* Playlist Box Styling */
+  .playlist-box {
+    background: var(--white);
+    border: 2.5px solid var(--black);
+    border-radius: 12px;
+    margin: 0.5rem 0 1.5rem;
+    box-shadow: 4px 4px 0px var(--black);
+    overflow: hidden;
   }
-  .size-btn.selected { background: var(--warm-brown); color: var(--cream); border-color: var(--warm-brown); }
+  .playlist-header {
+    background: var(--twilight-dark);
+    color: var(--white);
+    padding: 0.85rem 1.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--black);
+  }
+  .playlist-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  .playlist-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: var(--sunset-coral);
+    color: var(--white);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+  .playlist-tracks {
+    display: flex;
+    flex-direction: column;
+  }
+  .track-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.9rem 1.15rem;
+    border-bottom: 1.5px solid #EAE6DF;
+    text-decoration: none;
+    color: var(--twilight-dark);
+    transition: background 0.15s ease;
+  }
+  .track-item:last-child {
+    border-bottom: none;
+  }
+  .track-item:hover {
+    background: var(--sunset-glow);
+  }
+  .track-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+  .play-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bg-offwhite);
+    border: 1.5px solid var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--sunset-coral);
+    flex-shrink: 0;
+  }
+  .track-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .track-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-style: italic;
+    font-size: 0.98rem;
+    line-height: 1.2;
+  }
+  .track-artist {
+    font-size: 0.75rem;
+    color: var(--muted-text);
+    font-weight: 500;
+    margin-top: 0.1rem;
+  }
+  .track-action {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--sunset-coral);
+    border: 1.5px solid var(--black);
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    background: var(--white);
+    box-shadow: 1.5px 1.5px 0px var(--black);
+  }
 
-  .venue-box { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; }
-  .venue-map { width: 100%; height: 200px; border: none; display: block; }
+  .size-row { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+  .size-btn {
+    width: 36px; 
+    height: 32px; 
+    border-radius: 6px; 
+    border: 2px solid var(--black);
+    background: var(--white); 
+    color: var(--twilight-dark); 
+    font-weight: 700;
+    font-size: 0.8rem; 
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--black);
+  }
+  .size-btn.selected { 
+    background: var(--sunset-coral); 
+    color: var(--white); 
+  }
+
+  .venue-box { background: var(--white); border: 2.5px solid var(--black); border-radius: 10px; overflow: hidden; margin: 1rem 0 1.5rem; box-shadow: 4px 4px 0px var(--black); }
+  .venue-map { width: 100%; height: 200px; border: none; border-bottom: 2.5px solid var(--black); display: block; }
   .venue-info { padding: 1rem 1.15rem; }
-  .venue-name { font-family: var(--font-display); font-size: 1.05rem; margin-bottom: 0.3rem; }
-  .venue-addr { font-size: 0.8rem; color: var(--medium-brown); }
+  .venue-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; margin-bottom: 0.3rem; }
+  .venue-addr { font-size: 0.85rem; color: var(--muted-text); }
 
-  .terms-list { font-size: 0.8rem; color: var(--medium-brown); line-height: 1.8; padding-left: 1.1rem; }
-  .terms-list li { margin-bottom: 0.5rem; }
+  .terms-list { font-size: 0.85rem; color: var(--twilight-dark); line-height: 1.6; padding-left: 1.2rem; }
+  .terms-list li { margin-bottom: 0.6rem; }
 
   /* Organiser */
-  .organiser-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; margin-bottom: 0.9rem; display: flex; gap: 0.9rem; align-items: flex-start; }
-  .organiser-mark { width: 42px; height: 42px; border-radius: 50%; background: var(--light-brown); color: var(--warm-brown); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 600; flex-shrink: 0; }
-  .organiser-name { font-family: var(--font-display); font-size: 1.05rem; margin-bottom: 0.2rem; }
-  .organiser-role { font-size: 0.68rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.4rem; }
-  .organiser-blurb { font-size: 0.8rem; color: var(--medium-brown); line-height: 1.5; }
+  .organiser-card { 
+    background: var(--white); 
+    border: 2.5px solid var(--black); 
+    border-radius: 10px; 
+    padding: 1.15rem; 
+    margin-bottom: 1rem; 
+    display: flex; 
+    gap: 1rem; 
+    align-items: flex-start; 
+    box-shadow: 4px 4px 0px var(--black);
+  }
+  .organiser-mark { 
+    width: 46px; 
+    height: 46px; 
+    border-radius: 50%; 
+    border: 2.5px solid var(--black);
+    background: var(--sunset-coral); 
+    color: var(--white); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-family: var(--font-display); 
+    font-weight: 700; 
+    flex-shrink: 0; 
+  }
+  .organiser-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; margin-bottom: 0.1rem; }
+  .organiser-role { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sunset-coral); margin-bottom: 0.4rem; }
+  .organiser-blurb { font-size: 0.85rem; color: var(--muted-text); line-height: 1.5; }
 
-  footer { text-align: center; padding: 2rem; font-size: 0.78rem; color: var(--light-brown); }
-  footer a { color: var(--medium-brown); text-decoration: none; }
+  footer { text-align: center; padding: 2.5rem 2rem; font-size: 0.8rem; font-weight: 500; color: var(--muted-text); border-top: 2.5px solid var(--black); background: var(--white); }
+  footer a { color: var(--sunset-coral); font-weight: 700; text-decoration: none; }
 </style>
 </head>
 <body>
@@ -168,11 +533,28 @@
   <a href="/events" class="back">← All events</a>
 </header>
 
-<div class="hero">
-  <div class="hero-eyebrow">Teduh presents</div>
-  <h1>Deru: Suara Langit</h1>
-  <div class="hero-meta">Sat, 10 Oct 2026 · Muo Boutique Hotel, Rooftop — Muar<br>60 seats only</div>
-  <div class="hero-lineup">Deepset · Heavener · The World Ends With You</div>
+<div class="hero-container">
+  <div class="presents-label">Lorong Belakang & Teduh Presents</div>
+  <div class="hero">
+    <div class="hero-tag">Nightfall · Post-Rock / Shoegaze</div>
+    
+    <h1>
+      <span class="title-main">DERU:</span>
+      <span class="title-sub">Suara Langit</span>
+    </h1>
+
+    <div class="hero-meta">
+      Sat, 10 Oct 2026<br>
+      Muo Boutique Hotel (Rooftop), Muar<br>
+      60 Seats Only • Door Opens at 6.00PM
+    </div>
+
+    <div class="hero-lineup">
+      <span class="lineup-headliner">DEEPSET</span>
+      <span class="lineup-support">HEAVENER</span>
+      <span class="lineup-support">THE WORLD ENDS WITH YOU</span>
+    </div>
+  </div>
 </div>
 
 <div class="tabnav">
@@ -187,31 +569,45 @@
   <!-- TICKETS -->
   <div class="tabpanel active" id="tab-tickets">
     <div class="section-label">Choose your ticket</div>
-    <div class="section-note">Prices in MYR. One ticket admits one person.</div>
-    <!-- To turn a tier off, set data-active="false" on its .tier-card below — its price will hide and it becomes unselectable. -->
 
     <div class="tier-card" data-tier="Early Bird" data-price="55" data-active="true">
-      <div><div class="tier-name">Early Bird</div><div class="tier-avail">30 available</div></div>
-      <div class="tier-right"><div class="tier-price">RM55</div><div class="tier-radio"></div></div>
+      <div>
+        <div class="tier-name">Early Bird</div>
+      </div>
+      <div class="tier-right">
+        <div class="tier-price">RM55</div>
+        <div class="qty-control">
+          <button class="qty-btn" data-action="minus">−</button>
+          <span class="qty-val">0</span>
+          <button class="qty-btn" data-action="plus">+</button>
+        </div>
+      </div>
     </div>
+
     <div class="tier-card" data-tier="General Admission" data-price="70" data-active="true">
-      <div><div class="tier-name">General Admission</div><div class="tier-avail">25 available</div></div>
-      <div class="tier-right"><div class="tier-price">RM70</div><div class="tier-radio"></div></div>
+      <div>
+        <div class="tier-name">General Admission</div>
+      </div>
+      <div class="tier-right">
+        <div class="tier-price">RM70</div>
+        <div class="qty-control">
+          <button class="qty-btn" data-action="minus">−</button>
+          <span class="qty-val">0</span>
+          <button class="qty-btn" data-action="plus">+</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- EVENT DETAILS -->
   <div class="tabpanel" id="tab-details">
-    <div class="flyer-note">📎 Event flyer coming soon — poster artwork will be added here once ready.</div>
-
     <div class="section-label">The lineup</div>
-    <div class="section-note">Photos, genre tags, and Instagram links below are placeholders — swap for real assets when ready.</div>
 
     <div class="band-card">
       <div class="band-photo">Photo</div>
       <div class="band-info">
         <div class="band-name">Deepset</div>
-        <div class="band-genre">Genre TBC</div>
+        <div class="band-genre">Post-Rock / Instrumental</div>
         <a class="band-ig" href="#" target="_blank" rel="noopener">deepset</a>
       </div>
     </div>
@@ -219,7 +615,7 @@
       <div class="band-photo">Photo</div>
       <div class="band-info">
         <div class="band-name">Heavener</div>
-        <div class="band-genre">Genre TBC</div>
+        <div class="band-genre">Shoegaze / Dream Pop</div>
         <a class="band-ig" href="#" target="_blank" rel="noopener">heavener</a>
       </div>
     </div>
@@ -227,23 +623,64 @@
       <div class="band-photo">Photo</div>
       <div class="band-info">
         <div class="band-name">The World Ends With You</div>
-        <div class="band-genre">Genre TBC</div>
+        <div class="band-genre">Ambient / Post-Rock</div>
         <a class="band-ig" href="#" target="_blank" rel="noopener">twewy</a>
       </div>
     </div>
 
+    <!-- LISTEN BEFORE SHOW PLAYLIST BOX -->
     <div class="section-label" style="margin-top:1.75rem;">Listen before the show</div>
-    <div class="section-note">One song per band, queued back to back — replace the placeholder video IDs with real ones.</div>
-    <div class="yt-widget">
-      <iframe src="https://www.youtube.com/embed/videoseries?list=PLPLACEHOLDER_REPLACE_WITH_REAL_PLAYLIST_ID" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-      <div class="yt-caption">Playlist: Deepset → Heavener → The World Ends With You (placeholder — create a real YouTube playlist with one song per band and paste its ID above)</div>
+    <div class="playlist-box">
+      <div class="playlist-header">
+        <span class="playlist-title">Suara Langit Playlist</span>
+        <span class="playlist-badge">YT Music</span>
+      </div>
+      <div class="playlist-tracks">
+        
+        <!-- Track 1: Deepset -->
+        <a href="https://music.youtube.com/watch?v=ClC1uegkfg4&list=OLAK5uy_lgkBSaA33hpYA0uKR1OjT-lQf6E53412k" target="_blank" rel="noopener" class="track-item">
+          <div class="track-left">
+            <div class="play-icon">▶</div>
+            <div class="track-info">
+              <div class="track-title">Losing the Scars of Yesteryear</div>
+              <div class="track-artist">Deepset</div>
+            </div>
+          </div>
+          <div class="track-action">Listen</div>
+        </a>
+
+        <!-- Track 2: Heavener -->
+        <a href="https://music.youtube.com/watch?v=KIxIQA26KZc&list=OLAK5uy_nEHpsz706mvCwoCdxs45GLcSV1C-ISoWI" target="_blank" rel="noopener" class="track-item">
+          <div class="track-left">
+            <div class="play-icon">▶</div>
+            <div class="track-info">
+              <div class="track-title">Always</div>
+              <div class="track-artist">Heavener</div>
+            </div>
+          </div>
+          <div class="track-action">Listen</div>
+        </a>
+
+        <!-- Track 3: The World Ends With You -->
+        <a href="https://music.youtube.com/watch?v=kcH2MyKZyjU&list=OLAK5uy_mFp5MeFBixsNrldhfK4BDyPZXhx6uW7qw" target="_blank" rel="noopener" class="track-item">
+          <div class="track-left">
+            <div class="play-icon">▶</div>
+            <div class="track-info">
+              <div class="track-title">Resonance</div>
+              <div class="track-artist">The World Ends With You</div>
+            </div>
+          </div>
+          <div class="track-action">Listen</div>
+        </a>
+
+      </div>
     </div>
 
     <div class="section-label">Venue</div>
     <div class="venue-box">
       <iframe class="venue-map" loading="lazy" src="https://maps.google.com/maps?q=Muo+Boutique+Hotel+Muar&z=16&output=embed"></iframe>
       <div class="venue-info">
-        <div class="venue-name">Muo Boutique Hotel — Rooftop</div>
+        <div class="venue-name">Muo Boutique Hotel (Rooftop)</div>
         <div class="venue-addr">Muar, Johor · exact entrance point to be confirmed</div>
       </div>
     </div>
@@ -252,7 +689,7 @@
     <ol class="terms-list">
       <li>Each ticket admits one person and is valid for a single entry. Once scanned at the gate, it cannot be reused.</li>
       <li>Your e-ticket with QR code will be emailed after payment — please check your email is correct at checkout.</li>
-      <li>Tickets are non-refundable and non-transferable, except if the show is cancelled or postponed by Teduh.</li>
+      <li>Tickets are non-refundable and non-transferable, except if the show is cancelled or postponed.</li>
       <li>Total capacity is strictly 60 pax — entry isn't guaranteed without a valid ticket.</li>
       <li>This is a rooftop, partially open-air venue. The show won't be cancelled solely for rain unless deemed unsafe.</li>
       <li>Lineup and set times may change without prior notice.</li>
@@ -263,16 +700,7 @@
   <!-- ORGANISER -->
   <div class="tabpanel" id="tab-organiser">
     <div class="section-label">Organised by</div>
-    <div class="section-note">Details below are placeholder — update copy and links later.</div>
 
-    <div class="organiser-card">
-      <div class="organiser-mark">T</div>
-      <div>
-        <div class="organiser-name">Teduh</div>
-        <div class="organiser-role">Café · Roastery · Muar</div>
-        <div class="organiser-blurb">Specialty coffee shop and roastery on Jalan Sulaiman, Muar.</div>
-      </div>
-    </div>
     <div class="organiser-card">
       <div class="organiser-mark">LB</div>
       <div>
@@ -281,12 +709,19 @@
         <div class="organiser-blurb">A weekend art and coffee space at Lorong Seni Muar.</div>
       </div>
     </div>
+    <div class="organiser-card">
+      <div class="organiser-mark">T</div>
+      <div>
+        <div class="organiser-name">Teduh</div>
+        <div class="organiser-role">Café · Roastery · Muar</div>
+        <div class="organiser-blurb">Specialty coffee shop and roastery on Jalan Sulaiman, Muar.</div>
+      </div>
+    </div>
   </div>
 
   <!-- MERCHANDISE -->
   <div class="tabpanel" id="tab-merch">
     <div class="section-label">Merchandise</div>
-    <div class="section-note">Placeholder items — can be bought with or without a ticket.</div>
 
     <div class="merch-item" data-merch="Event Tee" data-price="45" style="align-items:flex-start;">
       <div>
@@ -312,8 +747,8 @@
   </div>
 
   <!-- SHARED CART -->
-  <div class="section-label" style="margin-top:1.75rem;">Your order</div>
-  <div class="cart-box">
+  <div class="cart-box" id="shared-cart">
+    <div class="section-label" style="margin-bottom: 0.75rem;">Your Order</div>
     <div id="cart-lines"><div class="cart-empty">Nothing added yet</div></div>
 
     <div class="buyer-form">
@@ -337,37 +772,45 @@
     </div>
 
     <button class="cta-btn">Continue to payment</button>
-    <div class="cta-note">Payment via Bayarcash · RM1 processing fee applies per order · Draft only — not connected to checkout yet</div>
+    <div class="cta-note">Payment via Bayarcash</div>
   </div>
 
 </main>
 
 <footer>
-  <p>© 2026 Teduh Coffee Roastery · Muar, Johor</p>
+  <p>© 2026 Lorong Belakang & Teduh via Teduh Events</p>
   <p style="margin-top:0.35rem;"><a href="/events">Back to all events</a></p>
 </footer>
 
 <script>
-  let selectedTier = null;
-  let ticketQty = 1;
   let teeSize = 'S';
+  const ticketCart = {};
   const merchCart = {};
-  const PROCESSING_FEE = 1;
 
   const cartLines = document.getElementById('cart-lines');
   const subtotalEl = document.getElementById('subtotal');
   const feeEl = document.getElementById('fee-amt');
   const totalEl = document.getElementById('total-amt');
+  const sharedCart = document.getElementById('shared-cart');
 
   function renderCart(){
     const lines = [];
-    if(selectedTier){
-      lines.push({ label: ticketQty + ' × ' + selectedTier.name + ' (ticket)', amt: selectedTier.price * ticketQty });
-    }
+    let fee = 0;
+
+    // Tickets Fee Calculation: RM3.50 per ticket
+    Object.entries(ticketCart).forEach(([name, item]) => {
+      if(item.qty > 0){
+        lines.push({ label: item.qty + ' × ' + name + ' (Ticket)', amt: item.price * item.qty });
+        fee += item.qty * 3.5;
+      }
+    });
+
+    // Merch Fee Calculation: RM1.00 per merch item
     Object.entries(merchCart).forEach(([name, item]) => {
       if(item.qty > 0){
         const sizeLabel = name === 'Event Tee' ? ` (${teeSize})` : '';
         lines.push({ label: item.qty + ' × ' + name + sizeLabel, amt: item.price * item.qty });
+        fee += item.qty * 1;
       }
     });
 
@@ -376,14 +819,13 @@
       : lines.map(l => `<div class="cart-row"><span>${l.label}</span><span>RM${l.amt}</span></div>`).join('');
 
     const subtotal = lines.reduce((s, l) => s + l.amt, 0);
-    const hasItems = lines.length > 0;
-    const fee = hasItems ? PROCESSING_FEE : 0;
 
     subtotalEl.textContent = 'RM' + subtotal;
-    feeEl.textContent = 'RM' + fee;
-    totalEl.textContent = 'RM' + (subtotal + fee);
+    feeEl.textContent = 'RM' + fee.toFixed(2).replace('.00', '');
+    totalEl.textContent = 'RM' + (subtotal + fee).toFixed(2).replace('.00', '');
   }
 
+  // T-Shirt size button handler
   document.querySelectorAll('#tee-sizes .size-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#tee-sizes .size-btn').forEach(b => b.classList.remove('selected'));
@@ -393,24 +835,38 @@
     });
   });
 
+  // Ticket tier logic setup
   document.querySelectorAll('.tier-card').forEach(card => {
     if (card.dataset.active === 'false') {
       card.classList.add('inactive');
-      const priceEl = card.querySelector('.tier-right');
-      priceEl.insertAdjacentHTML('afterbegin', '<span class="tier-unavailable">Not available</span>');
+      const rightEl = card.querySelector('.tier-right');
+      rightEl.innerHTML = '<span class="tier-unavailable">Not available</span>';
+      return;
     }
-  });
 
-  document.querySelectorAll('.tier-card').forEach(card => {
-    card.addEventListener('click', () => {
-      if (card.classList.contains('inactive')) return;
-      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      selectedTier = { name: card.dataset.tier, price: parseInt(card.dataset.price) };
-      renderCart();
+    const name = card.dataset.tier;
+    const price = parseInt(card.dataset.price);
+    ticketCart[name] = { price, qty: 0 };
+    const valEl = card.querySelector('.qty-val');
+
+    card.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if(btn.dataset.action === 'plus' && ticketCart[name].qty < 10) ticketCart[name].qty++;
+        if(btn.dataset.action === 'minus' && ticketCart[name].qty > 0) ticketCart[name].qty--;
+        
+        valEl.textContent = ticketCart[name].qty;
+        
+        if (ticketCart[name].qty > 0) {
+          card.classList.add('active-selected');
+        } else {
+          card.classList.remove('active-selected');
+        }
+        renderCart();
+      });
     });
   });
 
+  // Merch items setup
   document.querySelectorAll('.merch-item').forEach(item => {
     const name = item.dataset.merch;
     const price = parseInt(item.dataset.price);
@@ -426,12 +882,21 @@
     });
   });
 
+  // Tab switching
   document.querySelectorAll('.tabbtn').forEach(btn => {
     btn.addEventListener('click', () => {
+      const tabName = btn.dataset.tab;
       document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tabpanel').forEach(p => p.classList.remove('active'));
       btn.classList.add('active');
-      document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      document.getElementById('tab-' + tabName).classList.add('active');
+
+      if (tabName === 'details' || tabName === 'organiser') {
+        sharedCart.style.display = 'none';
+      } else {
+        sharedCart.style.display = 'block';
+      }
+
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
