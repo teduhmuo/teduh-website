@@ -59,8 +59,9 @@
   .top-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.8rem; }
 
   /* KPIs */
-  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 2rem; }
-  @media (max-width: 760px){ .kpi-row{ grid-template-columns: repeat(2, 1fr); } }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 2rem; }
+  @media (max-width: 900px){ .kpi-row{ grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px){ .kpi-row{ grid-template-columns: repeat(2, 1fr); } }
   .kpi { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.2rem; }
   .kpi-label { font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.5rem; }
   .kpi-val { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; }
@@ -168,9 +169,14 @@
         <div class="kpi-sub" id="kpi-tickets-sub">—</div>
       </div>
       <div class="kpi">
-        <div class="kpi-label">Revenue (paid)</div>
+        <div class="kpi-label">Ticket revenue (paid)</div>
         <div class="kpi-val" id="kpi-rev">—</div>
-        <div class="kpi-sub">from paid orders only</div>
+        <div class="kpi-sub">tickets only, excl. service charge</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Service charge (paid)</div>
+        <div class="kpi-val" id="kpi-service">—</div>
+        <div class="kpi-sub">RM3.50 × tickets sold</div>
       </div>
       <div class="kpi">
         <div class="kpi-label">Checked in</div>
@@ -180,7 +186,7 @@
       <div class="kpi">
         <div class="kpi-label">Pending orders</div>
         <div class="kpi-val" id="kpi-pending">—</div>
-        <div class="kpi-sub">awaiting payment</div>
+        <div class="kpi-sub">awaiting payment (last hour)</div>
       </div>
     </div>
 
@@ -374,7 +380,8 @@
     const k = dashboardData.kpis;
     document.getElementById('kpi-tickets').textContent = k.total_capacity ? `${k.tickets_sold} / ${k.total_capacity}` : `${k.tickets_sold}`;
     document.getElementById('kpi-tickets-sub').textContent = k.total_capacity ? `${Math.round(k.tickets_sold / k.total_capacity * 100)}% of capacity` : 'uncapped';
-    document.getElementById('kpi-rev').textContent = `RM${k.revenue.toFixed(0)}`;
+    document.getElementById('kpi-rev').textContent = `RM${k.revenue.toFixed(2)}`;
+    document.getElementById('kpi-service').textContent = `RM${(k.service_charge_revenue ?? 0).toFixed(2)}`;
     document.getElementById('kpi-checkin').textContent = `${k.checked_in} / ${k.tickets_sold}`;
     document.getElementById('kpi-pending').textContent = k.pending_orders;
   }
@@ -415,7 +422,7 @@
         <td>${escapeHtml(b.buyer_email)}${b.buyer_phone ? '<br>' + escapeHtml(b.buyer_phone) : ''}</td>
         <td>${escapeHtml(b.tier_name)}</td>
         <td class="num-cell">${b.qty}</td>
-        <td class="num-cell">RM${Number(b.amount).toFixed(0)}</td>
+        <td class="num-cell">RM${Number(b.amount).toFixed(2)}</td>
         <td><span class="${payClass}">${b.status}</span></td>
         <td><span class="${checkinClass}">${checkinLabel}</span></td>
       `;
