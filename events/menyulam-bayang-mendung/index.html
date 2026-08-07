@@ -216,18 +216,19 @@
       <div id="cart-lines"><div class="cart-empty">Nothing added yet</div></div>
 
       <div class="buyer-form">
-        <input type="text" placeholder="Full name (as per IC)">
-        <input type="email" placeholder="Email — your ticket + QR will be sent here">
-        <input type="tel" placeholder="Phone number">
+        <input type="text" id="buyer-name" placeholder="Full name (as per IC)">
+        <input type="email" id="buyer-email" placeholder="Email — your ticket + QR will be sent here">
+        <input type="tel" id="buyer-phone" placeholder="Phone number">
       </div>
+      <div id="checkout-error" style="display:none;color:#D7263D;font-size:0.8rem;margin-top:0.5rem;"></div>
 
       <div class="subtotal-line">
         <span>Subtotal</span>
         <span class="subtotal-amt" id="subtotal">RM0</span>
       </div>
 
-      <button class="cta-btn">Continue to payment</button>
-      <div class="cta-note">Payment via Bayarcash · Draft only — not connected to checkout yet</div>
+      <button class="cta-btn" id="checkout-btn">Continue to payment</button>
+      <div class="cta-note">Payment via Bayarcash (FPX)</div>
     </div>
   </div>
 
@@ -360,6 +361,65 @@
       document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+  });
+
+  // ── Checkout ──────────────────────────────────────────────────────
+  const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+  const checkoutBtn = document.getElementById('checkout-btn');
+  const errorBox = document.getElementById('checkout-error');
+
+  function showCheckoutError(msg) {
+    errorBox.textContent = msg;
+    errorBox.style.display = 'block';
+  }
+
+  checkoutBtn.addEventListener('click', async () => {
+    errorBox.style.display = 'none';
+
+    if (ticketQty < 1) return showCheckoutError('Please select at least 1 ticket.');
+
+    const name = document.getElementById('buyer-name').value.trim();
+    const email = document.getElementById('buyer-email').value.trim();
+    const phone = document.getElementById('buyer-phone').value.trim();
+
+    if (!name) return showCheckoutError('Please enter your full name.');
+    if (!/^\S+@\S+\.\S+$/.test(email)) return showCheckoutError('Please enter a valid email.');
+    if (!phone) return showCheckoutError('Please enter your phone number.');
+
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Redirecting to payment…';
+
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/event-checkout-intent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          event_slug: 'menyulam-bayang-mendung',
+          tier_name: tierName,
+          qty: ticketQty,
+          buyer_name: name,
+          buyer_email: email,
+          buyer_phone: phone,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.payment_url) {
+        window.location.href = data.payment_url;
+      } else {
+        showCheckoutError(data.message || 'Payment could not be started. Please try again.');
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = 'Continue to payment';
+      }
+    } catch (e) {
+      showCheckoutError('Network error. Please check your connection and try again.');
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = 'Continue to payment';
+    }
   });
 
   renderCart();
