@@ -75,6 +75,11 @@
   }
   .tier-card.selected { border-color: var(--red); box-shadow: 0 0 0 1px var(--red); }
   .tier-name { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; }
+  .tier-badge { font-size: 0.65rem; letter-spacing: 0.03em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; vertical-align: middle; margin-left: 0.4rem; }
+  .tier-badge.low { background: rgba(215,38,61,0.1); color: var(--red); }
+  .tier-badge.soldout { background: var(--ink); color: var(--white); }
+  .tier-card.disabled { opacity: 0.55; }
+  .tier-card.disabled .qty-btn { pointer-events: none; opacity: 0.4; }
   .tier-avail { font-size: 0.72rem; color: var(--ink-dim); }
   .tier-price { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; }
   .tier-radio { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border); margin-left: 0.9rem; flex-shrink: 0; }
@@ -198,7 +203,9 @@
     <div class="section-note">Prices in MYR. One ticket admits one person. Max 10 tickets per checkout.</div>
 
     <div class="tier-card" data-tier="Presale" data-price="30">
-      <div><div class="tier-name">Presale (Online)</div></div>
+      <div>
+        <div class="tier-name">Presale (Online) <span class="tier-badge" id="tier-badge" style="display:none;"></span></div>
+      </div>
       <div class="tier-right">
         <div class="tier-price" style="margin-right: 1rem;">RM30</div>
         <div class="qty-control">
@@ -344,14 +351,72 @@
     subtotalEl.textContent = 'RM' + (ticketQty * tierPrice);
   }
 
+  let tierSoldOut = false;
+
   tierCard.querySelectorAll('.qty-btn').forEach(btn => {
     btn.addEventListener('click', () => {
+      if (tierSoldOut) return;
       if(btn.dataset.action === 'plus' && ticketQty < MAX_QTY) ticketQty++;
       if(btn.dataset.action === 'minus' && ticketQty > 0) ticketQty--;
       qtyVal.textContent = ticketQty;
       renderCart();
     });
   });
+
+  // ── Live tier availability (running low / sold out) ─────────────────
+  const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+  const LOW_STOCK_THRESHOLD = 5; // show "running low" when this many or fewer remain
+
+  async function fetchTierAvailability(){
+    try {
+      const url = `${SUPABASE_URL}/rest/v1/ticket_tiers`
+        + `?select=sold_count,capacity,active,events!inner(slug)`
+        + `&events.slug=eq.menyulam-bayang-mendung`
+        + `&name=eq.${encodeURIComponent(tierName)}`;
+      const res = await fetch(url, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        },
+      });
+      const rows = await res.json();
+      if (!Array.isArray(rows) || rows.length === 0) return;
+      applyTierAvailability(rows[0]);
+    } catch (e) {
+      // If this fails (e.g. offline), fall back to allowing purchase as normal.
+      console.error('Could not fetch tier availability', e);
+    }
+  }
+
+  function applyTierAvailability(tier){
+    const badge = document.getElementById('tier-badge');
+    const { sold_count, capacity, active } = tier;
+    const remaining = capacity != null ? capacity - sold_count : null;
+
+    const isSoldOut = !active || (capacity != null && sold_count >= capacity);
+    const isLow = !isSoldOut && capacity != null && remaining <= LOW_STOCK_THRESHOLD;
+
+    tierSoldOut = isSoldOut;
+
+    if (isSoldOut) {
+      badge.textContent = 'Sold out';
+      badge.className = 'tier-badge soldout';
+      badge.style.display = 'inline-block';
+      tierCard.classList.add('disabled');
+      if (ticketQty > 0) { ticketQty = 0; qtyVal.textContent = 0; renderCart(); }
+      checkoutBtn.disabled = true;
+    } else if (isLow) {
+      badge.textContent = `Only ${remaining} left`;
+      badge.className = 'tier-badge low';
+      badge.style.display = 'inline-block';
+      tierCard.classList.remove('disabled');
+      checkoutBtn.disabled = false;
+    } else {
+      badge.style.display = 'none';
+      tierCard.classList.remove('disabled');
+      checkoutBtn.disabled = false;
+    }
+  }
 
   document.querySelectorAll('.tabbtn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -423,6 +488,7 @@
   });
 
   renderCart();
+  fetchTierAvailability();
 </script>
 
 </body>

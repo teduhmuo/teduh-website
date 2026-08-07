@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
 <title>Organiser Dashboard — Menyulam Bayang Mendung</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -207,7 +208,7 @@
       </select>
     </div>
     <table class="simple" id="buyers-table">
-      <tr><th>Order</th><th>Buyer</th><th>Contact</th><th>Tier</th><th class="num-cell">Qty</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>
+      <tr><th>Order</th><th>Ticket No.</th><th>Buyer</th><th>Contact</th><th>Tier</th><th class="num-cell">Qty</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>
     </table>
   </div>
 </div>
@@ -383,7 +384,7 @@
     const statusFilter = document.getElementById('status-filter').value;
     const checkinFilter = document.getElementById('checkin-filter').value;
     const table = document.getElementById('buyers-table');
-    table.innerHTML = '<tr><th>Order</th><th>Buyer</th><th>Contact</th><th>Tier</th><th class="num-cell">Qty</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>';
+    table.innerHTML = '<tr><th>Order</th><th>Ticket No.</th><th>Buyer</th><th>Contact</th><th>Tier</th><th class="num-cell">Qty</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>';
 
     const filtered = (dashboardData.buyers || [])
       .filter(b => (b.buyer_name.toLowerCase().includes(search) || b.buyer_email.toLowerCase().includes(search) || b.order_number.toLowerCase().includes(search)))
@@ -405,9 +406,11 @@
       const payClass = b.status === 'paid' ? 'pay-paid' : (b.status === 'pending' ? 'pay-pending' : 'pay-failed');
       const checkinLabel = b.ticket_count > 0 ? `${b.checked_in_count} / ${b.ticket_count}` : '—';
       const checkinClass = b.checked_in_count > 0 ? 'checkin-yes' : 'checkin-no';
+      const ticketNoLabel = (b.ticket_nos && b.ticket_nos.length > 0) ? b.ticket_nos.join(', ') : '—';
       const row = document.createElement('tr');
       row.innerHTML = `
         <td>${escapeHtml(b.order_number)}</td>
+        <td>${escapeHtml(ticketNoLabel)}</td>
         <td>${escapeHtml(b.buyer_name)}</td>
         <td>${escapeHtml(b.buyer_email)}${b.buyer_phone ? '<br>' + escapeHtml(b.buyer_phone) : ''}</td>
         <td>${escapeHtml(b.tier_name)}</td>
