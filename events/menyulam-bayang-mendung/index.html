@@ -229,8 +229,12 @@
       </div>
       <div id="checkout-error" style="display:none;color:#D7263D;font-size:0.8rem;margin-top:0.5rem;"></div>
 
+      <div class="subtotal-line" style="border-top:none; margin-top: 0.6rem; padding-top: 0;">
+        <span style="color:var(--ink-dim); font-size:0.85rem;">Service charge</span>
+        <span class="subtotal-amt" id="service-charge" style="font-size:0.85rem; color:var(--ink-dim);">RM0</span>
+      </div>
       <div class="subtotal-line">
-        <span>Subtotal</span>
+        <span>Total</span>
         <span class="subtotal-amt" id="subtotal">RM0</span>
       </div>
 
@@ -344,11 +348,19 @@
   const cartLines = document.getElementById('cart-lines');
   const subtotalEl = document.getElementById('subtotal');
 
+  const SERVICE_CHARGE_PER_TICKET = 3.50;
+  const serviceChargeEl = document.getElementById('service-charge');
+
   function renderCart(){
+    const ticketSubtotal = ticketQty * tierPrice;
+    const serviceCharge = ticketQty * SERVICE_CHARGE_PER_TICKET;
+    const total = ticketSubtotal + serviceCharge;
+
     cartLines.innerHTML = ticketQty === 0
       ? '<div class="cart-empty">Nothing added yet</div>'
-      : `<div class="cart-row"><span>${ticketQty} × ${tierName}</span><span>RM${ticketQty * tierPrice}</span></div>`;
-    subtotalEl.textContent = 'RM' + (ticketQty * tierPrice);
+      : `<div class="cart-row"><span>${ticketQty} × ${tierName}</span><span>RM${ticketSubtotal.toFixed(2)}</span></div>`;
+    serviceChargeEl.textContent = 'RM' + serviceCharge.toFixed(2);
+    subtotalEl.textContent = 'RM' + total.toFixed(2);
   }
 
   let tierSoldOut = false;
