@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Ticket Verification — Teduh Events</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1A1614; --ink-dim: #6B6058; --white: #FFFFFF; --paper: #FAF8F6;
+    --border: rgba(26,22,20,0.12); --red: #D7263D; --red-light: rgba(215,38,61,0.08);
+    --green: #2E7D46; --green-light: rgba(46,125,70,0.08);
+    --font-display: 'Poppins', 'DM Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body {
+    font-family: var(--font-body); background: #0D0B0A; color: var(--ink); min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  .card {
+    background: var(--white); border-radius: 16px; padding: 2rem 1.75rem; max-width: 380px; width: 100%;
+    text-align: center;
+  }
+  .icon { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem; font-size: 2rem; }
+  .icon.valid { background: var(--green-light); color: var(--green); }
+  .icon.used { background: rgba(215,38,61,0.08); color: var(--red); }
+  .icon.invalid { background: rgba(107,96,88,0.1); color: var(--ink-dim); }
+  h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+  .sub { color: var(--ink-dim); font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .details { background: var(--paper); border-radius: 10px; padding: 1rem 1.1rem; text-align: left; font-size: 0.85rem; }
+  .details .row { display: flex; justify-content: space-between; padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+  .details .row:last-child { border-bottom: none; }
+  .details .label { color: var(--ink-dim); }
+  .details .value { font-weight: 700; text-align: right; }
+  .loading { color: var(--ink-dim); font-size: 0.85rem; padding: 2rem 0; }
+  .note { font-size: 0.72rem; color: var(--ink-dim); margin-top: 1.2rem; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="loading" id="loading">Checking ticket…</div>
+</div>
+
+<script>
+  const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+  const params = new URLSearchParams(window.location.search);
+  const qrToken = params.get('t');
+  const card = document.getElementById('card');
+
+  function render(html) { card.innerHTML = html; }
+
+  async function checkTicket() {
+    if (!qrToken) {
+      return render(`
+        <div class="icon invalid">✕</div>
+        <h1>No ticket code</h1>
+        <div class="sub">This link is missing a ticket reference.</div>
+      `);
+    }
+
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/ticket-lookup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify({ qr_token: qrToken }),
+      });
+      const data = await res.json();
+
+      if (!data.valid) {
+        return render(`
+          <div class="icon invalid">✕</div>
+          <h1>Not found</h1>
+          <div class="sub">This QR code doesn't match a ticket in our system.</div>
+        `);
+      }
+
+      const event = data.event || {};
+      const iconClass = data.checked_in ? 'used' : 'valid';
+      const icon = data.checked_in ? '⚠' : '✓';
+      const heading = data.checked_in ? 'Already scanned' : 'Valid ticket';
+      const sub = data.checked_in
+        ? `Checked in at ${new Date(data.checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+        : 'This ticket has not been used yet.';
+
+      render(`
+        <div class="icon ${iconClass}">${icon}</div>
+        <h1>${heading}</h1>
+        <div class="sub">${sub}</div>
+        <div class="details">
+          <div class="row"><span class="label">Event</span><span class="value">${event.name ?? '—'}</span></div>
+          <div class="row"><span class="label">Ticket No.</span><span class="value">${data.ticket_no}</span></div>
+          <div class="row"><span class="label">Tier</span><span class="value">${data.tier_name}</span></div>
+          <div class="row"><span class="label">Holder</span><span class="value">${data.buyer_name}</span></div>
+        </div>
+        <div class="note">This page only shows ticket status. Door crew scan tickets separately to check them in.</div>
+      `);
+    } catch (e) {
+      render(`
+        <div class="icon invalid">✕</div>
+        <h1>Connection error</h1>
+        <div class="sub">Could not check this ticket right now. Try again.</div>
+      `);
+    }
+  }
+
+  checkTicket();
+</script>
+
+</body>
+</html>

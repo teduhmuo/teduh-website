@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Door Scanner — Menyulam Bayang Mendung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1A1614; --white: #FFFFFF; --red: #D7263D; --green: #2E7D46; --amber: #B8860B;
+    --font-display: 'Poppins', 'DM Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  html, body { height: 100%; overscroll-behavior: none; }
+  body { font-family: var(--font-body); background: #0D0B0A; color: var(--white); }
+
+  /* ---- PIN GATE ---- */
+  #pin-screen {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem; padding: 1.5rem;
+  }
+  #pin-screen .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
+  #pin-screen h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; text-align: center; }
+  #pin-display { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.6rem; height: 2.5rem; }
+  #pin-error { color: var(--red); font-size: 0.8rem; height: 1rem; }
+  #pin-pad { display: grid; grid-template-columns: repeat(3, 68px); gap: 14px; }
+  .pin-btn { width: 68px; height: 68px; border-radius: 50%; background: rgba(255,255,255,0.06); color: var(--white); border: 1px solid rgba(255,255,255,0.15); font-size: 1.3rem; }
+  .pin-btn:active { background: var(--red); border-color: var(--red); }
+
+  /* ---- SCANNER ---- */
+  #scanner { display: none; height: 100vh; position: relative; }
+  #video { width: 100%; height: 100%; object-fit: cover; }
+  #overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+    padding: 1.2rem; pointer-events: none;
+  }
+  .top-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; pointer-events: auto; }
+  .counter { background: rgba(13,11,10,0.75); border-radius: 10px; padding: 0.5rem 0.9rem; font-family: var(--font-display); font-weight: 800; font-size: 0.95rem; }
+  .manual-btn { background: rgba(13,11,10,0.75); border: 1px solid rgba(255,255,255,0.25); color: var(--white); border-radius: 8px; padding: 0.5rem 0.8rem; font-size: 0.78rem; }
+
+  .frame { width: 240px; height: 240px; border: 3px solid rgba(255,255,255,0.6); border-radius: 16px; }
+
+  .hint { background: rgba(13,11,10,0.75); border-radius: 10px; padding: 0.6rem 1rem; font-size: 0.8rem; text-align: center; pointer-events: auto; }
+
+  /* ---- RESULT OVERLAY ---- */
+  #result {
+    position: absolute; inset: 0; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 0.8rem;
+    padding: 2rem; text-align: center;
+  }
+  #result.show { display: flex; }
+  #result.valid { background: var(--green); }
+  #result.used { background: var(--amber); }
+  #result.invalid { background: var(--red); }
+  #result .big-icon { font-size: 4rem; }
+  #result h2 { font-family: var(--font-display); font-weight: 900; font-size: 1.6rem; text-transform: uppercase; }
+  #result .r-sub { font-size: 1rem; opacity: 0.9; }
+  #result .r-details { margin-top: 0.6rem; font-size: 0.85rem; opacity: 0.85; }
+
+  /* ---- MANUAL ENTRY MODAL ---- */
+  #manual-modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; padding: 1.5rem; z-index: 20;
+  }
+  #manual-modal.show { display: flex; }
+  .modal-box { background: var(--white); color: var(--ink); border-radius: 14px; padding: 1.5rem; width: 100%; max-width: 340px; }
+  .modal-box h3 { font-family: var(--font-display); font-weight: 800; margin-bottom: 0.8rem; }
+  .modal-box input { width: 100%; border: 1px solid rgba(26,22,20,0.15); border-radius: 8px; padding: 0.7rem 0.9rem; font-size: 1rem; margin-bottom: 0.8rem; }
+  .modal-box .row { display: flex; gap: 0.6rem; }
+  .modal-box button { flex: 1; padding: 0.7rem; border-radius: 8px; border: none; font-family: var(--font-body); font-weight: 700; font-size: 0.85rem; }
+  .btn-primary { background: var(--red); color: var(--white); }
+  .btn-secondary { background: #eee; color: var(--ink); }
+
+  #cam-error { display: none; padding: 2rem; text-align: center; }
+  #cam-error.show { display: block; }
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="pin-screen">
+  <div class="eyebrow">Menyulam Bayang Mendung · Door Crew</div>
+  <h1>Enter crew PIN to start scanning</h1>
+  <div id="pin-display"></div>
+  <div id="pin-error"></div>
+  <div id="pin-pad">
+    <button class="pin-btn" data-d="1">1</button>
+    <button class="pin-btn" data-d="2">2</button>
+    <button class="pin-btn" data-d="3">3</button>
+    <button class="pin-btn" data-d="4">4</button>
+    <button class="pin-btn" data-d="5">5</button>
+    <button class="pin-btn" data-d="6">6</button>
+    <button class="pin-btn" data-d="7">7</button>
+    <button class="pin-btn" data-d="8">8</button>
+    <button class="pin-btn" data-d="9">9</button>
+    <button class="pin-btn" id="pin-clear">⌫</button>
+    <button class="pin-btn" data-d="0">0</button>
+    <div></div>
+  </div>
+</div>
+
+<!-- SCANNER -->
+<div id="scanner">
+  <video id="video" playsinline autoplay muted></video>
+  <canvas id="canvas" style="display:none;"></canvas>
+
+  <div id="overlay">
+    <div class="top-bar">
+      <div class="counter" id="counter">— / —</div>
+      <button class="manual-btn" id="manual-open-btn">Enter code manually</button>
+    </div>
+    <div class="frame"></div>
+    <div class="hint">Point camera at the ticket's QR code</div>
+  </div>
+
+  <div id="result">
+    <div class="big-icon" id="result-icon"></div>
+    <h2 id="result-heading"></h2>
+    <div class="r-sub" id="result-sub"></div>
+    <div class="r-details" id="result-details"></div>
+  </div>
+
+  <div id="cam-error">
+    <p>Couldn't access the camera. Check browser permissions, or use manual entry below.</p>
+    <br>
+    <button class="manual-btn" id="manual-open-btn-2" style="pointer-events:auto;">Enter code manually</button>
+  </div>
+</div>
+
+<!-- MANUAL ENTRY MODAL -->
+<div id="manual-modal">
+  <div class="modal-box">
+    <h3>Enter ticket code</h3>
+    <input type="text" id="manual-input" placeholder="e.g. TEBK0002" autocapitalize="characters">
+    <div class="row">
+      <button class="btn-secondary" id="manual-cancel">Cancel</button>
+      <button class="btn-primary" id="manual-submit">Check in</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+  const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+  let enteredPin = "";
+  let crewPin = "";
+
+  const pinDisplay = document.getElementById('pin-display');
+  const pinError = document.getElementById('pin-error');
+
+  document.querySelectorAll('.pin-btn[data-d]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (enteredPin.length >= 6) return;
+      enteredPin += btn.dataset.d;
+      pinDisplay.textContent = "•".repeat(enteredPin.length);
+      if (enteredPin.length === 4) trySubmitPin();
+    });
+  });
+  document.getElementById('pin-clear').addEventListener('click', () => {
+    enteredPin = ""; pinDisplay.textContent = ""; pinError.textContent = "";
+  });
+
+  async function trySubmitPin(){
+    // We don't verify the PIN in isolation — it gets validated on the first
+    // real check-in call. Just stash it and move to the scanner.
+    crewPin = enteredPin;
+    document.getElementById('pin-screen').style.display = 'none';
+    document.getElementById('scanner').style.display = 'block';
+    startCamera();
+    refreshCounter();
+  }
+
+  // ── Camera + QR scanning ──────────────────────────────────────────
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+  let scanning = true;
+  let lastScanValue = null;
+  let lastScanTime = 0;
+
+  async function startCamera(){
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      video.srcObject = stream;
+      requestAnimationFrame(scanLoop);
+    } catch (e) {
+      console.error('Camera error', e);
+      document.getElementById('cam-error').classList.add('show');
+    }
+  }
+
+  function scanLoop(){
+    if (scanning && video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height);
+      if (code && code.data) {
+        const now = Date.now();
+        // Debounce: ignore the same code re-firing within 4s (continuous camera frames)
+        if (code.data !== lastScanValue || now - lastScanTime > 4000) {
+          lastScanValue = code.data;
+          lastScanTime = now;
+          handleScan(code.data);
+        }
+      }
+    }
+    requestAnimationFrame(scanLoop);
+  }
+
+  function extractIdentifier(raw){
+    if (raw.includes('://')) {
+      try {
+        const url = new URL(raw);
+        return url.searchParams.get('t') ?? raw;
+      } catch { return raw; }
+    }
+    return raw;
+  }
+
+  async function handleScan(rawValue){
+    const identifier = extractIdentifier(rawValue);
+    await submitCheckin(identifier);
+  }
+
+  async function submitCheckin(identifier){
+    scanning = false;
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/ticket-checkin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify({ pin: crewPin, identifier }),
+      });
+      const data = await res.json();
+
+      if (res.status === 401) {
+        showResult('invalid', '✕', 'Wrong PIN', 'Reload this page and re-enter the crew PIN.');
+        return;
+      }
+      if (!data.found) {
+        showResult('invalid', '✕', 'Not found', 'This code doesn\'t match a ticket.');
+        return;
+      }
+      if (data.already_checked_in) {
+        const time = new Date(data.checked_in_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        showResult('used', '⚠', 'Already scanned', `${data.buyer_name} · ${data.tier_name}`, `Checked in at ${time}`);
+        return;
+      }
+      // Success
+      showResult('valid', '✓', 'Checked in', `${data.buyer_name} · ${data.tier_name}`, data.ticket_no);
+      updateCounterFromResult(data);
+    } catch (e) {
+      showResult('invalid', '✕', 'Connection error', 'Try scanning again.');
+    }
+  }
+
+  function showResult(cls, icon, heading, sub, details){
+    const result = document.getElementById('result');
+    result.className = 'show ' + cls;
+    document.getElementById('result-icon').textContent = icon;
+    document.getElementById('result-heading').textContent = heading;
+    document.getElementById('result-sub').textContent = sub || '';
+    document.getElementById('result-details').textContent = details || '';
+
+    if (navigator.vibrate) navigator.vibrate(cls === 'valid' ? 80 : [60, 60, 60]);
+
+    setTimeout(() => {
+      result.className = '';
+      scanning = true;
+    }, 2200);
+  }
+
+  function updateCounterFromResult(data){
+    if (data.total_tickets != null && data.total_checked_in != null) {
+      document.getElementById('counter').textContent = `${data.total_checked_in} / ${data.total_tickets}`;
+    }
+  }
+
+  async function refreshCounter(){
+    // Piggyback off a dummy identifier-less lookup isn't available, so this
+    // just relies on the counter updating after each real scan. Starts blank.
+  }
+
+  // ── Manual entry ──────────────────────────────────────────────────
+  const manualModal = document.getElementById('manual-modal');
+  const manualInput = document.getElementById('manual-input');
+
+  function openManual(){ manualModal.classList.add('show'); manualInput.value = ''; manualInput.focus(); }
+  function closeManual(){ manualModal.classList.remove('show'); }
+
+  document.getElementById('manual-open-btn').addEventListener('click', openManual);
+  document.getElementById('manual-open-btn-2').addEventListener('click', openManual);
+  document.getElementById('manual-cancel').addEventListener('click', closeManual);
+  document.getElementById('manual-submit').addEventListener('click', async () => {
+    const val = manualInput.value.trim();
+    if (!val) return;
+    closeManual();
+    await submitCheckin(val);
+  });
+  manualInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('manual-submit').click();
+  });
+</script>
+
+</body>
+</html>
