@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmed — Menyulam Bayang Mendung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1A1614; --ink-dim: #6B6058; --white: #FFFFFF; --paper: #FAF8F6;
+    --border: rgba(26,22,20,0.12); --red: #D7263D; --red-light: rgba(215,38,61,0.08);
+    --font-display: 'Poppins', 'DM Sans', sans-serif; --font-body: 'DM Sans', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--white); color: var(--ink); min-height: 100vh; }
+  header { background: #0D0B0A; padding: 1.25rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+  header .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; color: #F5EBE0; text-decoration: none; }
+  main { max-width: 480px; margin: 3rem auto; padding: 0 1.5rem; text-align: center; }
+  .status-icon { width: 64px; height: 64px; border-radius: 50%; margin: 0 auto 1.25rem; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+  .status-icon.pending { background: #F0E6D8; color: #8A6D3B; }
+  .status-icon.paid { background: var(--red-light); color: var(--red); }
+  h1 { font-family: var(--font-display); font-weight: 900; text-transform: uppercase; font-size: 1.6rem; margin-bottom: 0.6rem; }
+  .sub { color: var(--ink-dim); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.5rem; }
+  .order-box { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; text-align: left; margin-bottom: 1.5rem; }
+  .order-row { display: flex; justify-content: space-between; font-size: 0.85rem; padding: 0.4rem 0; }
+  .order-row span:first-child { color: var(--ink-dim); }
+  .back-link { display: inline-block; margin-top: 0.5rem; color: var(--red); font-size: 0.85rem; text-decoration: none; font-weight: 700; }
+  .refresh-note { font-size: 0.75rem; color: var(--ink-dim); margin-top: 1rem; }
+</style>
+</head>
+<body>
+
+<header><a href="/events" class="logo">Teduh Events</a></header>
+
+<main>
+  <div id="icon" class="status-icon pending">⏳</div>
+  <h1 id="title">Checking your payment…</h1>
+  <p class="sub" id="subtitle">Give us a moment while we confirm this with Bayarcash.</p>
+
+  <div class="order-box" id="order-box" style="display:none;">
+    <div class="order-row"><span>Order number</span><span id="order-number">—</span></div>
+    <div class="order-row"><span>Status</span><span id="order-status">—</span></div>
+  </div>
+
+  <div class="refresh-note" id="refresh-note"></div>
+  <a href="/events" class="back-link">← Back to all events</a>
+</main>
+
+<script>
+  const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+  const params = new URLSearchParams(window.location.search);
+  const orderNumber = params.get('order');
+
+  const iconEl = document.getElementById('icon');
+  const titleEl = document.getElementById('title');
+  const subtitleEl = document.getElementById('subtitle');
+  const boxEl = document.getElementById('order-box');
+  const orderNumEl = document.getElementById('order-number');
+  const orderStatusEl = document.getElementById('order-status');
+  const refreshNoteEl = document.getElementById('refresh-note');
+
+  async function checkStatus() {
+    if (!orderNumber) {
+      titleEl.textContent = 'No order reference found';
+      subtitleEl.textContent = 'If you just paid, check your email in a few minutes — your ticket is on its way.';
+      return;
+    }
+    orderNumEl.textContent = orderNumber;
+    boxEl.style.display = 'block';
+
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/orders?order_number=eq.${encodeURIComponent(orderNumber)}&select=status`,
+        { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const rows = await res.json();
+      const status = rows[0]?.status || 'pending';
+      orderStatusEl.textContent = status;
+
+      if (status === 'paid') {
+        iconEl.className = 'status-icon paid';
+        iconEl.textContent = '✓';
+        titleEl.textContent = "You're confirmed!";
+        subtitleEl.textContent = 'Your e-ticket with QR code has been emailed to you. Check your inbox (and spam folder, just in case).';
+        refreshNoteEl.textContent = '';
+      } else if (status === 'failed' || status === 'cancelled') {
+        iconEl.className = 'status-icon pending';
+        iconEl.textContent = '✕';
+        titleEl.textContent = 'Payment not completed';
+        subtitleEl.textContent = 'Your payment didn\'t go through. No charge was made — feel free to try again.';
+      } else {
+        titleEl.textContent = 'Payment processing…';
+        subtitleEl.textContent = 'This can take a few moments after paying.';
+        refreshNoteEl.textContent = 'Refreshing automatically…';
+        setTimeout(checkStatus, 4000);
+      }
+    } catch (e) {
+      subtitleEl.textContent = 'Could not check status right now — but if you completed payment, your ticket is still on its way by email.';
+    }
+  }
+
+  checkStatus();
+</script>
+
+</body>
+</html>
