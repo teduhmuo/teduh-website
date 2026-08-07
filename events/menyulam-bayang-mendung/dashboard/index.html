@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Organiser Dashboard — Menyulam Bayang Mendung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1A1614;
+    --ink-dim: #6B6058;
+    --white: #FFFFFF;
+    --paper: #FAF8F6;
+    --border: rgba(26,22,20,0.12);
+    --red: #D7263D;
+    --red-light: rgba(215,38,61,0.08);
+    --green: #2E7D46;
+    --green-light: rgba(46,125,70,0.08);
+    --font-display: 'Poppins', 'DM Sans', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  body { font-family: var(--font-body); background: var(--paper); color: var(--ink); min-height: 100vh; padding-bottom: 3rem; }
+
+  /* ---- PIN GATE ---- */
+  #pin-screen {
+    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;
+    background: #0D0B0A; color: var(--white); padding: 1.5rem;
+  }
+  #pin-screen .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--red); }
+  #pin-screen h1 { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; }
+  #pin-display { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.6rem; height: 2.5rem; color: #F5EBE0; }
+  #pin-error { color: var(--red); font-size: 0.8rem; height: 1rem; }
+  #pin-pad { display: grid; grid-template-columns: repeat(3, 64px); gap: 12px; }
+  .pin-btn { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.06); color: var(--white); border: 1px solid rgba(255,255,255,0.15); font-size: 1.2rem; cursor: pointer; }
+  .pin-btn:active { background: var(--red); border-color: var(--red); }
+  #pin-loading { font-size: 0.75rem; color: var(--ink-dim); height: 1rem; }
+
+  /* ---- DASHBOARD ---- */
+  #dash { display: none; }
+  header { background: #0D0B0A; color: var(--white); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+  header .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; }
+  header .sub { font-size: 0.72rem; color: var(--red); }
+
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 1.75rem 1.5rem; }
+
+  .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.4rem; }
+  h1.page-title { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; margin-bottom: 1.5rem; text-transform: uppercase; }
+
+  #refresh-btn {
+    font-family: var(--font-body); font-size: 0.78rem; border: 1px solid var(--border); background: var(--white);
+    color: var(--ink); border-radius: 6px; padding: 0.5rem 0.9rem; cursor: pointer;
+  }
+  #refresh-btn:hover { border-color: var(--red); color: var(--red); }
+  .top-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.8rem; }
+
+  /* KPIs */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 2rem; }
+  @media (max-width: 760px){ .kpi-row{ grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.2rem; }
+  .kpi-label { font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 0.5rem; }
+  .kpi-val { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; }
+  .kpi-sub { font-size: 0.72rem; color: var(--ink-dim); margin-top: 0.3rem; }
+
+  .section-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-dim); margin: 2rem 0 0.9rem; }
+
+  /* Tier management */
+  .tier-mgmt { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .tier-row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem;
+    padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .tier-row:last-child { border-bottom: none; }
+  .tier-name-cell { font-family: var(--font-display); font-weight: 700; font-size: 1rem; flex: 1 1 140px; }
+  .tier-cell-price { flex: 0 0 auto; min-width: 60px; }
+  .tier-price-cell.hidden-price { color: var(--ink-dim); font-style: italic; }
+  .tier-cell-quota { flex: 0 0 auto; display: flex; align-items: center; gap: 0.4rem; }
+  .quota-input { width: 60px; border: 1px solid var(--border); border-radius: 5px; padding: 0.35rem 0.5rem; font-family: var(--font-body); font-size: 0.82rem; background: var(--paper); color: var(--ink); }
+  .tier-cell-status { flex: 1 1 auto; display: flex; align-items: center; gap: 0.5rem; }
+  .sold-cell { font-family: var(--font-display); font-weight: 700; }
+  .status-badge { font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 9px; border-radius: 12px; display: inline-block; }
+  .status-badge.active { background: var(--green-light); color: var(--green); }
+  .status-badge.soldout { background: var(--red-light); color: var(--red); }
+  .status-badge.paused { background: rgba(107,96,88,0.1); color: var(--ink-dim); }
+  .tier-cell-toggle { flex: 0 0 auto; margin-left: auto; }
+
+  .toggle { position: relative; width: 40px; height: 22px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 22px; cursor: pointer; transition: 0.15s; }
+  .toggle-slider::before { content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: 0.15s; }
+  .toggle input:checked + .toggle-slider { background: var(--green); }
+  .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+  .merch-note { background: var(--white); border: 1px dashed var(--border); border-radius: 10px; padding: 1rem 1.1rem; font-size: 0.82rem; color: var(--ink-dim); }
+
+  /* Buyers table */
+  .buyer-controls { display: flex; gap: 0.6rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
+  .buyer-controls input, .buyer-controls select {
+    border: 1px solid var(--border); border-radius: 6px; padding: 0.55rem 0.8rem; font-family: var(--font-body); font-size: 0.82rem; background: var(--white); color: var(--ink);
+  }
+  .buyer-controls input { flex: 1; min-width: 180px; }
+  table.simple { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  table.simple th, table.simple td { text-align: left; padding: 0.7rem 0.9rem; font-size: 0.8rem; }
+  table.simple th { font-size: 0.65rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-dim); background: var(--paper); font-weight: 700; }
+  table.simple td { border-top: 1px solid var(--border); }
+  .num-cell { text-align: right; }
+  .checkin-yes { color: var(--green); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .checkin-no { color: var(--ink-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .pay-paid { color: var(--green); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .pay-pending { color: var(--red); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  .pay-failed { color: var(--ink-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .empty-note { font-size: 0.82rem; color: var(--ink-dim); padding: 1.2rem; text-align: center; }
+  .toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--white); padding: 0.6rem 1.1rem; border-radius: 8px; font-size: 0.8rem; opacity: 0; transition: 0.2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<!-- PIN GATE -->
+<div id="pin-screen">
+  <div class="eyebrow">Menyulam Bayang Mendung · Balai Ketiga</div>
+  <h1>Enter organiser PIN</h1>
+  <div id="pin-display"></div>
+  <div id="pin-error"></div>
+  <div id="pin-loading"></div>
+  <div id="pin-pad">
+    <button class="pin-btn" data-d="1">1</button>
+    <button class="pin-btn" data-d="2">2</button>
+    <button class="pin-btn" data-d="3">3</button>
+    <button class="pin-btn" data-d="4">4</button>
+    <button class="pin-btn" data-d="5">5</button>
+    <button class="pin-btn" data-d="6">6</button>
+    <button class="pin-btn" data-d="7">7</button>
+    <button class="pin-btn" data-d="8">8</button>
+    <button class="pin-btn" data-d="9">9</button>
+    <button class="pin-btn" id="pin-clear">⌫</button>
+    <button class="pin-btn" data-d="0">0</button>
+    <div></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <header>
+    <div class="logo">Balai Ketiga</div>
+    <div class="sub">Organiser Dashboard</div>
+  </header>
+
+  <div class="wrap">
+    <div class="top-row">
+      <div>
+        <div class="eyebrow">Private — organiser only</div>
+        <h1 class="page-title">Menyulam Bayang Mendung — Sales Overview</h1>
+      </div>
+      <button id="refresh-btn">Refresh</button>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Tickets sold</div>
+        <div class="kpi-val" id="kpi-tickets">—</div>
+        <div class="kpi-sub" id="kpi-tickets-sub">—</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Revenue (paid)</div>
+        <div class="kpi-val" id="kpi-rev">—</div>
+        <div class="kpi-sub">from paid orders only</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Checked in</div>
+        <div class="kpi-val" id="kpi-checkin">—</div>
+        <div class="kpi-sub">at the door</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Pending orders</div>
+        <div class="kpi-val" id="kpi-pending">—</div>
+        <div class="kpi-sub">awaiting payment</div>
+      </div>
+    </div>
+
+    <div class="section-label">Ticket tiers — manage availability</div>
+    <div class="tier-mgmt">
+      <div id="tier-rows"></div>
+    </div>
+
+    <div class="section-label">Merchandise</div>
+    <div class="merch-note">No merchandise configured yet for this event. Once items and prices are decided, this section will show sales the same way the ticket tiers do.</div>
+
+    <div class="section-label">Buyers / Orders</div>
+    <div class="buyer-controls">
+      <input type="text" id="buyer-search" placeholder="Search by name, email, or order number…">
+      <select id="status-filter">
+        <option value="all">All statuses</option>
+        <option value="paid">Paid</option>
+        <option value="pending">Pending</option>
+        <option value="failed">Failed</option>
+      </select>
+      <select id="checkin-filter">
+        <option value="all">All check-in status</option>
+        <option value="yes">Checked in</option>
+        <option value="no">Not checked in</option>
+      </select>
+    </div>
+    <table class="simple" id="buyers-table">
+      <tr><th>Order</th><th>Buyer</th><th>Contact</th><th>Tier</th><th class="num-cell">Qty</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>
+    </table>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+  const EVENT_SLUG = 'menyulam-bayang-mendung';
+
+  let enteredPin = "";
+  let currentPin = "";
+  let dashboardData = null;
+
+  const pinDisplay = document.getElementById('pin-display');
+  const pinError = document.getElementById('pin-error');
+  const pinLoading = document.getElementById('pin-loading');
+
+  document.querySelectorAll('.pin-btn[data-d]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (enteredPin.length >= 6) return;
+      enteredPin += btn.dataset.d;
+      pinDisplay.textContent = "•".repeat(enteredPin.length);
+      pinError.textContent = "";
+    });
+  });
+  document.getElementById('pin-clear').addEventListener('click', () => {
+    enteredPin = ""; pinDisplay.textContent = ""; pinError.textContent = "";
+  });
+
+  // Submit on Enter, or auto-submit at 4 digits (adjust if your PIN is longer)
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') tryLogin();
+  });
+  document.getElementById('pin-pad').addEventListener('click', (e) => {
+    if (e.target.matches('.pin-btn[data-d]') && enteredPin.length === 4) {
+      setTimeout(tryLogin, 80);
+    }
+  });
+
+  async function tryLogin(){
+    if (!enteredPin) return;
+    pinLoading.textContent = "Checking…";
+    pinError.textContent = "";
+    try {
+      const res = await fetchDashboard(enteredPin);
+      if (res.error) {
+        pinError.textContent = res.error === 'Invalid PIN' ? 'Wrong PIN' : res.error;
+        enteredPin = "";
+        setTimeout(() => { pinDisplay.textContent = ""; }, 300);
+      } else {
+        currentPin = enteredPin;
+        dashboardData = res;
+        document.getElementById('pin-screen').style.display = 'none';
+        document.getElementById('dash').style.display = 'block';
+        renderAll();
+      }
+    } catch (err) {
+      pinError.textContent = "Connection error — try again";
+      console.error(err);
+    } finally {
+      pinLoading.textContent = "";
+    }
+  }
+
+  async function fetchDashboard(pin){
+    const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/organiser-dashboard-data`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ pin, event_slug: EVENT_SLUG }),
+    });
+    return await res.json();
+  }
+
+  async function refreshData(){
+    if (!currentPin) return;
+    const res = await fetchDashboard(currentPin);
+    if (!res.error) {
+      dashboardData = res;
+      renderAll();
+      showToast('Refreshed');
+    }
+  }
+  document.getElementById('refresh-btn').addEventListener('click', refreshData);
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function tierStatus(t){
+    if (!t.active) return { label: 'Paused', cls: 'paused' };
+    if (t.capacity != null && t.sold_count >= t.capacity) return { label: 'Sold out', cls: 'soldout' };
+    return { label: 'Active', cls: 'active' };
+  }
+
+  function renderTiers(){
+    const container = document.getElementById('tier-rows');
+    container.innerHTML = '';
+    (dashboardData.tiers || []).forEach(t => {
+      const status = tierStatus(t);
+      const row = document.createElement('div');
+      row.className = 'tier-row';
+      row.innerHTML = `
+        <div class="tier-name-cell">${escapeHtml(t.name)}</div>
+        <div class="tier-cell-price">RM${Number(t.price).toFixed(0)}</div>
+        <div class="tier-cell-quota">
+          Quota:
+          <input type="number" class="quota-input" value="${t.capacity ?? ''}" placeholder="∞" min="${t.sold_count}" data-id="${t.id}">
+        </div>
+        <div class="tier-cell-status">
+          <span class="sold-cell">${t.sold_count} / ${t.capacity ?? '∞'}</span>
+          <span class="status-badge ${status.cls}">${status.label}</span>
+        </div>
+        <div class="tier-cell-toggle">
+          <label class="toggle">
+            <input type="checkbox" ${t.active ? 'checked' : ''} data-id="${t.id}" class="tier-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      `;
+      container.appendChild(row);
+    });
+
+    container.querySelectorAll('.quota-input').forEach(input => {
+      input.addEventListener('change', async () => {
+        const tierId = input.dataset.id;
+        const val = input.value === '' ? null : parseInt(input.value);
+        const res = await updateTier(tierId, { capacity: val });
+        if (res.error) { showToast(res.error); } else { showToast('Quota updated'); }
+        await refreshData();
+      });
+    });
+    container.querySelectorAll('.tier-toggle').forEach(toggle => {
+      toggle.addEventListener('change', async () => {
+        const tierId = toggle.dataset.id;
+        const res = await updateTier(tierId, { active: toggle.checked });
+        if (res.error) { showToast(res.error); } else { showToast(toggle.checked ? 'Tier resumed' : 'Tier paused'); }
+        await refreshData();
+      });
+    });
+  }
+
+  async function updateTier(tierId, fields){
+    const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/organiser-update-tier`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ pin: currentPin, tier_id: tierId, ...fields }),
+    });
+    return await res.json();
+  }
+
+  function renderKpis(){
+    const k = dashboardData.kpis;
+    document.getElementById('kpi-tickets').textContent = k.total_capacity ? `${k.tickets_sold} / ${k.total_capacity}` : `${k.tickets_sold}`;
+    document.getElementById('kpi-tickets-sub').textContent = k.total_capacity ? `${Math.round(k.tickets_sold / k.total_capacity * 100)}% of capacity` : 'uncapped';
+    document.getElementById('kpi-rev').textContent = `RM${k.revenue.toFixed(0)}`;
+    document.getElementById('kpi-checkin').textContent = `${k.checked_in} / ${k.tickets_sold}`;
+    document.getElementById('kpi-pending').textContent = k.pending_orders;
+  }
+
+  function renderBuyers(){
+    const search = document.getElementById('buyer-search').value.toLowerCase();
+    const statusFilter = document.getElementById('status-filter').value;
+    const checkinFilter = document.getElementById('checkin-filter').value;
+    const table = document.getElementById('buyers-table');
+    table.innerHTML = '<tr><th>Order</th><th>Buyer</th><th>Contact</th><th>Tier</th><th class="num-cell">Qty</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>';
+
+    const filtered = (dashboardData.buyers || [])
+      .filter(b => (b.buyer_name.toLowerCase().includes(search) || b.buyer_email.toLowerCase().includes(search) || b.order_number.toLowerCase().includes(search)))
+      .filter(b => statusFilter === 'all' || b.status === statusFilter)
+      .filter(b => {
+        if (checkinFilter === 'all') return true;
+        const isCheckedIn = b.checked_in_count > 0;
+        return checkinFilter === 'yes' ? isCheckedIn : !isCheckedIn;
+      });
+
+    if (filtered.length === 0) {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td colspan="8" class="empty-note">No matching orders yet.</td>`;
+      table.appendChild(row);
+      return;
+    }
+
+    filtered.forEach(b => {
+      const payClass = b.status === 'paid' ? 'pay-paid' : (b.status === 'pending' ? 'pay-pending' : 'pay-failed');
+      const checkinLabel = b.ticket_count > 0 ? `${b.checked_in_count} / ${b.ticket_count}` : '—';
+      const checkinClass = b.checked_in_count > 0 ? 'checkin-yes' : 'checkin-no';
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${escapeHtml(b.order_number)}</td>
+        <td>${escapeHtml(b.buyer_name)}</td>
+        <td>${escapeHtml(b.buyer_email)}${b.buyer_phone ? '<br>' + escapeHtml(b.buyer_phone) : ''}</td>
+        <td>${escapeHtml(b.tier_name)}</td>
+        <td class="num-cell">${b.qty}</td>
+        <td class="num-cell">RM${Number(b.amount).toFixed(0)}</td>
+        <td><span class="${payClass}">${b.status}</span></td>
+        <td><span class="${checkinClass}">${checkinLabel}</span></td>
+      `;
+      table.appendChild(row);
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
+  }
+
+  function renderAll(){
+    renderTiers();
+    renderKpis();
+    renderBuyers();
+  }
+
+  document.getElementById('buyer-search').addEventListener('input', renderBuyers);
+  document.getElementById('status-filter').addEventListener('change', renderBuyers);
+  document.getElementById('checkin-filter').addEventListener('change', renderBuyers);
+</script>
+
+</body>
+</html>
