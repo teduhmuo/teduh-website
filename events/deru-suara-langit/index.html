@@ -332,16 +332,22 @@
   }
   .cta-note { text-align: center; font-size: 0.75rem; color: var(--muted-text); margin-top: 0.75rem; }
 
+  /* Band Cards */
   .band-card { 
     display: flex; 
-    gap: 1rem; 
-    align-items: center; 
-    padding: 1rem; 
+    flex-direction: column;
+    gap: 0.75rem; 
+    padding: 1.15rem; 
     background: var(--white);
     border: 2.5px solid var(--black);
     border-radius: 10px;
     margin-bottom: 0.85rem;
     box-shadow: 4px 4px 0px var(--black);
+  }
+  .band-card-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
   }
   .band-photo {
     width: 58px; 
@@ -362,7 +368,14 @@
   .band-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; }
   .band-genre { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sunset-coral); margin: 0.15rem 0 0.2rem; }
   .band-ig { font-size: 0.8rem; color: var(--muted-text); text-decoration: none; font-weight: 500; }
-  .band-ig::before { content: "@"; }
+  .band-ig:hover { color: var(--sunset-coral); }
+  .band-bio {
+    font-size: 0.83rem;
+    color: var(--twilight-dark);
+    line-height: 1.5;
+    padding-top: 0.5rem;
+    border-top: 1px dashed var(--bg-offwhite);
+  }
 
   /* Playlist Box Styling */
   .playlist-box {
@@ -603,28 +616,48 @@
   <div class="tabpanel" id="tab-details">
     <div class="section-label">The lineup</div>
 
+    <!-- Deepset -->
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info">
-        <div class="band-name">Deepset</div>
-        <div class="band-genre">Post-Rock / Instrumental</div>
-        <a class="band-ig" href="#" target="_blank" rel="noopener">deepset</a>
+      <div class="band-card-header">
+        <div class="band-photo">Photo</div>
+        <div class="band-info">
+          <div class="band-name">Deepset</div>
+          <div class="band-genre">Post-Rock / Instrumental</div>
+          <a class="band-ig" href="https://www.instagram.com/deepsetan/" target="_blank" rel="noopener">@deepsetan</a>
+        </div>
+      </div>
+      <div class="band-bio">
+        Deepset is an instrumental post-rock band from Malaysia. Formed in late 2002 in the Klang Valley, the quartet is known for atmospheric, epic soundscapes and emotional, long-form compositions.
       </div>
     </div>
+
+    <!-- Heavener -->
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info">
-        <div class="band-name">Heavener</div>
-        <div class="band-genre">Shoegaze / Dream Pop</div>
-        <a class="band-ig" href="#" target="_blank" rel="noopener">heavener</a>
+      <div class="band-card-header">
+        <div class="band-photo">Photo</div>
+        <div class="band-info">
+          <div class="band-name">Heavener</div>
+          <div class="band-genre">Shoegaze / Dream Pop</div>
+          <a class="band-ig" href="https://www.instagram.com/heavener.alive/" target="_blank" rel="noopener">@heavener.alive</a>
+        </div>
+      </div>
+      <div class="band-bio">
+        Heavëner is a four-piece shoegaze and dream pop band formed in the Klang Valley, Malaysia, in 2023. Known for hazy, reverb-drenched guitar textures and emotive DIY punk roots.
       </div>
     </div>
+
+    <!-- The World Ends With You -->
     <div class="band-card">
-      <div class="band-photo">Photo</div>
-      <div class="band-info">
-        <div class="band-name">The World Ends With You</div>
-        <div class="band-genre">Ambient / Post-Rock</div>
-        <a class="band-ig" href="#" target="_blank" rel="noopener">twewy</a>
+      <div class="band-card-header">
+        <div class="band-photo">Photo</div>
+        <div class="band-info">
+          <div class="band-name">The World Ends With You</div>
+          <div class="band-genre">Ambient / Post-Rock</div>
+          <a class="band-ig" href="https://www.instagram.com/theworldendswithyouband/" target="_blank" rel="noopener">@theworldendswithyouband</a>
+        </div>
+      </div>
+      <div class="band-bio">
+        the world ends with you. is a Klang Valley-based Malaysian shoegaze and "nü-gaze" band known for their lush, heavy soundscapes and dynamic underground presence.
       </div>
     </div>
 
