@@ -54,6 +54,8 @@
   .tier-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; padding: 0.9rem 1.1rem; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.85rem; }
   .tier-row:last-child { border-bottom: none; }
   .tier-name-cell { font-family: var(--font-display); font-weight: 700; flex: 1 1 140px; }
+  .quota-input { width: 60px; border: 1px solid rgba(0,0,0,0.2); border-radius: 5px; padding: 0.35rem 0.5rem; font-family: var(--font-body); font-size: 0.82rem; }
+  .tier-quota-cell { display: flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; }
   .sold-cell { font-family: var(--font-display); font-weight: 700; }
   .status-badge { font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 9px; border-radius: 12px; }
   .status-badge.active { background: var(--green-light); color: var(--green); }
@@ -126,15 +128,7 @@
       <div class="kpi"><div class="kpi-label">Checked in</div><div class="kpi-val" id="kpi-checkin">—</div><div class="kpi-sub" id="kpi-pending-sub">—</div></div>
     </div>
 
-    <div class="section-label">Shared capacity (Early Bird + General Admission combined)</div>
-    <div class="capacity-box">
-      <span>Total seats:</span>
-      <input type="number" id="capacity-input" min="0">
-      <button id="capacity-save" style="font-family:var(--font-body); font-size:0.78rem; border:2px solid var(--black); background:var(--white); border-radius:6px; padding:0.5rem 0.9rem; box-shadow:2px 2px 0px var(--black);">Save</button>
-      <span id="capacity-note" style="font-size:0.78rem; color:var(--muted-text);"></span>
-    </div>
-
-    <div class="section-label">Ticket tiers — pause/resume</div>
+    <div class="section-label">Ticket tiers — quota &amp; pause/resume</div>
     <div class="tier-mgmt"><div id="tier-rows"></div></div>
 
     <div class="section-label">Merch to prepare (paid orders only)</div>
@@ -222,39 +216,48 @@
     document.getElementById('kpi-pending-sub').textContent = `${k.pending_orders} pending (last hour)`;
   }
 
-  function renderCapacity(){
-    const input = document.getElementById('capacity-input');
-    input.value = dashboardData.event.shared_capacity ?? '';
+  
+  function tierStatus(t){
+    if (!t.active) return { label: 'Paused', cls: 'paused' };
+    if (t.capacity != null && t.sold_count >= t.capacity) return { label: 'Sold out', cls: 'paused' };
+    return { label: 'Active', cls: 'active' };
   }
-  document.getElementById('capacity-save').addEventListener('click', async () => {
-    const val = document.getElementById('capacity-input').value;
-    const shared_capacity = val === '' ? null : parseInt(val);
-    const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-update-settings`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
-      body: JSON.stringify({ pin: currentPin, shared_capacity }),
-    });
-    const data = await res.json();
-    document.getElementById('capacity-note').textContent = data.error ? data.error : 'Saved';
-    if (!data.error) await refreshData();
-  });
 
   function renderTiers(){
     const container = document.getElementById('tier-rows');
     container.innerHTML = '';
     (dashboardData.tiers || []).forEach(t => {
+      const status = tierStatus(t);
       const row = document.createElement('div');
       row.className = 'tier-row';
       row.innerHTML = `
         <div class="tier-name-cell">${escapeHtml(t.name)} <span style="color:var(--muted-text); font-weight:400;">RM${Number(t.price).toFixed(0)}</span></div>
-        <div class="sold-cell">${t.sold_count} sold</div>
-        <span class="status-badge ${t.active ? 'active' : 'paused'}">${t.active ? 'Active' : 'Paused'}</span>
+        <div class="tier-quota-cell">
+          Quota: <input type="number" class="quota-input" value="${t.capacity ?? ''}" placeholder="∞" min="${t.sold_count}" data-id="${t.id}">
+        </div>
+        <div class="sold-cell">${t.sold_count} / ${t.capacity ?? '∞'}</div>
+        <span class="status-badge ${status.cls}">${status.label}</span>
         <label class="toggle">
           <input type="checkbox" ${t.active ? 'checked' : ''} data-id="${t.id}" class="tier-toggle">
           <span class="toggle-slider"></span>
         </label>
       `;
       container.appendChild(row);
+    });
+
+    container.querySelectorAll('.quota-input').forEach(input => {
+      input.addEventListener('change', async () => {
+        const tierId = input.dataset.id;
+        const val = input.value === '' ? null : parseInt(input.value);
+        const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-update-settings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+          body: JSON.stringify({ pin: currentPin, tier_id: tierId, capacity: val }),
+        });
+        const data = await res.json();
+        showToast(data.error ? data.error : 'Quota updated');
+        await refreshData();
+      });
     });
     container.querySelectorAll('.tier-toggle').forEach(toggle => {
       toggle.addEventListener('change', async () => {
@@ -328,7 +331,7 @@
   }
 
   function renderAll(){
-    renderKpis(); renderCapacity(); renderTiers(); renderMerchFulfillment(); renderBuyers();
+    renderKpis(); renderTiers(); renderMerchFulfillment(); renderBuyers();
   }
 
   document.getElementById('buyer-search').addEventListener('input', renderBuyers);

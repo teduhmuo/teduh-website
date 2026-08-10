@@ -240,6 +240,8 @@
   }
   
   .tier-name { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; font-style: italic; }
+  .tier-badge { font-size: 0.62rem; font-family: var(--font-body); font-style: normal; letter-spacing: 0.03em; text-transform: uppercase; padding: 2px 8px; border-radius: 10px; vertical-align: middle; margin-left: 0.4rem; background: rgba(240,101,83,0.12); color: var(--sunset-coral); }
+  .tier-badge.soldout { background: var(--twilight-dark); color: var(--white); }
   .tier-price { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; color: var(--twilight-dark); margin-right: 0.75rem; }
   .tier-right { display: flex; align-items: center; }
 
@@ -584,11 +586,10 @@
   <!-- TICKETS -->
   <div class="tabpanel active" id="tab-tickets">
     <div class="section-label">Choose your ticket</div>
-    <div id="seats-status" style="font-size:0.8rem; color:var(--muted-text); margin-bottom:0.8rem; display:none;"></div>
 
     <div class="tier-card" data-tier="Early Bird" data-price="55" data-active="true">
       <div>
-        <div class="tier-name">Early Bird</div>
+        <div class="tier-name">Early Bird <span class="tier-badge" id="badge-Early Bird" style="display:none;"></span></div>
       </div>
       <div class="tier-right">
         <div class="tier-price">RM55</div>
@@ -602,7 +603,7 @@
 
     <div class="tier-card" data-tier="General Admission" data-price="70" data-active="true">
       <div>
-        <div class="tier-name">General Admission</div>
+        <div class="tier-name">General Admission <span class="tier-badge" id="badge-General Admission" style="display:none;"></span></div>
       </div>
       <div class="tier-right">
         <div class="tier-price">RM70</div>
@@ -939,62 +940,72 @@
     });
   });
 
+  // ── Live per-tier capacity check (35 Early Bird / 25 General Admission) ──
   renderCart();
-
-  // ── Live shared-capacity check (60 seats across BOTH tiers) ──────────
   const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
   const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
-  const LOW_STOCK_THRESHOLD = 10;
-  let seatsRemaining = null;
+  const LOW_STOCK_THRESHOLD = 5;
+  const tierRemaining = {}; // { 'Early Bird': 12, 'General Admission': 25 }
 
-  async function fetchSeatsRemaining(){
+  async function fetchTierAvailability(){
     try {
       const url = `${SUPABASE_URL}/rest/v1/ticket_tiers`
-        + `?select=sold_count,active,events!inner(slug,shared_capacity)`
+        + `?select=name,sold_count,capacity,active,events!inner(slug)`
         + `&events.slug=eq.deru-suara-langit`;
       const res = await fetch(url, {
         headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
       });
       const rows = await res.json();
-      if (!Array.isArray(rows) || rows.length === 0) return;
-      const capacity = rows[0].events.shared_capacity;
-      const sold = rows.reduce((sum, r) => sum + (r.sold_count || 0), 0);
-      seatsRemaining = capacity != null ? capacity - sold : null;
-      applySeatsStatus();
+      if (!Array.isArray(rows)) return;
+      rows.forEach(applyTierAvailability);
     } catch (e) {
-      console.error('Could not fetch seat availability', e);
+      console.error('Could not fetch tier availability', e);
     }
   }
 
-  function applySeatsStatus(){
-    const el = document.getElementById('seats-status');
-    if (seatsRemaining == null) return;
-    if (seatsRemaining <= 0) {
-      el.textContent = 'Sold out — no seats remaining.';
-      el.style.color = '#f06553';
-      el.style.display = 'block';
-      document.querySelectorAll('.tier-card .qty-btn').forEach(b => { b.disabled = true; b.style.opacity = 0.4; });
-    } else if (seatsRemaining <= LOW_STOCK_THRESHOLD) {
-      el.textContent = `Only ${seatsRemaining} seat${seatsRemaining === 1 ? '' : 's'} left (Early Bird + General Admission combined).`;
-      el.style.color = '#f06553';
-      el.style.display = 'block';
+  function applyTierAvailability(tier){
+    const card = document.querySelector(`.tier-card[data-tier="${tier.name}"]`);
+    if (!card) return;
+    const badge = document.getElementById(`badge-${tier.name}`);
+    const remaining = tier.capacity != null ? tier.capacity - tier.sold_count : null;
+    tierRemaining[tier.name] = remaining;
+
+    const isSoldOut = !tier.active || (tier.capacity != null && tier.sold_count >= tier.capacity);
+    const isLow = !isSoldOut && tier.capacity != null && remaining <= LOW_STOCK_THRESHOLD;
+
+    if (isSoldOut) {
+      badge.textContent = 'Sold out';
+      badge.className = 'tier-badge soldout';
+      badge.style.display = 'inline-block';
+      card.classList.add('inactive');
+      card.querySelector('.tier-right').innerHTML = '<span class="tier-unavailable">Not available</span>';
+      if (ticketCart[tier.name]) { ticketCart[tier.name].qty = 0; }
+      renderCart();
+    } else if (isLow) {
+      badge.textContent = `Only ${remaining} left`;
+      badge.className = 'tier-badge';
+      badge.style.display = 'inline-block';
+    } else {
+      badge.style.display = 'none';
     }
   }
-  fetchSeatsRemaining();
+  fetchTierAvailability();
 
   // ── Real checkout ──────────────────────────────────────────────────
   const checkoutBtn = document.getElementById('checkout-btn');
   checkoutBtn.addEventListener('click', async () => {
     const items = [];
-    let ticketQtyRequested = 0;
 
-    Object.entries(ticketCart).forEach(([name, item]) => {
+    for (const [name, item] of Object.entries(ticketCart)) {
       if (item.qty > 0) {
+        if (tierRemaining[name] != null && item.qty > tierRemaining[name]) {
+          alert(`Only ${tierRemaining[name]} ${name} ticket(s) remaining — please reduce your quantity.`);
+          return;
+        }
         items.push({ type: 'ticket', tier_name: name, qty: item.qty });
-        ticketQtyRequested += item.qty;
       }
-    });
+    }
     Object.entries(merchCart).forEach(([name, item]) => {
       if (item.qty > 0) {
         items.push({ type: 'merch', name, size: name === 'Event Tee' ? teeSize : null, qty: item.qty });
@@ -1003,10 +1014,6 @@
 
     if (items.length === 0) {
       alert('Add at least one ticket or merch item first.');
-      return;
-    }
-    if (seatsRemaining != null && ticketQtyRequested > seatsRemaining) {
-      alert(`Only ${seatsRemaining} seat(s) remaining — please reduce your ticket quantity.`);
       return;
     }
 
