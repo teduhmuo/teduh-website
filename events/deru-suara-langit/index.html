@@ -352,8 +352,8 @@
     align-items: center;
   }
   .band-photo {
-    width: 58px; 
-    height: 58px; 
+    width: 87px; 
+    height: 87px; 
     border-radius: 50%; 
     flex-shrink: 0;
     border: 2px solid var(--black);
@@ -365,7 +365,10 @@
     color: var(--white); 
     font-weight: 700;
     font-size: 0.75rem;
+    overflow: hidden;
+    cursor: pointer;
   }
+  .band-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .band-info { flex: 1; }
   .band-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; }
   .band-genre { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--sunset-coral); margin: 0.15rem 0 0.2rem; }
@@ -377,6 +380,21 @@
     line-height: 1.5;
     padding-top: 0.5rem;
     border-top: 1px dashed var(--bg-offwhite);
+  }
+
+  .band-listen { margin-top: 0.6rem; }
+  .band-listen iframe { width: 100%; height: 80px; border: 2px solid var(--black); border-radius: 8px; display: block; }
+
+  /* Photo lightbox */
+  #photo-lightbox {
+    position: fixed; inset: 0; background: rgba(18,15,24,0.92); z-index: 100;
+    display: none; align-items: center; justify-content: center; padding: 1.5rem;
+  }
+  #photo-lightbox.show { display: flex; }
+  #photo-lightbox img { max-width: 100%; max-height: 80vh; border-radius: 12px; border: 3px solid var(--white); }
+  #photo-lightbox .lb-close {
+    position: absolute; top: 1.2rem; right: 1.2rem; width: 40px; height: 40px; border-radius: 50%;
+    background: var(--white); border: 2px solid var(--black); font-size: 1.2rem; font-weight: 700; cursor: pointer;
   }
 
   /* Playlist Box Styling */
@@ -623,7 +641,7 @@
     <!-- Deepset -->
     <div class="band-card">
       <div class="band-card-header">
-        <div class="band-photo">Photo</div>
+        <div class="band-photo" onclick="openLightbox('/images/bands/deepset.jpg', 'Deepset')"><img src="/images/bands/deepset.jpg" alt="Deepset" onerror="this.parentElement.textContent='Photo'"></div>
         <div class="band-info">
           <div class="band-name">Deepset</div>
           <div class="band-genre">Post-Rock / Instrumental</div>
@@ -633,12 +651,15 @@
       <div class="band-bio">
         Deepset is an instrumental post-rock band from Malaysia. Formed in late 2002 in the Klang Valley, the quartet is known for atmospheric, epic soundscapes and emotional, long-form compositions.
       </div>
+      <div class="band-listen">
+        <iframe src="https://www.youtube.com/embed/ClC1uegkfg4" loading="lazy" allow="encrypted-media" allowfullscreen></iframe>
+      </div>
     </div>
 
     <!-- Heavener -->
     <div class="band-card">
       <div class="band-card-header">
-        <div class="band-photo">Photo</div>
+        <div class="band-photo" onclick="openLightbox('/images/bands/heavener.jpg', 'Heavener')"><img src="/images/bands/heavener.jpg" alt="Heavener" onerror="this.parentElement.textContent='Photo'"></div>
         <div class="band-info">
           <div class="band-name">Heavener</div>
           <div class="band-genre">Shoegaze / Dream Pop</div>
@@ -648,12 +669,15 @@
       <div class="band-bio">
         Heavëner is a four-piece shoegaze and dream pop band formed in the Klang Valley, Malaysia, in 2023. Known for hazy, reverb-drenched guitar textures and emotive DIY punk roots.
       </div>
+      <div class="band-listen">
+        <iframe src="https://www.youtube.com/embed/KIxIQA26KZc" loading="lazy" allow="encrypted-media" allowfullscreen></iframe>
+      </div>
     </div>
 
     <!-- The World Ends With You -->
     <div class="band-card">
       <div class="band-card-header">
-        <div class="band-photo">Photo</div>
+        <div class="band-photo" onclick="openLightbox('/images/bands/the-world-ends-with-you.jpg', 'The World Ends With You')"><img src="/images/bands/the-world-ends-with-you.jpg" alt="The World Ends With You" onerror="this.parentElement.textContent='Photo'"></div>
         <div class="band-info">
           <div class="band-name">The World Ends With You</div>
           <div class="band-genre">Ambient / Post-Rock</div>
@@ -662,6 +686,9 @@
       </div>
       <div class="band-bio">
         the world ends with you. is a Klang Valley-based Malaysian shoegaze and "nü-gaze" band known for their lush, heavy soundscapes and dynamic underground presence.
+      </div>
+      <div class="band-listen">
+        <iframe src="https://www.youtube.com/embed/kcH2MyKZyjU" loading="lazy" allow="encrypted-media" allowfullscreen></iframe>
       </div>
     </div>
 
@@ -821,6 +848,11 @@
   <p style="margin-top:0.35rem;"><a href="/events">Back to all events</a></p>
 </footer>
 
+<div id="photo-lightbox" onclick="if(event.target===this) closeLightbox()">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
 <script>
   let teeSize = 'S';
   const ticketCart = {};
@@ -939,6 +971,17 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+
+  // ── Photo lightbox ──────────────────────────────────────────────────
+  function openLightbox(src, alt){
+    document.getElementById('lightbox-img').src = src;
+    document.getElementById('lightbox-img').alt = alt;
+    document.getElementById('photo-lightbox').classList.add('show');
+  }
+  function closeLightbox(){
+    document.getElementById('photo-lightbox').classList.remove('show');
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
   // ── Live per-tier capacity check (35 Early Bird / 25 General Admission) ──
   renderCart();
