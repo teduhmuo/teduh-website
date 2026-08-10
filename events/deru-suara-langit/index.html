@@ -879,7 +879,7 @@
     if (card.dataset.active === 'false') {
       card.classList.add('inactive');
       const rightEl = card.querySelector('.tier-right');
-      rightEl.innerHTML = '<span class="tier-unavailable">Not available</span>';
+      rightEl.innerHTML = '<span class="tier-unavailable">Sold out</span>';
       return;
     }
 
@@ -971,15 +971,24 @@
     const remaining = tier.capacity != null ? tier.capacity - tier.sold_count : null;
     tierRemaining[tier.name] = remaining;
 
-    const isSoldOut = !tier.active || (tier.capacity != null && tier.sold_count >= tier.capacity);
-    const isLow = !isSoldOut && tier.capacity != null && remaining <= LOW_STOCK_THRESHOLD;
+    const isSoldOut = tier.capacity != null && tier.sold_count >= tier.capacity;
+    const isPaused = !tier.active && !isSoldOut;
+    const isLow = tier.active && !isSoldOut && tier.capacity != null && remaining <= LOW_STOCK_THRESHOLD;
 
     if (isSoldOut) {
       badge.textContent = 'Sold out';
       badge.className = 'tier-badge soldout';
       badge.style.display = 'inline-block';
       card.classList.add('inactive');
-      card.querySelector('.tier-right').innerHTML = '<span class="tier-unavailable">Not available</span>';
+      card.querySelector('.tier-right').innerHTML = '<span class="tier-unavailable">Sold out</span>';
+      if (ticketCart[tier.name]) { ticketCart[tier.name].qty = 0; }
+      renderCart();
+    } else if (isPaused) {
+      badge.textContent = 'Coming soon';
+      badge.className = 'tier-badge';
+      badge.style.display = 'inline-block';
+      card.classList.add('inactive');
+      card.querySelector('.tier-right').innerHTML = '<span class="tier-unavailable">Coming soon</span>';
       if (ticketCart[tier.name]) { ticketCart[tier.name].qty = 0; }
       renderCart();
     } else if (isLow) {
