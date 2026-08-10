@@ -3,352 +3,336 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Organizer Dashboard — Deru: Suara Langit</title>
+<meta name="robots" content="noindex, nofollow">
+<title>Organiser Dashboard — Deru: Suara Langit</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --cream: #F7F3EE;
-    --warm-brown: #3D2B1F;
-    --medium-brown: #7A5C46;
-    --light-brown: #C4A882;
-    --accent: #5B7E5A;
-    --accent-light: #EAF0E9;
-    --border: #E2D9CE;
-    --white: #FFFFFF;
-    --error: #C0392B;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
+    --bg-offwhite: #FAF7F2; --sunset-coral: #f06553; --twilight-dark: #120F18;
+    --black: #000000; --muted-text: #686270; --white: #FFFFFF;
+    --green: #2E7D46; --green-light: rgba(46,125,70,0.08);
+    --font-display: 'Playfair Display', Georgia, serif; --font-body: 'Space Grotesk', sans-serif;
   }
+  body { font-family: var(--font-body); background: var(--bg-offwhite); color: var(--twilight-dark); min-height: 100vh; padding-bottom: 3rem; }
 
-  body { font-family: var(--font-body); background: var(--cream); color: var(--warm-brown); min-height: 100vh; padding-bottom: 3rem; }
-
-  /* ---- PIN GATE ---- */
-  #pin-screen {
-    min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;
-    background: var(--warm-brown); color: var(--cream); padding: 1.5rem;
-  }
-  #pin-screen .eyebrow { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light-brown); }
-  #pin-screen h1 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 500; }
-  #pin-display { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.6rem; height: 2.5rem; color: var(--light-brown); }
-  #pin-error { color: #E08A78; font-size: 0.8rem; height: 1rem; }
+  #pin-screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; background: var(--twilight-dark); color: var(--white); padding: 1.5rem; }
+  #pin-screen .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--sunset-coral); }
+  #pin-screen h1 { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; }
+  #pin-display { font-family: var(--font-display); font-size: 1.8rem; letter-spacing: 0.6rem; height: 2.5rem; }
+  #pin-error { color: var(--sunset-coral); font-size: 0.8rem; height: 1rem; }
   #pin-pad { display: grid; grid-template-columns: repeat(3, 64px); gap: 12px; }
-  .pin-btn { width: 64px; height: 64px; border-radius: 50%; background: rgba(247,243,238,0.08); color: var(--cream); border: 1px solid rgba(247,243,238,0.15); font-size: 1.2rem; cursor: pointer; }
-  .pin-btn:active { background: var(--light-brown); color: var(--warm-brown); }
+  .pin-btn { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,0.06); color: var(--white); border: 1px solid rgba(255,255,255,0.15); font-size: 1.2rem; }
+  .pin-btn:active { background: var(--sunset-coral); border-color: var(--sunset-coral); }
 
-  /* ---- DASHBOARD ---- */
   #dash { display: none; }
-  header { background: var(--warm-brown); color: var(--cream); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
-  header .logo { font-family: var(--font-display); font-size: 1.2rem; }
-  header .sub { font-size: 0.72rem; color: var(--light-brown); }
+  header { background: var(--twilight-dark); color: var(--white); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2.5px solid var(--black); }
+  header .logo { font-family: var(--font-display); font-weight: 700; font-style: italic; font-size: 1.1rem; }
+  header .sub { font-size: 0.72rem; color: var(--sunset-coral); }
 
-  .wrap { max-width: 980px; margin: 0 auto; padding: 1.75rem 1.5rem; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 1.75rem 1.5rem; }
+  .top-row { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 0.8rem; }
+  .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-text); margin-bottom: 0.4rem; }
+  h1.page-title { font-family: var(--font-display); font-weight: 700; font-style: italic; font-size: 1.5rem; margin-bottom: 1.5rem; }
+  #refresh-btn { font-family: var(--font-body); font-size: 0.78rem; border: 2px solid var(--black); background: var(--white); color: var(--twilight-dark); border-radius: 6px; padding: 0.5rem 0.9rem; box-shadow: 2px 2px 0px var(--black); }
 
-  .eyebrow { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--medium-brown); margin-bottom: 0.4rem; }
-  h1.page-title { font-family: var(--font-display); font-size: 1.7rem; font-weight: 500; margin-bottom: 1.5rem; }
+  .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 2rem; }
+  @media (max-width: 900px){ .kpi-row{ grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px){ .kpi-row{ grid-template-columns: repeat(2, 1fr); } }
+  .kpi { background: var(--white); border: 2px solid var(--black); border-radius: 10px; padding: 1.1rem 1.2rem; box-shadow: 3px 3px 0px var(--black); }
+  .kpi-label { font-size: 0.63rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-text); margin-bottom: 0.5rem; }
+  .kpi-val { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; }
+  .kpi-sub { font-size: 0.7rem; color: var(--muted-text); margin-top: 0.3rem; }
 
-  /* KPIs */
-  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 2rem; }
-  @media (max-width: 760px){ .kpi-row{ grid-template-columns: repeat(2, 1fr); } }
-  .kpi { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.2rem; }
-  .kpi-label { font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--medium-brown); margin-bottom: 0.5rem; }
-  .kpi-val { font-family: var(--font-display); font-size: 1.6rem; }
-  .kpi-sub { font-size: 0.72rem; color: var(--medium-brown); margin-top: 0.3rem; }
+  .section-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-text); margin: 2rem 0 0.9rem; }
 
-  .section-label { font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--medium-brown); margin: 2rem 0 0.9rem; }
+  .capacity-box { background: var(--white); border: 2px solid var(--black); border-radius: 10px; padding: 1rem 1.1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; box-shadow: 3px 3px 0px var(--black); }
+  .capacity-box input { width: 70px; border: 1px solid rgba(0,0,0,0.2); border-radius: 5px; padding: 0.4rem 0.5rem; font-family: var(--font-body); font-size: 0.85rem; }
 
-  /* Tier management */
-  .tier-mgmt { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .tier-row {
-    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem;
-    padding: 0.9rem 1.1rem; border-bottom: 1px solid var(--border);
-    font-size: 0.85rem;
-  }
+  .tier-mgmt { background: var(--white); border: 2px solid var(--black); border-radius: 10px; overflow: hidden; box-shadow: 3px 3px 0px var(--black); }
+  .tier-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.2rem; padding: 0.9rem 1.1rem; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.85rem; }
   .tier-row:last-child { border-bottom: none; }
-  .tier-row.head { display: none; }
-  .tier-name-cell { font-family: var(--font-display); font-size: 1.05rem; flex: 1 1 140px; }
-  .tier-cell-price { flex: 0 0 auto; min-width: 60px; }
-  .tier-cell-quota { flex: 0 0 auto; }
-  .tier-cell-status { flex: 1 1 auto; display: flex; align-items: center; gap: 0.5rem; }
-  .tier-cell-toggle { flex: 0 0 auto; margin-left: auto; }
-  .tier-name-cell { font-family: var(--font-display); font-size: 1rem; }
-  .tier-price-cell.hidden-price { color: var(--medium-brown); font-style: italic; }
-  .quota-input { width: 60px; border: 1px solid var(--border); border-radius: 5px; padding: 0.35rem 0.5rem; font-family: var(--font-body); font-size: 0.82rem; background: var(--cream); color: var(--warm-brown); }
-  .sold-cell { font-family: var(--font-display); }
-  .status-badge { font-size: 0.65rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 9px; border-radius: 12px; display: inline-block; }
-  .status-badge.active { background: var(--accent-light); color: var(--accent); }
-  .status-badge.soldout { background: rgba(192,57,43,0.12); color: var(--error); }
-  .status-badge.paused { background: rgba(122,92,70,0.12); color: var(--medium-brown); }
-
-  .toggle { position: relative; width: 40px; height: 22px; }
+  .tier-name-cell { font-family: var(--font-display); font-weight: 700; flex: 1 1 140px; }
+  .sold-cell { font-family: var(--font-display); font-weight: 700; }
+  .status-badge { font-size: 0.62rem; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 9px; border-radius: 12px; }
+  .status-badge.active { background: var(--green-light); color: var(--green); }
+  .status-badge.paused { background: rgba(104,98,112,0.1); color: var(--muted-text); }
+  .toggle { position: relative; width: 40px; height: 22px; margin-left: auto; }
   .toggle input { opacity: 0; width: 0; height: 0; }
-  .toggle-slider { position: absolute; inset: 0; background: var(--border); border-radius: 22px; cursor: pointer; transition: 0.15s; }
+  .toggle-slider { position: absolute; inset: 0; background: rgba(0,0,0,0.15); border-radius: 22px; cursor: pointer; transition: 0.15s; }
   .toggle-slider::before { content: ""; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: var(--white); border-radius: 50%; transition: 0.15s; }
-  .toggle input:checked + .toggle-slider { background: var(--accent); }
+  .toggle input:checked + .toggle-slider { background: var(--green); }
   .toggle input:checked + .toggle-slider::before { transform: translateX(18px); }
 
-  /* Merch table */
-  table.simple { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  table.simple th, table.simple td { text-align: left; padding: 0.8rem 1.1rem; font-size: 0.85rem; }
-  table.simple th { font-size: 0.68rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--medium-brown); background: var(--cream); font-weight: 500; }
-  table.simple td { border-top: 1px solid var(--border); }
-  .num-cell { text-align: right; }
+  .merch-fulfillment { background: var(--white); border: 2px solid var(--black); border-radius: 10px; overflow: hidden; box-shadow: 3px 3px 0px var(--black); }
+  .merch-row { display: flex; justify-content: space-between; padding: 0.7rem 1.1rem; border-bottom: 1px solid rgba(0,0,0,0.08); font-size: 0.85rem; }
+  .merch-row:last-child { border-bottom: none; }
+  .merch-row .qty { font-family: var(--font-display); font-weight: 700; }
 
-  /* Buyers table */
   .buyer-controls { display: flex; gap: 0.6rem; margin-bottom: 0.9rem; flex-wrap: wrap; }
-  .buyer-controls input, .buyer-controls select {
-    border: 1px solid var(--border); border-radius: 6px; padding: 0.55rem 0.8rem; font-family: var(--font-body); font-size: 0.82rem; background: var(--white); color: var(--warm-brown);
-  }
+  .buyer-controls input, .buyer-controls select { border: 1px solid rgba(0,0,0,0.2); border-radius: 6px; padding: 0.55rem 0.8rem; font-family: var(--font-body); font-size: 0.82rem; background: var(--white); }
   .buyer-controls input { flex: 1; min-width: 180px; }
-  .checkin-yes { color: var(--accent); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .checkin-no { color: var(--medium-brown); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .pay-paid { color: var(--accent); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
-  .pay-pending { color: var(--error); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; }
-
-  .note-box { margin-top: 2rem; font-size: 0.78rem; color: var(--medium-brown); background: var(--accent-light); border-radius: 8px; padding: 0.9rem 1.1rem; }
+  table.simple { width: 100%; border-collapse: collapse; background: var(--white); border: 2px solid var(--black); border-radius: 10px; overflow: hidden; box-shadow: 3px 3px 0px var(--black); }
+  table.simple th, table.simple td { text-align: left; padding: 0.7rem 0.9rem; font-size: 0.78rem; }
+  table.simple th { font-size: 0.62rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted-text); background: var(--bg-offwhite); font-weight: 700; }
+  table.simple td { border-top: 1px solid rgba(0,0,0,0.08); }
+  .num-cell { text-align: right; }
+  .pay-paid { color: var(--green); font-size: 0.7rem; text-transform: uppercase; }
+  .pay-pending { color: var(--sunset-coral); font-size: 0.7rem; text-transform: uppercase; }
+  .pay-failed { color: var(--muted-text); font-size: 0.7rem; text-transform: uppercase; }
+  .checkin-yes { color: var(--green); font-size: 0.7rem; text-transform: uppercase; }
+  .checkin-no { color: var(--muted-text); font-size: 0.7rem; text-transform: uppercase; }
+  .empty-note { font-size: 0.82rem; color: var(--muted-text); padding: 1.2rem; text-align: center; }
+  .toast { position: fixed; bottom: 1.2rem; left: 50%; transform: translateX(-50%); background: var(--twilight-dark); color: var(--white); padding: 0.6rem 1.1rem; border-radius: 8px; font-size: 0.8rem; opacity: 0; transition: 0.2s; pointer-events: none; }
+  .toast.show { opacity: 1; }
 </style>
 </head>
 <body>
 
-<!-- PIN GATE -->
 <div id="pin-screen">
-  <div class="eyebrow">Deru: Suara Langit · Organizer</div>
-  <h1>Enter owner PIN</h1>
+  <div class="eyebrow">Deru: Suara Langit · Lorong Belakang &amp; Teduh</div>
+  <h1>Enter organiser PIN</h1>
   <div id="pin-display"></div>
   <div id="pin-error"></div>
   <div id="pin-pad">
-    <button class="pin-btn" data-d="1">1</button>
-    <button class="pin-btn" data-d="2">2</button>
-    <button class="pin-btn" data-d="3">3</button>
-    <button class="pin-btn" data-d="4">4</button>
-    <button class="pin-btn" data-d="5">5</button>
-    <button class="pin-btn" data-d="6">6</button>
-    <button class="pin-btn" data-d="7">7</button>
-    <button class="pin-btn" data-d="8">8</button>
-    <button class="pin-btn" data-d="9">9</button>
-    <button class="pin-btn" id="pin-clear">⌫</button>
-    <button class="pin-btn" data-d="0">0</button>
-    <div></div>
+    <button class="pin-btn" data-d="1">1</button><button class="pin-btn" data-d="2">2</button><button class="pin-btn" data-d="3">3</button>
+    <button class="pin-btn" data-d="4">4</button><button class="pin-btn" data-d="5">5</button><button class="pin-btn" data-d="6">6</button>
+    <button class="pin-btn" data-d="7">7</button><button class="pin-btn" data-d="8">8</button><button class="pin-btn" data-d="9">9</button>
+    <button class="pin-btn" id="pin-clear">⌫</button><button class="pin-btn" data-d="0">0</button><div></div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dash">
   <header>
-    <div class="logo">Teduh</div>
-    <div class="sub">Organizer Dashboard</div>
+    <div class="logo">Lorong Belakang &amp; Teduh</div>
+    <div class="sub">Organiser Dashboard</div>
   </header>
 
   <div class="wrap">
-    <div class="eyebrow">Private — organizer only</div>
-    <h1 class="page-title">Deru: Suara Langit — Sales Overview</h1>
+    <div class="top-row">
+      <div>
+        <div class="eyebrow">Private — organiser only</div>
+        <h1 class="page-title">Deru: Suara Langit — Sales Overview</h1>
+      </div>
+      <button id="refresh-btn">Refresh</button>
+    </div>
 
     <div class="kpi-row">
-      <div class="kpi">
-        <div class="kpi-label">Tickets sold</div>
-        <div class="kpi-val" id="kpi-tickets">0 / 55</div>
-        <div class="kpi-sub" id="kpi-tickets-sub">0% of capacity</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Ticket revenue</div>
-        <div class="kpi-val" id="kpi-ticket-rev">RM0</div>
-        <div class="kpi-sub">across all tiers</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Merch revenue</div>
-        <div class="kpi-val" id="kpi-merch-rev">RM0</div>
-        <div class="kpi-sub" id="kpi-merch-sub">0 items sold</div>
-      </div>
-      <div class="kpi">
-        <div class="kpi-label">Checked in</div>
-        <div class="kpi-val" id="kpi-checkin">0 / 0</div>
-        <div class="kpi-sub">at the door</div>
-      </div>
+      <div class="kpi"><div class="kpi-label">Tickets sold</div><div class="kpi-val" id="kpi-tickets">—</div><div class="kpi-sub" id="kpi-tickets-sub">—</div></div>
+      <div class="kpi"><div class="kpi-label">Ticket revenue</div><div class="kpi-val" id="kpi-ticket-rev">—</div><div class="kpi-sub">excl. fees &amp; merch</div></div>
+      <div class="kpi"><div class="kpi-label">Merch revenue</div><div class="kpi-val" id="kpi-merch-rev">—</div><div class="kpi-sub" id="kpi-merch-sub">—</div></div>
+      <div class="kpi"><div class="kpi-label">Fees collected</div><div class="kpi-val" id="kpi-fees">—</div><div class="kpi-sub">RM3.50/ticket, RM1/merch</div></div>
+      <div class="kpi"><div class="kpi-label">Checked in</div><div class="kpi-val" id="kpi-checkin">—</div><div class="kpi-sub" id="kpi-pending-sub">—</div></div>
     </div>
 
-    <div class="section-label">Ticket tiers — manage availability</div>
-    <div class="tier-mgmt">
-      <div id="tier-rows"></div>
+    <div class="section-label">Shared capacity (Early Bird + General Admission combined)</div>
+    <div class="capacity-box">
+      <span>Total seats:</span>
+      <input type="number" id="capacity-input" min="0">
+      <button id="capacity-save" style="font-family:var(--font-body); font-size:0.78rem; border:2px solid var(--black); background:var(--white); border-radius:6px; padding:0.5rem 0.9rem; box-shadow:2px 2px 0px var(--black);">Save</button>
+      <span id="capacity-note" style="font-size:0.78rem; color:var(--muted-text);"></span>
     </div>
 
-    <div class="section-label">Merchandise sold</div>
-    <table class="simple">
-      <tr><th>Item</th><th>Price</th><th class="num-cell">Qty sold</th><th class="num-cell">Revenue</th></tr>
-      <tr><td>Event Tee</td><td>RM45</td><td class="num-cell">8</td><td class="num-cell">RM360</td></tr>
-      <tr><td>A3 Poster</td><td>RM25</td><td class="num-cell">6</td><td class="num-cell">RM150</td></tr>
-      <tr><td>Tote Bag</td><td>RM30</td><td class="num-cell">1</td><td class="num-cell">RM30</td></tr>
-    </table>
+    <div class="section-label">Ticket tiers — pause/resume</div>
+    <div class="tier-mgmt"><div id="tier-rows"></div></div>
 
-    <div class="section-label">Event Tee — sizes to pre-order</div>
-    <table class="simple">
-      <tr><th>Size</th><th class="num-cell">Qty ordered</th></tr>
-      <tr><td>S</td><td class="num-cell">2</td></tr>
-      <tr><td>M</td><td class="num-cell">3</td></tr>
-      <tr><td>L</td><td class="num-cell">2</td></tr>
-      <tr><td>XL</td><td class="num-cell">1</td></tr>
-      <tr><td><b>Total</b></td><td class="num-cell"><b>8</b></td></tr>
-    </table>
+    <div class="section-label">Merch to prepare (paid orders only)</div>
+    <div class="merch-fulfillment" id="merch-fulfillment"></div>
 
-    <div class="section-label">Buyers</div>
+    <div class="section-label">Buyers / Orders</div>
     <div class="buyer-controls">
-      <input type="text" id="buyer-search" placeholder="Search by name or email…">
-      <select id="checkin-filter">
-        <option value="all">All check-in status</option>
-        <option value="yes">Checked in</option>
-        <option value="no">Not checked in</option>
+      <input type="text" id="buyer-search" placeholder="Search by name, email, or order number…">
+      <select id="status-filter">
+        <option value="all">All statuses</option>
+        <option value="paid">Paid</option>
+        <option value="pending">Pending</option>
+        <option value="failed">Failed</option>
       </select>
     </div>
-    <table class="simple" id="buyers-table">
-      <tr><th>Buyer</th><th>Email</th><th>Items</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>
-    </table>
-
-    <div class="note-box">
-      This is a working prototype: tier toggles and quota fields update the sold-out logic live in your browser, but nothing is saved yet. Once wired to Supabase, toggling a tier off (or hitting quota) will hide its price on the public ticket page automatically, and buyer/revenue data will populate here in real time as orders come in.
-    </div>
+    <table class="simple" id="buyers-table"></table>
   </div>
 </div>
 
+<div class="toast" id="toast"></div>
+
 <script>
-  // ============================================================
-  // MOCK DATA — replace with real Supabase queries once wired up
-  // ============================================================
-  const tiers = [
-    { id: 'eb', name: 'Early Bird', price: 55, quota: 30, sold: 30, active: true },
-    { id: 'ga', name: 'General Admission', price: 70, quota: 25, sold: 6, active: true },
-  ];
+  const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
 
-  const buyers = [
-    { name: 'Nur Aisyah', email: 'aisyah@example.com', items: '1× General Admission', amount: 70, paid: true, checkedIn: false },
-    { name: 'Faiz Rahman', email: 'faiz@example.com', items: '2× Early Bird, 1× Tee', amount: 155, paid: true, checkedIn: true },
-    { name: 'Wei Ling', email: 'weiling@example.com', items: '1× GA, 1× Poster', amount: 95, paid: true, checkedIn: false },
-    { name: 'Haziq Aiman', email: 'haziq@example.com', items: '1× Early Bird', amount: 55, paid: false, checkedIn: false },
-  ];
-  // ============================================================
-
-  let enteredPin = "";
-  const OWNER_PIN = "8808"; // replace with real owner PIN
-
+  let enteredPin = "", currentPin = "", dashboardData = null;
   const pinDisplay = document.getElementById('pin-display');
   const pinError = document.getElementById('pin-error');
 
   document.querySelectorAll('.pin-btn[data-d]').forEach(btn => {
     btn.addEventListener('click', () => {
-      if (enteredPin.length >= 4) return;
+      if (enteredPin.length >= 6) return;
       enteredPin += btn.dataset.d;
       pinDisplay.textContent = "•".repeat(enteredPin.length);
-      if (enteredPin.length === 4) checkPin();
+      pinError.textContent = "";
+      if (enteredPin.length === 4) setTimeout(tryLogin, 80);
     });
   });
-  document.getElementById('pin-clear').addEventListener('click', () => {
-    enteredPin = ""; pinDisplay.textContent = ""; pinError.textContent = "";
-  });
+  document.getElementById('pin-clear').addEventListener('click', () => { enteredPin = ""; pinDisplay.textContent = ""; });
 
-  function checkPin(){
-    if (enteredPin === OWNER_PIN) {
+  async function tryLogin(){
+    const res = await fetchDashboard(enteredPin);
+    if (res.error) {
+      pinError.textContent = res.error === 'Invalid PIN' ? 'Wrong PIN' : res.error;
+      enteredPin = ""; setTimeout(() => { pinDisplay.textContent = ""; }, 300);
+    } else {
+      currentPin = enteredPin; dashboardData = res;
       document.getElementById('pin-screen').style.display = 'none';
       document.getElementById('dash').style.display = 'block';
       renderAll();
-    } else {
-      pinError.textContent = "Wrong PIN";
-      enteredPin = "";
-      setTimeout(() => { pinDisplay.textContent = ""; }, 400);
     }
   }
 
-  function tierStatus(t){
-    if (!t.active) return { label: 'Paused', cls: 'paused' };
-    if (t.sold >= t.quota) return { label: 'Sold out', cls: 'soldout' };
-    return { label: 'Active', cls: 'active' };
+  async function fetchDashboard(pin){
+    const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-organiser-dashboard-data`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+      body: JSON.stringify({ pin }),
+    });
+    return await res.json();
   }
+
+  async function refreshData(){
+    if (!currentPin) return;
+    const res = await fetchDashboard(currentPin);
+    if (!res.error) { dashboardData = res; renderAll(); showToast('Refreshed'); }
+  }
+  document.getElementById('refresh-btn').addEventListener('click', refreshData);
+
+  function showToast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1600);
+  }
+
+  function renderKpis(){
+    const k = dashboardData.kpis;
+    document.getElementById('kpi-tickets').textContent = k.total_capacity ? `${k.tickets_sold} / ${k.total_capacity}` : `${k.tickets_sold}`;
+    document.getElementById('kpi-tickets-sub').textContent = k.total_capacity ? `${Math.round(k.tickets_sold / k.total_capacity * 100)}% of capacity` : 'uncapped';
+    document.getElementById('kpi-ticket-rev').textContent = `RM${k.ticket_revenue.toFixed(2)}`;
+    document.getElementById('kpi-merch-rev').textContent = `RM${k.merch_revenue.toFixed(2)}`;
+    document.getElementById('kpi-merch-sub').textContent = `${k.total_merch_qty_paid} item(s) sold`;
+    document.getElementById('kpi-fees').textContent = `RM${k.fee_revenue.toFixed(2)}`;
+    document.getElementById('kpi-checkin').textContent = `${k.checked_in} / ${k.tickets_sold}`;
+    document.getElementById('kpi-pending-sub').textContent = `${k.pending_orders} pending (last hour)`;
+  }
+
+  function renderCapacity(){
+    const input = document.getElementById('capacity-input');
+    input.value = dashboardData.event.shared_capacity ?? '';
+  }
+  document.getElementById('capacity-save').addEventListener('click', async () => {
+    const val = document.getElementById('capacity-input').value;
+    const shared_capacity = val === '' ? null : parseInt(val);
+    const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-update-settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+      body: JSON.stringify({ pin: currentPin, shared_capacity }),
+    });
+    const data = await res.json();
+    document.getElementById('capacity-note').textContent = data.error ? data.error : 'Saved';
+    if (!data.error) await refreshData();
+  });
 
   function renderTiers(){
     const container = document.getElementById('tier-rows');
     container.innerHTML = '';
-    tiers.forEach(t => {
-      const status = tierStatus(t);
+    (dashboardData.tiers || []).forEach(t => {
       const row = document.createElement('div');
       row.className = 'tier-row';
       row.innerHTML = `
-        <div class="tier-name-cell">${t.name}</div>
-        <div class="tier-cell-price ${t.active ? '' : 'tier-price-cell hidden-price'}">${t.active ? 'RM' + t.price : 'Hidden'}</div>
-        <div class="tier-cell-quota"><input type="number" class="quota-input" value="${t.quota}" min="${t.sold}" data-id="${t.id}"></div>
-        <div class="tier-cell-status"><span class="sold-cell">${t.sold} / ${t.quota}</span><span class="status-badge ${status.cls}">${status.label}</span></div>
-        <div class="tier-cell-toggle">
-          <label class="toggle">
-            <input type="checkbox" ${t.active ? 'checked' : ''} data-id="${t.id}" class="tier-toggle">
-            <span class="toggle-slider"></span>
-          </label>
-        </div>
+        <div class="tier-name-cell">${escapeHtml(t.name)} <span style="color:var(--muted-text); font-weight:400;">RM${Number(t.price).toFixed(0)}</span></div>
+        <div class="sold-cell">${t.sold_count} sold</div>
+        <span class="status-badge ${t.active ? 'active' : 'paused'}">${t.active ? 'Active' : 'Paused'}</span>
+        <label class="toggle">
+          <input type="checkbox" ${t.active ? 'checked' : ''} data-id="${t.id}" class="tier-toggle">
+          <span class="toggle-slider"></span>
+        </label>
       `;
       container.appendChild(row);
     });
-
-    container.querySelectorAll('.quota-input').forEach(input => {
-      input.addEventListener('change', () => {
-        const t = tiers.find(x => x.id === input.dataset.id);
-        const newQuota = Math.max(t.sold, parseInt(input.value) || t.sold);
-        t.quota = newQuota;
-        renderAll();
-      });
-    });
     container.querySelectorAll('.tier-toggle').forEach(toggle => {
-      toggle.addEventListener('change', () => {
-        const t = tiers.find(x => x.id === toggle.dataset.id);
-        t.active = toggle.checked;
-        renderAll();
+      toggle.addEventListener('change', async () => {
+        const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-update-settings`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+          body: JSON.stringify({ pin: currentPin, tier_id: toggle.dataset.id, active: toggle.checked }),
+        });
+        const data = await res.json();
+        showToast(data.error ? data.error : (toggle.checked ? 'Tier resumed' : 'Tier paused'));
+        await refreshData();
       });
     });
   }
 
-  function renderKpis(){
-    const totalSold = tiers.reduce((s, t) => s + t.sold, 0);
-    const capacity = 55;
-    const ticketRev = tiers.reduce((s, t) => s + t.sold * t.price, 0);
-    const merchRev = 8*45 + 6*25 + 1*30;
-    const merchQty = 8 + 6 + 1;
-    const checkedIn = buyers.filter(b => b.checkedIn).length;
-
-    document.getElementById('kpi-tickets').textContent = `${totalSold} / ${capacity}`;
-    document.getElementById('kpi-tickets-sub').textContent = `${Math.round(totalSold/capacity*100)}% of capacity`;
-    document.getElementById('kpi-ticket-rev').textContent = `RM${ticketRev}`;
-    document.getElementById('kpi-merch-rev').textContent = `RM${merchRev}`;
-    document.getElementById('kpi-merch-sub').textContent = `${merchQty} items sold`;
-    document.getElementById('kpi-checkin').textContent = `${checkedIn} / ${totalSold}`;
+  function renderMerchFulfillment(){
+    const container = document.getElementById('merch-fulfillment');
+    const list = dashboardData.merch_fulfillment || [];
+    if (list.length === 0) {
+      container.innerHTML = '<div class="empty-note">No merch orders yet.</div>';
+      return;
+    }
+    container.innerHTML = list.map(m => `
+      <div class="merch-row">
+        <span>${escapeHtml(m.name)}${m.size ? ` (${escapeHtml(m.size)})` : ''}</span>
+        <span class="qty">${m.qty}</span>
+      </div>
+    `).join('');
   }
 
   function renderBuyers(){
     const search = document.getElementById('buyer-search').value.toLowerCase();
-    const filter = document.getElementById('checkin-filter').value;
+    const statusFilter = document.getElementById('status-filter').value;
     const table = document.getElementById('buyers-table');
-    table.innerHTML = '<tr><th>Buyer</th><th>Email</th><th>Items</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>';
+    table.innerHTML = '<tr><th>Order</th><th>Ticket No.</th><th>Buyer</th><th>Contact</th><th>Tickets</th><th>Merch</th><th class="num-cell">Amount</th><th>Payment</th><th>Check-in</th></tr>';
 
-    buyers
-      .filter(b => (b.name.toLowerCase().includes(search) || b.email.toLowerCase().includes(search)))
-      .filter(b => filter === 'all' || (filter === 'yes' && b.checkedIn) || (filter === 'no' && !b.checkedIn))
-      .forEach(b => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${b.name}</td>
-          <td>${b.email}</td>
-          <td>${b.items}</td>
-          <td class="num-cell">RM${b.amount}</td>
-          <td><span class="${b.paid ? 'pay-paid' : 'pay-pending'}">${b.paid ? 'Paid' : 'Pending'}</span></td>
-          <td><span class="${b.checkedIn ? 'checkin-yes' : 'checkin-no'}">${b.checkedIn ? 'Checked in' : 'Not yet'}</span></td>
-        `;
-        table.appendChild(row);
-      });
+    const filtered = (dashboardData.buyers || [])
+      .filter(b => (b.buyer_name.toLowerCase().includes(search) || b.buyer_email.toLowerCase().includes(search) || b.order_number.toLowerCase().includes(search)))
+      .filter(b => statusFilter === 'all' || b.status === statusFilter);
+
+    if (filtered.length === 0) {
+      table.innerHTML += `<tr><td colspan="9" class="empty-note">No matching orders yet.</td></tr>`;
+      return;
+    }
+
+    filtered.forEach(b => {
+      const payClass = b.status === 'paid' ? 'pay-paid' : (b.status === 'pending' ? 'pay-pending' : 'pay-failed');
+      const checkinLabel = b.ticket_count > 0 ? `${b.checked_in_count} / ${b.ticket_count}` : '—';
+      const checkinClass = b.checked_in_count > 0 ? 'checkin-yes' : 'checkin-no';
+      const ticketNoLabel = (b.ticket_nos && b.ticket_nos.length > 0) ? b.ticket_nos.join(', ') : '—';
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${escapeHtml(b.order_number)}</td>
+        <td>${escapeHtml(ticketNoLabel)}</td>
+        <td>${escapeHtml(b.buyer_name)}</td>
+        <td>${escapeHtml(b.buyer_email)}${b.buyer_phone ? '<br>' + escapeHtml(b.buyer_phone) : ''}</td>
+        <td>${escapeHtml(b.tickets_summary)}</td>
+        <td>${escapeHtml(b.merch_summary)}</td>
+        <td class="num-cell">RM${Number(b.amount).toFixed(2)}</td>
+        <td><span class="${payClass}">${b.status}</span></td>
+        <td><span class="${checkinClass}">${checkinLabel}</span></td>
+      `;
+      table.appendChild(row);
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str ?? '';
+    return div.innerHTML;
   }
 
   function renderAll(){
-    renderTiers();
-    renderKpis();
-    renderBuyers();
+    renderKpis(); renderCapacity(); renderTiers(); renderMerchFulfillment(); renderBuyers();
   }
 
   document.getElementById('buyer-search').addEventListener('input', renderBuyers);
-  document.getElementById('checkin-filter').addEventListener('change', renderBuyers);
+  document.getElementById('status-filter').addEventListener('change', renderBuyers);
 </script>
 
 </body>

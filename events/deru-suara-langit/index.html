@@ -584,6 +584,7 @@
   <!-- TICKETS -->
   <div class="tabpanel active" id="tab-tickets">
     <div class="section-label">Choose your ticket</div>
+    <div id="seats-status" style="font-size:0.8rem; color:var(--muted-text); margin-bottom:0.8rem; display:none;"></div>
 
     <div class="tier-card" data-tier="Early Bird" data-price="55" data-active="true">
       <div>
@@ -789,9 +790,9 @@
     <div id="cart-lines"><div class="cart-empty">Nothing added yet</div></div>
 
     <div class="buyer-form">
-      <input type="text" placeholder="Full name (as per IC)">
-      <input type="email" placeholder="Email — your ticket + QR will be sent here">
-      <input type="tel" placeholder="Phone number">
+      <input type="text" id="buyer-name" placeholder="Full name (as per IC)">
+      <input type="email" id="buyer-email" placeholder="Email — your ticket + QR will be sent here">
+      <input type="tel" id="buyer-phone" placeholder="Phone number">
     </div>
 
     <div class="cart-row">
@@ -808,7 +809,7 @@
       <span class="subtotal-amt" id="total-amt">RM0</span>
     </div>
 
-    <button class="cta-btn">Continue to payment</button>
+    <button class="cta-btn" id="checkout-btn">Continue to payment</button>
     <div class="cta-note">Payment via Bayarcash</div>
   </div>
 
@@ -939,6 +940,107 @@
   });
 
   renderCart();
+
+  // ── Live shared-capacity check (60 seats across BOTH tiers) ──────────
+  const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+  const SUPABASE_FUNCTIONS_URL = 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+  const LOW_STOCK_THRESHOLD = 10;
+  let seatsRemaining = null;
+
+  async function fetchSeatsRemaining(){
+    try {
+      const url = `${SUPABASE_URL}/rest/v1/ticket_tiers`
+        + `?select=sold_count,active,events!inner(slug,shared_capacity)`
+        + `&events.slug=eq.deru-suara-langit`;
+      const res = await fetch(url, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+      });
+      const rows = await res.json();
+      if (!Array.isArray(rows) || rows.length === 0) return;
+      const capacity = rows[0].events.shared_capacity;
+      const sold = rows.reduce((sum, r) => sum + (r.sold_count || 0), 0);
+      seatsRemaining = capacity != null ? capacity - sold : null;
+      applySeatsStatus();
+    } catch (e) {
+      console.error('Could not fetch seat availability', e);
+    }
+  }
+
+  function applySeatsStatus(){
+    const el = document.getElementById('seats-status');
+    if (seatsRemaining == null) return;
+    if (seatsRemaining <= 0) {
+      el.textContent = 'Sold out — no seats remaining.';
+      el.style.color = '#f06553';
+      el.style.display = 'block';
+      document.querySelectorAll('.tier-card .qty-btn').forEach(b => { b.disabled = true; b.style.opacity = 0.4; });
+    } else if (seatsRemaining <= LOW_STOCK_THRESHOLD) {
+      el.textContent = `Only ${seatsRemaining} seat${seatsRemaining === 1 ? '' : 's'} left (Early Bird + General Admission combined).`;
+      el.style.color = '#f06553';
+      el.style.display = 'block';
+    }
+  }
+  fetchSeatsRemaining();
+
+  // ── Real checkout ──────────────────────────────────────────────────
+  const checkoutBtn = document.getElementById('checkout-btn');
+  checkoutBtn.addEventListener('click', async () => {
+    const items = [];
+    let ticketQtyRequested = 0;
+
+    Object.entries(ticketCart).forEach(([name, item]) => {
+      if (item.qty > 0) {
+        items.push({ type: 'ticket', tier_name: name, qty: item.qty });
+        ticketQtyRequested += item.qty;
+      }
+    });
+    Object.entries(merchCart).forEach(([name, item]) => {
+      if (item.qty > 0) {
+        items.push({ type: 'merch', name, size: name === 'Event Tee' ? teeSize : null, qty: item.qty });
+      }
+    });
+
+    if (items.length === 0) {
+      alert('Add at least one ticket or merch item first.');
+      return;
+    }
+    if (seatsRemaining != null && ticketQtyRequested > seatsRemaining) {
+      alert(`Only ${seatsRemaining} seat(s) remaining — please reduce your ticket quantity.`);
+      return;
+    }
+
+    const buyerName = document.getElementById('buyer-name').value.trim();
+    const buyerEmail = document.getElementById('buyer-email').value.trim();
+    const buyerPhone = document.getElementById('buyer-phone').value.trim();
+    if (!buyerName || !buyerEmail) {
+      alert('Please fill in your name and email.');
+      return;
+    }
+
+    checkoutBtn.disabled = true;
+    checkoutBtn.textContent = 'Redirecting to payment…';
+
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-checkout-intent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify({ items, buyer_name: buyerName, buyer_email: buyerEmail, buyer_phone: buyerPhone }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert(data.error);
+        checkoutBtn.disabled = false;
+        checkoutBtn.textContent = 'Continue to payment';
+        return;
+      }
+      window.location.href = data.payment_url;
+    } catch (e) {
+      alert('Something went wrong. Please try again.');
+      checkoutBtn.disabled = false;
+      checkoutBtn.textContent = 'Continue to payment';
+    }
+  });
 </script>
 
 </body>

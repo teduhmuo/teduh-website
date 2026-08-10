@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Confirmation — Deru: Suara Langit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,400;1,600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg-offwhite: #FAF7F2; --sunset-coral: #f06553; --twilight-dark: #120F18;
+    --black: #000000; --muted-text: #686270; --white: #FFFFFF;
+    --font-display: 'Playfair Display', Georgia, serif; --font-body: 'Space Grotesk', sans-serif;
+  }
+  body { font-family: var(--font-body); background: var(--bg-offwhite); color: var(--twilight-dark); min-height: 100vh; }
+  header { background: var(--bg-offwhite); padding: 1.25rem 1.5rem; border-bottom: 2.5px solid var(--black); }
+  header .logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--sunset-coral); text-transform: uppercase; letter-spacing: 0.05em; text-shadow: 2px 2px 0px var(--black); }
+  main { max-width: 480px; margin: 3rem auto; padding: 0 1.5rem; text-align: center; }
+  .icon { width: 70px; height: 70px; border-radius: 50%; background: var(--sunset-coral); border: 2.5px solid var(--black); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.3rem; font-size: 2rem; color: var(--white); }
+  h1 { font-family: var(--font-display); font-weight: 700; font-style: italic; font-size: 1.8rem; margin-bottom: 0.8rem; }
+  .sub { color: var(--muted-text); font-size: 0.9rem; margin-bottom: 2rem; line-height: 1.6; }
+  .details { background: var(--white); border: 2.5px solid var(--black); border-radius: 10px; padding: 1.2rem 1.4rem; box-shadow: 4px 4px 0px var(--black); text-align: left; }
+  .row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px dashed rgba(0,0,0,0.15); font-size: 0.88rem; }
+  .row:last-child { border-bottom: none; }
+  .row .label { color: var(--muted-text); }
+  .row .value { font-weight: 700; }
+  .back-link { display: inline-block; margin-top: 2rem; font-size: 0.85rem; font-weight: 700; color: var(--sunset-coral); text-decoration: none; }
+</style>
+</head>
+<body>
+
+<header><div class="logo">Deru: Suara Langit</div></header>
+
+<main>
+  <div id="content">
+    <p style="color:var(--muted-text);">Checking your order…</p>
+  </div>
+  <a class="back-link" href="/events/deru-suara-langit">← Back to event page</a>
+</main>
+
+<script>
+  const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+  const params = new URLSearchParams(window.location.search);
+  const orderNumber = params.get('order_number');
+  const content = document.getElementById('content');
+
+  function renderPending(){
+    content.innerHTML = `
+      <div class="icon">⏳</div>
+      <h1>Confirming payment…</h1>
+      <div class="sub">This usually takes a few seconds.</div>
+      <div class="details">
+        <div class="row"><span class="label">Order number</span><span class="value">${orderNumber ?? '—'}</span></div>
+      </div>
+    `;
+  }
+
+  function renderPaid(){
+    content.innerHTML = `
+      <div class="icon">✓</div>
+      <h1>You're confirmed!</h1>
+      <div class="sub">Your e-ticket with QR code has been emailed to you. Check your inbox (and spam folder, just in case).</div>
+      <div class="details">
+        <div class="row"><span class="label">Order number</span><span class="value">${orderNumber}</span></div>
+        <div class="row"><span class="label">Status</span><span class="value">paid</span></div>
+      </div>
+    `;
+  }
+
+  function renderFailed(status){
+    content.innerHTML = `
+      <div class="icon" style="background:#B8860B;">✕</div>
+      <h1>Payment ${status}</h1>
+      <div class="sub">Something went wrong with this payment. No charge should have gone through — please try again from the event page.</div>
+      <div class="details">
+        <div class="row"><span class="label">Order number</span><span class="value">${orderNumber}</span></div>
+        <div class="row"><span class="label">Status</span><span class="value">${status}</span></div>
+      </div>
+    `;
+  }
+
+  async function checkStatus(){
+    if (!orderNumber) {
+      content.innerHTML = `<p style="color:var(--muted-text);">No order number found in this link.</p>`;
+      return;
+    }
+    try {
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/order_status_public?order_number=eq.${encodeURIComponent(orderNumber)}&select=order_number,status`,
+        { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+      );
+      const rows = await res.json();
+      if (!Array.isArray(rows) || rows.length === 0) { renderPending(); return; }
+      const status = rows[0].status;
+      if (status === 'paid') { renderPaid(); return; }
+      if (status === 'failed' || status === 'cancelled') { renderFailed(status); return; }
+      renderPending();
+      setTimeout(checkStatus, 4000);
+    } catch (e) {
+      renderPending();
+      setTimeout(checkStatus, 4000);
+    }
+  }
+
+  checkStatus();
+</script>
+
+</body>
+</html>
