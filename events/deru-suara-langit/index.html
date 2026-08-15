@@ -459,7 +459,9 @@
     font-family: var(--font-display); 
     font-weight: 700; 
     flex-shrink: 0; 
+    overflow: hidden;
   }
+  .organiser-mark img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .organiser-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; font-style: italic; margin-bottom: 0.1rem; }
   .organiser-role { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--sunset-coral); margin-bottom: 0.4rem; }
   .organiser-blurb { font-size: 0.85rem; color: var(--muted-text); line-height: 1.5; }
@@ -610,7 +612,7 @@
     <div class="section-label">Organised by</div>
 
     <div class="organiser-card">
-      <div class="organiser-mark">LB</div>
+      <div class="organiser-mark"><img src="/images/logos/lorong-belakang.jpeg" alt="Lorong Belakang"></div>
       <div>
         <div class="organiser-name">Lorong Belakang</div>
         <div class="organiser-role">DIY creative collective · Indie art space · Muar</div>
@@ -622,7 +624,7 @@
     <div class="section-label" style="margin-top:1.75rem;">Supported by</div>
 
     <div class="organiser-card">
-      <div class="organiser-mark">T</div>
+      <div class="organiser-mark"><img src="/images/logos/teduh.jpeg" alt="Teduh"></div>
       <div>
         <div class="organiser-name">Teduh</div>
         <div class="organiser-role">Specialty coffee, Neapolitan pizzeria &amp; art community · Muar</div>
