@@ -91,6 +91,16 @@
     position: relative;
     overflow: hidden;
   }
+  .hero-poster {
+    padding: 0;
+    line-height: 0;
+  }
+  .hero-poster img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 9.5px; /* accounts for the 2.5px border already on .hero */
+  }
   .hero-tag {
     display: inline-block;
     font-size: 0.68rem;
@@ -469,25 +479,8 @@
 
 <div class="hero-container">
   <div class="presents-label">Lorong Belakang Presents</div>
-  <div class="hero">
-    <div class="hero-tag">Nightfall · Post-Rock / Shoegaze</div>
-    
-    <h1>
-      <span class="title-main">DERU:</span>
-      <span class="title-sub">Suara Langit</span>
-    </h1>
-
-    <div class="hero-meta">
-      Sat, 10 Oct 2026<br>
-      Muo Boutique Hotel (Rooftop), Muar<br>
-      60 Seats Only • Door Opens at 6.00PM
-    </div>
-
-    <div class="hero-lineup">
-      <span class="lineup-headliner">DEEPSET</span>
-      <span class="lineup-support">HEAVENER</span>
-      <span class="lineup-support">THE WORLD ENDS WITH YOU</span>
-    </div>
+  <div class="hero hero-poster">
+    <img src="/images/flyers/deru-suara-langit.jpg" alt="Deru: Suara Langit — Sat, 10 Oct 2026, Muo Boutique Hotel (Rooftop), Muar">
   </div>
 </div>
 
