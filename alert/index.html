@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Teduh — Order Alert</title>
+<style>
+  :root {
+    --dark-brown: #2b1c14;
+    --medium-brown: #6b5344;
+    --accent: #c0783c;
+    --alert-red: #c0392b;
+    --success: #3a7d44;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow: hidden;
+    user-select: none;
+  }
+  body {
+    background: var(--dark-brown);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+  body.alerting {
+    animation: flash 1s infinite;
+  }
+  @keyframes flash {
+    0%, 100% { background: var(--alert-red); }
+    50% { background: #7a1f16; }
+  }
+
+  /* Idle state */
+  #idle-screen {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  #idle-screen .logo { font-size: 2.2rem; font-weight: 700; letter-spacing: 0.05em; }
+  #idle-screen .status-line { display: flex; align-items: center; gap: 0.6rem; font-size: 1.1rem; color: #cbb8a8; }
+  .status-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--success); }
+  .status-dot.disconnected { background: var(--alert-red); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+  #clock { font-size: 1.4rem; color: #a68f7c; margin-top: 0.5rem; }
+  #test-btn {
+    margin-top: 2rem;
+    padding: 0.8rem 1.8rem;
+    border-radius: 999px;
+    border: 1px solid #6b5344;
+    background: transparent;
+    color: #cbb8a8;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  #test-btn:hover { background: rgba(255,255,255,0.06); }
+  #notif-btn {
+    margin-top: 0.8rem;
+    padding: 0.8rem 1.8rem;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    background: rgba(192,120,60,0.2);
+    color: #ffd9b3;
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  #notif-btn:hover { background: rgba(192,120,60,0.35); }
+
+  /* Alert state */
+  #alert-screen { display: none; width: 100%; max-width: 720px; padding: 2rem; text-align: center; }
+  body.alerting #alert-screen { display: block; }
+  body.alerting #idle-screen { display: none; }
+
+  #alert-screen .badge {
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.15);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+  #alert-screen .queue-num { font-size: 5rem; font-weight: 800; line-height: 1; margin: 0.3rem 0; }
+  #alert-screen .order-type { font-size: 1.6rem; font-weight: 600; margin-bottom: 0.3rem; }
+  #alert-screen .pickup-time { font-size: 1.3rem; color: #ffe1d6; margin-bottom: 1rem; }
+  #alert-screen .customer { font-size: 1.3rem; margin-bottom: 1.2rem; }
+  #alert-screen .customer .phone { opacity: 0.85; font-size: 1.05rem; }
+  #alert-screen .items-box {
+    background: rgba(0,0,0,0.25);
+    border-radius: 16px;
+    padding: 1.2rem 1.5rem;
+    text-align: left;
+    font-size: 1.15rem;
+    line-height: 1.6;
+    max-height: 30vh;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  #alert-screen .address-box { font-size: 1rem; opacity: 0.9; margin-bottom: 1rem; }
+  #alert-screen .notes-box { font-size: 1rem; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 1.2rem; }
+  #queue-remaining { font-size: 0.95rem; opacity: 0.85; margin-bottom: 1rem; }
+
+  #ack-btn {
+    width: 100%;
+    padding: 1.3rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 16px;
+    background: #fff;
+    color: var(--alert-red);
+    cursor: pointer;
+    letter-spacing: 0.03em;
+  }
+  #ack-btn:active { transform: scale(0.98); }
+
+  #wake-lock-warning {
+    position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+    background: rgba(255,255,255,0.12); padding: 0.5rem 1rem; border-radius: 10px;
+    font-size: 0.85rem; color: #ffcf99; display: none;
+  }
+</style>
+</head>
+<body>
+
+  <div id="idle-screen">
+    <div class="logo">TEDUH ORDER ALERT</div>
+    <div class="status-line"><span id="status-dot" class="status-dot"></span><span id="status-text">Connecting…</span></div>
+    <div id="clock"></div>
+    <button id="test-btn" onclick="testAlarm()">🔊 Test Alarm</button>
+    <button id="notif-btn" onclick="requestNotificationPermission()" style="display:none;">🔔 Enable Desktop Notifications</button>
+  </div>
+
+  <div id="alert-screen">
+    <div class="badge" id="al-badge">NEW ORDER</div>
+    <div class="queue-num" id="al-queue">—</div>
+    <div class="order-type" id="al-type"></div>
+    <div class="pickup-time" id="al-pickup" style="display:none;"></div>
+    <div class="customer">
+      <div id="al-name"></div>
+      <div class="phone" id="al-phone"></div>
+    </div>
+    <div class="items-box" id="al-items"></div>
+    <div class="address-box" id="al-address" style="display:none;"></div>
+    <div class="notes-box" id="al-notes" style="display:none;"></div>
+    <div id="queue-remaining"></div>
+    <button id="ack-btn" onclick="acknowledgeCurrent()">✓ ACKNOWLEDGE</button>
+  </div>
+
+  <div id="wake-lock-warning">⚠ Screen may sleep — check your PC's power settings so this stays on.</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── Config ─────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
+
+let alertQueue = [];   // orders waiting to be acknowledged, oldest first
+let alarmTimer = null;
+let audioCtx = null;
+
+// ── Clock ──────────────────────────────────────────────────────────
+function tickClock() {
+  document.getElementById('clock').textContent = new Date().toLocaleTimeString('en-MY', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+// ── Alarm sound (generated tone, no external audio file needed) ────
+function beep() {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = 880;
+    gain.gain.value = 0.3;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    setTimeout(() => { osc.stop(); }, 220);
+  } catch (e) { console.warn('Audio error:', e); }
+}
+
+function startAlarmLoop() {
+  if (alarmTimer) return;
+  beep();
+  alarmTimer = setInterval(beep, 700);
+}
+
+function stopAlarmLoop() {
+  if (alarmTimer) { clearInterval(alarmTimer); alarmTimer = null; }
+}
+
+function testAlarm() {
+  beep();
+  setTimeout(beep, 700);
+  setTimeout(beep, 1400);
+}
+
+// ── Rendering ──────────────────────────────────────────────────────
+function renderCurrentAlert() {
+  if (!alertQueue.length) {
+    document.body.classList.remove('alerting');
+    stopAlarmLoop();
+    return;
+  }
+  document.body.classList.add('alerting');
+  startAlarmLoop();
+
+  const o = alertQueue[0];
+  const isPickup = (o.fulfillment_type || 'pickup') !== 'delivery';
+
+  document.getElementById('al-queue').textContent = o.queue_number || '—';
+  document.getElementById('al-type').textContent = isPickup ? '🥡 Pickup Order' : '🛵 Delivery Order';
+
+  const pickupEl = document.getElementById('al-pickup');
+  if (isPickup && o.pickup_time) {
+    pickupEl.style.display = 'block';
+    pickupEl.textContent = 'Requested: ' + o.pickup_time;
+  } else {
+    pickupEl.style.display = 'none';
+  }
+
+  document.getElementById('al-name').textContent = o.customer_name || '';
+  document.getElementById('al-phone').textContent = o.phone || '';
+  document.getElementById('al-items').innerHTML = (o.items || '')
+    .split(', ')
+    .map(i => '· ' + i)
+    .join('<br>');
+
+  const addrEl = document.getElementById('al-address');
+  if (!isPickup && o.address) {
+    addrEl.style.display = 'block';
+    addrEl.textContent = '📍 ' + o.address;
+  } else {
+    addrEl.style.display = 'none';
+  }
+
+  const notesEl = document.getElementById('al-notes');
+  if (o.notes) {
+    notesEl.style.display = 'block';
+    notesEl.textContent = 'Note: ' + o.notes;
+  } else {
+    notesEl.style.display = 'none';
+  }
+
+  const remaining = alertQueue.length - 1;
+  document.getElementById('queue-remaining').textContent =
+    remaining > 0 ? (remaining + ' more order' + (remaining > 1 ? 's' : '') + ' waiting') : '';
+}
+
+// ── Acknowledge ────────────────────────────────────────────────────
+async function acknowledgeCurrent() {
+  if (!alertQueue.length) return;
+  const o = alertQueue[0];
+  alertQueue.shift();
+  renderCurrentAlert();
+
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/queue_orders?id=eq.${o.id}`, {
+      method: 'PATCH',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({ alert_acknowledged: true }),
+    });
+  } catch (e) {
+    console.error('Failed to mark acknowledged:', e);
+  }
+}
+
+function pushAlert(order) {
+  if (alertQueue.find(o => o.id === order.id)) return; // avoid duplicates
+  alertQueue.push(order);
+  renderCurrentAlert();
+  fireOsNotification(order);
+}
+
+// ── Native OS notification (pops up even if this window is covered by
+// another app like the Loyverse POS software) ──────────────────────
+function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    Notification.requestPermission().then(updateNotifButtonVisibility);
+  }
+}
+
+function updateNotifButtonVisibility() {
+  const btn = document.getElementById('notif-btn');
+  if (!btn) return;
+  const supported = 'Notification' in window;
+  btn.style.display = (supported && Notification.permission === 'default') ? 'inline-block' : 'none';
+}
+updateNotifButtonVisibility();
+
+function fireOsNotification(order) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const isPickup = (order.fulfillment_type || 'pickup') !== 'delivery';
+  const n = new Notification('🔔 New order — #' + (order.queue_number || ''), {
+    body: (isPickup ? 'Pickup' : 'Delivery') +
+      (order.pickup_time ? ' · ' + order.pickup_time : '') +
+      '\n' + (order.customer_name || '') +
+      '\n' + (order.items || ''),
+    requireInteraction: true, // stays on screen until dismissed, doesn't auto-vanish
+    tag: 'teduh-order-' + order.id, // avoid stacking duplicate notifications for the same order
+  });
+  n.onclick = () => { window.focus(); n.close(); };
+}
+
+// ── Backfill: catch anything missed while offline/reloading ────────
+async function backfillMissedOrders() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/queue_orders?alert_acknowledged=eq.false&order=created_at.asc&select=*`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` } }
+    );
+    const rows = await res.json();
+    if (Array.isArray(rows)) rows.forEach(pushAlert);
+  } catch (e) {
+    console.error('Backfill error:', e);
+  }
+}
+
+// ── Realtime connection ──────────────────────────────────────────
+function setStatus(connected) {
+  document.getElementById('status-dot').classList.toggle('disconnected', !connected);
+  document.getElementById('status-text').textContent = connected ? 'Connected — listening for orders' : 'Reconnecting…';
+}
+
+function connectRealtime() {
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+  const channel = supabase
+    .channel('order-alert-channel')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'queue_orders' }, (payload) => {
+      pushAlert(payload.new);
+    })
+    .subscribe((status) => {
+      setStatus(status === 'SUBSCRIBED');
+      if (status === 'SUBSCRIBED') backfillMissedOrders();
+    });
+
+  // Safety net: re-check for anything missed every 30s in case a realtime
+  // event is ever dropped (network blip, etc.)
+  setInterval(backfillMissedOrders, 30000);
+}
+
+// ── Keep screen awake ──────────────────────────────────────────────
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      const lock = await navigator.wakeLock.request('screen');
+      lock.addEventListener('release', () => {
+        document.getElementById('wake-lock-warning').style.display = 'block';
+      });
+    } else {
+      document.getElementById('wake-lock-warning').style.display = 'block';
+    }
+  } catch (e) {
+    document.getElementById('wake-lock-warning').style.display = 'block';
+  }
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') requestWakeLock();
+});
+requestWakeLock();
+
+// A user gesture is required before browsers allow audio — clicking Test
+// Alarm also "unlocks" audio for the automatic alerts that follow.
+document.body.addEventListener('click', () => {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}, { once: true });
+
+connectRealtime();
+</script>
+</body>
+</html>
