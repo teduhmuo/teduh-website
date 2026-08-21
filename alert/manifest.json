@@ -1,0 +1,37 @@
+{
+  "name": "Teduh Order Alert",
+  "short_name": "Teduh Alert",
+  "description": "Real-time order alert screen for Teduh Coffee Roastery staff",
+  "start_url": "/alert/",
+  "scope": "/alert/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#2b1c14",
+  "theme_color": "#2b1c14",
+  "icons": [
+    {
+      "src": "/alert/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/alert/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/alert/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/alert/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
