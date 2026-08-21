@@ -564,7 +564,9 @@ function pushAlert(order) {
   alertQueue.push(order);
   renderCurrentAlert();
   fireOsNotification(order);
-  printReceipt(order);
+  // Note: printing no longer happens here — see maybeAutoPrint(), which
+  // fires once loyverse_synced flips true so the printed ticket and the
+  // Loyverse sale record can never go out of sync.
 }
 
 // ── Auto-print via iMin's built-in printer ──────────────────────────
@@ -689,8 +691,41 @@ async function printReceipt(order) {
     p.printAndFeedPaper(60);
     p.partialCut();
     printLog('All print commands sent successfully');
+
+    try {
+      await sbFetch('queue_orders?id=eq.' + order.id, {
+        method: 'PATCH',
+        headers: { 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ printed_at: new Date().toISOString() }),
+      });
+    } catch (markErr) {
+      printLog('Could not mark printed_at (will retry on next backfill): ' + markErr.message);
+    }
   } catch (e) {
     printLog('ERROR during print: ' + (e && e.message ? e.message : JSON.stringify(e)));
+  }
+}
+
+// ── Auto-print trigger: fires once Loyverse confirms the sale ──────
+// (loyverse_synced flips true), not the moment the order first arrives.
+function maybeAutoPrint(order) {
+  if (order && order.loyverse_synced && !order.printed_at) {
+    printReceipt(order);
+  }
+}
+
+async function backfillMissedPrints() {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/queue_orders?loyverse_synced=eq.true&printed_at=is.null&created_at=gte.${today.toISOString()}&select=*`,
+      { headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` } }
+    );
+    const rows = await res.json();
+    if (Array.isArray(rows)) rows.forEach(maybeAutoPrint);
+  } catch (e) {
+    printLog('Backfill print check failed: ' + (e && e.message ? e.message : e));
   }
 }
 
@@ -812,17 +847,18 @@ function connectRealtime() {
       pushAlert(payload.new);
       loadQueue();
     })
-    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'queue_orders' }, () => {
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'queue_orders' }, (payload) => {
+      maybeAutoPrint(payload.new);
       loadQueue();
     })
     .subscribe((status) => {
       setStatus(status === 'SUBSCRIBED');
-      if (status === 'SUBSCRIBED') { backfillMissedOrders(); loadQueue(); }
+      if (status === 'SUBSCRIBED') { backfillMissedOrders(); backfillMissedPrints(); loadQueue(); }
     });
 
   // Safety net: re-check for anything missed / any status changes every 30s
   // in case a realtime event is ever dropped (network blip, etc.)
-  setInterval(() => { backfillMissedOrders(); loadQueue(); }, 30000);
+  setInterval(() => { backfillMissedOrders(); backfillMissedPrints(); loadQueue(); }, 30000);
 }
 
 // ── Keep screen awake ──────────────────────────────────────────────
