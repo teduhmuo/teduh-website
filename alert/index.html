@@ -162,6 +162,7 @@
   <div id="wake-lock-warning">⚠ Screen may sleep — check your PC's power settings so this stays on.</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/alert/imin-print-web.js"></script>
 <script>
 // ── Config ─────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
@@ -290,6 +291,85 @@ function pushAlert(order) {
   alertQueue.push(order);
   renderCurrentAlert();
   fireOsNotification(order);
+  printReceipt(order);
+}
+
+// ── Auto-print via iMin's built-in printer ──────────────────────────
+// Connects to the iMinprinterplugin app's local WebSocket bridge
+// (ws://127.0.0.1:8081) and prints a ticket for the order — fully
+// automatic, no staff action required. If the plugin/printer isn't
+// available (e.g. testing this page on a non-iMin device), this just
+// logs a warning and the rest of the alert still works normally.
+let iminPrinter = null;
+let printerReady = false;
+
+async function ensurePrinterConnected() {
+  if (typeof IminPrinterWeb === 'undefined') return false;
+  if (printerReady && iminPrinter && iminPrinter.isConnected()) return true;
+  try {
+    if (!iminPrinter) iminPrinter = new IminPrinterWeb();
+    if (!iminPrinter.isConnected()) await iminPrinter.connect();
+    iminPrinter.initPrinter('USB'); // Falcon's built-in printer uses USB internally
+    printerReady = true;
+    return true;
+  } catch (e) {
+    console.warn('[print] Printer connect failed:', e);
+    printerReady = false;
+    return false;
+  }
+}
+
+async function printReceipt(order) {
+  const ok = await ensurePrinterConnected();
+  if (!ok) { console.warn('[print] Skipping print — printer not available'); return; }
+
+  const p = iminPrinter;
+  const isPickup = (order.fulfillment_type || 'pickup') !== 'delivery';
+
+  try {
+    p.setAlignment(1); // center
+    p.setTextStyle(1); // bold
+    p.setTextSize(40);
+    p.printText('TEDUH COFFEE ROASTERY');
+
+    p.setTextStyle(0);
+    p.setTextSize(24);
+    p.printText('--------------------------------');
+
+    p.setAlignment(0); // left
+    p.setTextStyle(1);
+    p.setTextSize(32);
+    p.printText('Order #' + (order.queue_number || ''));
+
+    p.setTextStyle(0);
+    p.setTextSize(26);
+    p.printText((isPickup ? 'PICKUP' : 'DELIVERY') + (order.pickup_time ? '  ' + order.pickup_time : ''));
+    if (order.customer_name) p.printText('Customer: ' + order.customer_name);
+    if (order.phone) p.printText('Phone: ' + order.phone);
+    if (!isPickup && order.address) p.printText('Address: ' + order.address);
+
+    p.printText('--------------------------------');
+
+    const items = (order.items || '').split(', ').filter(Boolean);
+    items.forEach((item) => p.printText(item));
+
+    p.printText('--------------------------------');
+
+    if (order.notes) {
+      p.setTextStyle(2); // italic
+      p.printText('Note: ' + order.notes);
+      p.setTextStyle(0);
+    }
+
+    p.setAlignment(1);
+    p.setTextSize(20);
+    p.printText(new Date().toLocaleString('en-MY'));
+
+    p.printAndFeedPaper(60);
+    p.partialCut();
+  } catch (e) {
+    console.error('[print] Print error:', e);
+  }
 }
 
 // ── Native OS notification (pops up even if this window is covered by
