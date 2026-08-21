@@ -220,9 +220,28 @@
     background: rgba(255,255,255,0.12); padding: 0.5rem 1rem; border-radius: 10px;
     font-size: 0.85rem; color: #ffcf99; display: none;
   }
+
+  /* In-app toast — replaces native alert() popups so errors/confirmations
+     feel like part of the app instead of a jarring browser dialog. */
+  #toast-container {
+    position: fixed; top: 1rem; left: 50%; transform: translateX(-50%);
+    z-index: 1000; display: flex; flex-direction: column; gap: 0.5rem;
+    align-items: center; pointer-events: none;
+  }
+  .toast {
+    padding: 0.7rem 1.2rem; border-radius: 10px; font-size: 0.9rem;
+    max-width: 90vw; text-align: center; box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    animation: toast-in 0.2s ease-out;
+  }
+  .toast.error { background: var(--alert-red); color: #fff; }
+  .toast.success { background: var(--success); color: #fff; }
+  .toast.info { background: rgba(255,255,255,0.15); color: #fff; }
+  @keyframes toast-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
+
+<div id="toast-container"></div>
 
   <div id="idle-screen">
     <div class="top-bar">
@@ -292,7 +311,14 @@ async function sbFetch(path, options = {}) {
       ...(options.headers || {})
     }
   });
-  return res.json();
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error('Request failed (' + res.status + '): ' + (text || res.statusText));
+  }
+  // Requests sent with Prefer: return=minimal come back with an empty body
+  // (204 No Content) on success — parsing that as JSON would throw even
+  // though the update actually worked, so only parse when there's content.
+  return text ? JSON.parse(text) : null;
 }
 
 async function loadQueue() {
@@ -388,7 +414,7 @@ async function updateQueueStatus(id, status) {
     if (idx > -1) allQueue[idx].status = status;
     renderQueue();
   } catch (e) {
-    alert('Could not update status. Try again.');
+    toast('Could not update status. Try again.', 'error');
   }
 }
 
@@ -410,11 +436,11 @@ async function dispatchLalamove(orderId, customerName, customerPhone, deliveryLa
       body: JSON.stringify({ orderId, customerName, customerPhone, deliveryLat, deliveryLng, deliveryAddress }),
     });
     const data = await res.json();
-    if (!res.ok) { alert('Dispatch failed: ' + (data.error || 'Unknown error')); return; }
-    alert('Rider dispatched! Tracking link saved.');
+    if (!res.ok) { toast('Dispatch failed: ' + (data.error || 'Unknown error'), 'error'); return; }
+    toast('Rider dispatched! Tracking link saved.', 'success');
     loadQueue();
   } catch (e) {
-    alert('Dispatch failed: ' + e.message);
+    toast('Dispatch failed: ' + e.message, 'error');
   }
 }
 
@@ -549,6 +575,17 @@ function pushAlert(order) {
 // logs a warning and the rest of the alert still works normally.
 let iminPrinter = null;
 let printerReady = false;
+
+// ── In-app toast (replaces native alert() popups) ───────────────────
+function toast(message, type) {
+  const container = document.getElementById('toast-container');
+  if (!container) { console.log('[toast]', message); return; }
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type || 'info');
+  el.textContent = message;
+  container.appendChild(el);
+  setTimeout(() => { el.remove(); }, 3500);
+}
 
 function printLog(msg) {
   const el = document.getElementById('print-debug-log');
