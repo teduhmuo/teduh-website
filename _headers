@@ -1,0 +1,6 @@
+# Prevents the installed Teduh Alert app (and browsers) from caching an old
+# version of the page/scripts indefinitely. Without this, deploying a fix
+# doesn't help until the cache expires or someone manually clears app data —
+# and the installed app has no address bar / hard-refresh gesture to force it.
+/alert/*
+  Cache-Control: no-cache, must-revalidate
