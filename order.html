@@ -1073,7 +1073,7 @@ const PRODUCTS = {
   'piz-mar':    { name: 'Margherita Pizza',            price: 25, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Classic tomato, mozzarella & basil' },
   'piz-pep':    { name: 'Beef Pepperoni Pizza',        price: 32, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Loaded with savoury beef pepperoni' },
   'piz-bsf':    { name: 'Sliced Beef Pizza',           price: 35, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Tender sliced beef on tomato base' },
-  'piz-chk':    { name: 'Spicy Garlic Chicken Pizza',  price: 32, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Spicy garlic chicken with chilli kick' },
+  'piz-chk':    { name: 'Garlic Chicken Pizza',  price: 32, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Garlic chicken — choose your spice level', spiceOptions: ['Spicy', 'Non-Spicy'] },
   'piz-smk':    { name: 'Teduh Smoked Pizza',          price: 37, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Signature smoked meat Teduh special' },
   'piz-trf':    { name: 'Creamy Truffle Beef Pizza',   price: 45, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'Luxurious truffle cream with beef' },
   'piz-wbp':    { name: 'White Beef Pepperoni Pizza',  price: 35, hotPrice: null, cat: 'menu', sub: 'Neapolitan Pizza', desc: 'White sauce base with beef pepperoni' },
@@ -1230,6 +1230,7 @@ function lineIdFor(productKey, opts) {
   let id = productKey;
   if (opts.temp) id += '|' + opts.temp;
   if (opts.weight) id += '|' + opts.weight;
+  if (opts.spice) id += '|spice:' + opts.spice;
   if (opts.addonKeys && opts.addonKeys.length) id += '|' + opts.addonKeys.slice().sort().join(',');
   return id;
 }
@@ -1248,6 +1249,7 @@ function computeLineMeta(productKey, opts) {
     base = p.price;
     sku = p.sku || productKey;
   }
+  if (opts.spice) label += ' (' + opts.spice + ')'; // same price/sku either way — just a kitchen prep note
   const originalBase = base; // pre-discount, for Loyverse's "normal sale" record
   // Promo discount applies to the base drink/food price only — never to
   // add-on surcharges, and never to beans/drip/merch (isPromoEligible
@@ -1275,52 +1277,41 @@ function totalQtyForProduct(key) {
   return sum;
 }
 
-function isPizzaProduct(key) {
+function isExtraPrepProduct(key) {
   const p = PRODUCTS[key];
-  return !!p && p.cat === 'menu' && (p.sub === 'Neapolitan Pizza' || p.sub === 'Half-Half Pizza');
+  return !!p && p.cat === 'menu' && (p.sub === 'Neapolitan Pizza' || p.sub === 'Half-Half Pizza' || p.sub === 'Pasta');
 }
 
-function cartHasPizza() {
-  return Object.keys(cart).some(id => cartMeta[id] && isPizzaProduct(cartMeta[id].productKey));
+function cartNeedsExtraPrepBuffer() {
+  return Object.keys(cart).some(id => cartMeta[id] && isExtraPrepProduct(cartMeta[id].productKey));
 }
 
-function bumpPickupTimeForPizza() {
+function refreshPickupTimeForCart() {
   if (fulfillment !== 'pickup') return;
   const sel = document.getElementById('pickup-time');
   const notice = document.getElementById('pickup-time-notice');
-  if (!sel || !sel.value) return; // nothing selected yet — nothing to bump
+  if (!sel) return;
+  const hadValue = sel.value;
 
-  const currentMin = timeLabelToMinutes(sel.value);
-  if (currentMin === null) return;
-  const nextMin = currentMin + 30;
+  buildPickupTimeOptions();
 
-  buildPickupTimeOptions(); // refresh in case time has since passed
-  if (nextMin > PICKUP_END_MIN) {
+  if (hadValue && sel.value !== hadValue) {
+    // The rebuild couldn't keep the previous selection — it no longer
+    // meets the (possibly new) minimum lead time, so it got cleared.
     if (notice) {
       notice.style.display = 'block';
-      notice.textContent = 'Pizza needs extra prep time — your selected slot may be tight. Consider an earlier order or contact us for late pickup.';
-    }
-    return;
-  }
-  const nextLabel = minutesToTimeLabel(nextMin);
-  const opt = Array.from(sel.options).find(o => o.value === nextLabel && !o.disabled);
-  if (opt) {
-    sel.value = nextLabel;
-    if (notice) {
-      notice.style.display = 'block';
-      notice.textContent = 'Pickup time moved to ' + nextLabel + ' to allow extra prep time for pizza.';
+      notice.textContent = cartNeedsExtraPrepBuffer()
+        ? 'Pizza & pasta need extra prep time — please pick a new pickup time.'
+        : 'Please pick a new pickup time.';
     }
   }
 }
 
 function addLine(productKey, opts) {
-  const hadPizzaBefore = cartHasPizza();
   const id = lineIdFor(productKey, opts);
   cart[id] = (cart[id] || 0) + 1;
   cartMeta[id] = computeLineMeta(productKey, opts);
-  if (!hadPizzaBefore && isPizzaProduct(productKey)) {
-    bumpPickupTimeForPizza();
-  }
+  refreshPickupTimeForCart();
   buildMenuGrid();
   buildBeansGrid();
   buildDripGrid();
@@ -1332,6 +1323,7 @@ function addLine(productKey, opts) {
 function changeLineQty(id, delta) {
   cart[id] = Math.max(0, (cart[id] || 0) + delta);
   if (cart[id] === 0) { delete cart[id]; delete cartMeta[id]; }
+  refreshPickupTimeForCart();
   buildMenuGrid();
   buildBeansGrid();
   buildDripGrid();
@@ -1347,7 +1339,8 @@ function addMenuLine(key) {
   const addonKeys = eligibleAddons(key)
     .filter(a => addonState[key] && addonState[key][a.key])
     .map(a => a.key);
-  addLine(key, { temp, addonKeys });
+  const spice = p.spiceOptions ? (spiceSelection[key] || p.spiceOptions[0]) : null;
+  addLine(key, { temp, addonKeys, spice });
 }
 
 function addBeanLine(key) {
@@ -1358,6 +1351,7 @@ function addBeanLine(key) {
 
 // Track selected temperature per product
 const tempSelection = {};
+const spiceSelection = {}; // key -> 'Spicy' | 'Non-Spicy' (or whatever a product's spiceOptions list contains)
 let activeMenuSub = 'Coffee Essential';
 
 function buildSubTabs() {
@@ -1426,7 +1420,16 @@ function buildMenuGrid() {
         '</div>';
     }
 
-    const configurable = hasTemp || itemAddons.length > 0;
+    if (p.spiceOptions) {
+      if (!spiceSelection[key]) spiceSelection[key] = p.spiceOptions[0];
+      html += '<div class="menu-item-temp">' +
+        p.spiceOptions.map(opt =>
+          '<button class="temp-btn ' + (spiceSelection[key] === opt ? 'selected' : '') + '" onclick="setSpice(\'' + key + '\',\'' + opt + '\')">' + opt + '</button>'
+        ).join('') +
+        '</div>';
+    }
+
+    const configurable = hasTemp || itemAddons.length > 0 || !!p.spiceOptions;
     const inCartQty = configurable ? totalQtyForProduct(key) : 0;
 
     html += '<div class="menu-item-bottom">';
@@ -1578,6 +1581,11 @@ function setWeight(key, weightKey) {
 
 function setTemp(key, temp) {
   tempSelection[key] = temp;
+  buildMenuGrid();
+}
+
+function setSpice(key, spice) {
+  spiceSelection[key] = spice;
   buildMenuGrid();
 }
 
@@ -2170,6 +2178,12 @@ function buildPickupTimeOptions() {
   if (!sel) return;
   const now = new Date();
   const nowMin = now.getHours() * 60 + now.getMinutes();
+  // Pizza and pasta need extra prep time — require at least 30 extra
+  // minutes of lead time on top of "now" before a slot can be selected.
+  // e.g. it's 2:17pm, so anything before 2:47pm is too soon, and since
+  // slots are on the 30-min grid, that means 3:00pm becomes the earliest.
+  const extraPrep = cartNeedsExtraPrepBuffer();
+  const minSelectableMin = nowMin + (extraPrep ? 30 : 0);
 
   const prevValue = sel.value;
   let html = '<option value="">Select a pickup time…</option>';
@@ -2177,8 +2191,11 @@ function buildPickupTimeOptions() {
   for (let m = PICKUP_START_MIN; m <= PICKUP_END_MIN; m += 30) {
     const label = minutesToTimeLabel(m);
     const isPast = m < nowMin;
-    if (!isPast) anyEnabled = true;
-    html += '<option value="' + label + '"' + (isPast ? ' disabled' : '') + '>' + label + (isPast ? ' (passed)' : '') + '</option>';
+    const tooSoon = !isPast && m < minSelectableMin;
+    const disabled = isPast || tooSoon;
+    if (!disabled) anyEnabled = true;
+    const suffix = isPast ? ' (passed)' : tooSoon ? ' (too soon — pizza/pasta prep)' : '';
+    html += '<option value="' + label + '"' + (disabled ? ' disabled' : '') + '>' + label + suffix + '</option>';
   }
   if (!anyEnabled) {
     html += '<option value="" disabled>No more pickup slots today — please order tomorrow</option>';
