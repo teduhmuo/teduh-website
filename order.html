@@ -1937,6 +1937,48 @@ sessionStorage.setItem('teduh_pending_order', JSON.stringify({
     deliveryLat: deliveryLat,
     deliveryLng: deliveryLng
 }));
+
+  // ── Also save the full order server-side BEFORE leaving for payment ──
+  // sessionStorage alone isn't reliable: if the customer's browser tab
+  // doesn't survive the round trip to the payment gateway and back
+  // (closed, backgrounded, killed by the OS, or they paid via a different
+  // device scanning a QR code), the order would otherwise be lost even
+  // though payment succeeded. This copy lives in Supabase instead, so the
+  // payment webhook can create the real order independent of the browser.
+  try {
+    await fetch(`${SUPABASE_URL}/rest/v1/pending_orders`, {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal',
+      },
+      body: JSON.stringify({
+        order_ref: orderRef,
+        payload: {
+          orderRef, name, phone, email,
+          items: itemLines, itemsSimple, cartItems,
+          fulfillment: fulfillmentNote + (notes ? ` | Note: ${notes}` : ''),
+          fulfillmentType: fulfillment,
+          pickupTime: pickupTime || null,
+          address: address || '',
+          notes: notes || '',
+          redeemItem: redeemItem ? redeemItem.name : null,
+          loyaltyPhone: loyaltyMember ? loyaltyMember.phone : null,
+          total: total.toFixed(2),
+          lalamoveQuotation: lalamoveQuotation,
+          deliveryLat: deliveryLat,
+          deliveryLng: deliveryLng,
+        },
+      }),
+    });
+  } catch (e) {
+    // Don't block checkout on this — sessionStorage + the thank-you page's
+    // own fallback creation still work as a second line of defense.
+    console.warn('Could not save pending order server-side:', e);
+  }
+
   const description = `${buildOrderDesc()} | ${fulfillmentNote}${notes ? ' | Note: ' + notes : ''}`;
 
   const payload = {
@@ -1948,7 +1990,7 @@ sessionStorage.setItem('teduh_pending_order', JSON.stringify({
     payer_email: email,
     description: description,
     return_url: window.location.origin + '/order/thank-you',
-    callback_url: 'https://teduh.com.my/api/payment-callback',
+    callback_url: 'https://nazkkichtnanodrgdyff.supabase.co/functions/v1/bayarcash-webhook',
   };
 
   try {

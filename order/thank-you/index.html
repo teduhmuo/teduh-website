@@ -205,7 +205,14 @@ async function sbFetch(path, options = {}) {
       ...(options.headers || {})
     }
   });
-  return res.json();
+  const text = await res.text();
+  if (!res.ok) {
+    throw new Error('Request failed (' + res.status + '): ' + (text || res.statusText));
+  }
+  // Prefer: return=minimal responses come back with an empty body (204) —
+  // parsing that as JSON would throw even though the write succeeded, so
+  // only parse when there's actually content to parse.
+  return text ? JSON.parse(text) : null;
 }
 
 // ── Generate queue number ─────────────────────────────────────────────
@@ -329,37 +336,61 @@ async function onLoad() {
     return;
   }
 
-  document.getElementById('processing-msg').textContent = 'Generating your queue number…';
+  document.getElementById('processing-msg').textContent = 'Confirming your order…';
 
   try {
-    const queueNum = await generateQueueNumber(order.fulfillmentType || 'pickup');
+    // The bayarcash-webhook function (server-to-server, independent of this
+    // browser) may have already created this order the moment payment
+    // succeeded — often before this page even finishes loading. Check for
+    // that first so we don't create a duplicate or double-sync to Loyverse.
+    let queueNum;
+    let alreadyHandled = false;
+    try {
+      const existing = await sbFetch(`queue_orders?order_ref=eq.${encodeURIComponent(order.orderRef)}&select=queue_number`);
+      if (Array.isArray(existing) && existing.length) {
+        queueNum = existing[0].queue_number;
+        alreadyHandled = true;
+      }
+    } catch (checkErr) {
+      console.warn('Could not check for existing order, proceeding with normal flow:', checkErr);
+    }
 
-   await sbFetch('queue_orders', {
-  method: 'POST',
-  body: JSON.stringify({
-    queue_number:     queueNum,
-    order_ref:        order.orderRef,
-    customer_name:    order.name,
-    phone:            order.phone,
-    items:            order.itemsSimple || order.items,
-    fulfillment_type: order.fulfillmentType || 'pickup',
-    address:          order.address  || '',
-    notes:            order.notes    || '',
-    status:           'pending',
-    delivery_lat:     order.deliveryLat  || null,
-    delivery_lng:     order.deliveryLng  || null,
-    pickup_time:      order.pickupTime   || null,
-  })
-});
+    if (!alreadyHandled) {
+      queueNum = await generateQueueNumber(order.fulfillmentType || 'pickup');
 
-    // Show queue ticket
-    if (order.cartItems) {
+      // on_conflict + ignore-duplicates: if the webhook creates this exact
+      // order_ref a moment after this check, this becomes a safe no-op
+      // instead of a duplicate-key error.
+      await sbFetch('queue_orders?on_conflict=order_ref', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=ignore-duplicates,return=minimal' },
+        body: JSON.stringify({
+          queue_number:     queueNum,
+          order_ref:        order.orderRef,
+          customer_name:    order.name,
+          phone:            order.phone,
+          items:            order.itemsSimple || order.items,
+          fulfillment_type: order.fulfillmentType || 'pickup',
+          address:          order.address  || '',
+          notes:            order.notes    || '',
+          status:           'pending',
+          delivery_lat:     order.deliveryLat  || null,
+          delivery_lng:     order.deliveryLng  || null,
+          pickup_time:      order.pickupTime   || null,
+        })
+      });
+    }
+
+    // Only sync to Loyverse if WE created the order — if the webhook
+    // already handled it, it already did this too, and calling it again
+    // would create a duplicate sale in Loyverse.
+    if (!alreadyHandled && order.cartItems) {
   fetch(`${SUPABASE_URL}/functions/v1/loyverse-receipt`, {
     method: 'POST',
     headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       cartItems: order.cartItems,
-      deliveryFee: order.fulfillmentType === 'delivery' ? parseFloat(order.total) - 1 : 0,
+      deliveryFee: order.fulfillmentType === 'delivery' ? (order.lalamoveQuotation?.totalFee || 0) : 0,
       orderRef: order.orderRef,
       customerName: order.name,
       customerPhone: order.phone,
