@@ -783,6 +783,7 @@
 
     <!-- Café Menu -->
     <div class="category-section visible" id="cat-menu">
+    <div id="promo-banner"></div>
     <div class="menu-sub-tabs" id="menu-sub-tabs"></div>
     <div id="menu-grid"></div>
   </div>
@@ -1033,6 +1034,36 @@ async function sbUpdate(table, match, updates) {
 }
 
 // ── Product catalogue ──────────────────────────────────────────────
+// ── Merdeka Countdown Promo ──────────────────────────────────────────
+// 8% off all Café Menu items (drinks, pizza, pasta, snacks) — beans,
+// drip bags, merchandise, and add-ons are never discounted. Online
+// ordering only; has no effect on Loyverse/in-store pricing. Runs
+// automatically based on real time, anchored to Malaysia (UTC+8) so it
+// starts/stops at the right moment regardless of the customer's or
+// device's own timezone setting.
+const PROMO = {
+  name: 'Merdeka Countdown',
+  discount: 0.08,
+  start: new Date('2026-08-22T12:00:00+08:00').getTime(),
+  end: new Date('2026-09-01T18:00:00+08:00').getTime(),
+};
+
+function isPromoActive() {
+  const now = Date.now();
+  return now >= PROMO.start && now <= PROMO.end;
+}
+
+function isPromoEligible(p) {
+  return p && p.cat === 'menu'; // excludes beans, drip, merch by construction; add-on surcharges are applied after this check so they're never discounted either
+}
+
+function applyPromo(basePrice, product) {
+  if (isPromoActive() && isPromoEligible(product)) {
+    return Math.round(basePrice * (1 - PROMO.discount) * 100) / 100;
+  }
+  return basePrice;
+}
+
 const PRODUCTS = {
   // ── Café Menu ──────────────────────────────────────────────────────
   // Coffee Essential
@@ -1257,6 +1288,11 @@ function computeLineMeta(productKey, opts) {
     base = p.price;
     sku = p.sku || productKey;
   }
+  const originalBase = base; // pre-discount, for Loyverse's "normal sale" record
+  // Promo discount applies to the base drink/food price only — never to
+  // add-on surcharges, and never to beans/drip/merch (isPromoEligible
+  // returns false for those categories).
+  base = applyPromo(base, p);
   const addonKeys = opts.addonKeys || [];
   const addons = addonKeys.map(ak => ADDONS.find(a => a.key === ak)).filter(Boolean);
   const surcharge = addons.reduce((s, a) => s + a.price, 0);
@@ -1265,6 +1301,8 @@ function computeLineMeta(productKey, opts) {
     productKey,
     label,
     unitPrice: base + surcharge,
+    originalUnitPrice: originalBase + surcharge, // what Loyverse should display as the line price
+    promoApplied: base < originalBase,
     sku,
     name: p.name,
     addons: addons.map(a => ({ sku: a.sku, name: a.label, price: a.price }))
@@ -1397,9 +1435,17 @@ function buildMenuGrid() {
     if (p.desc) html += '<div class="menu-item-desc">' + p.desc + '</div>';
 
     if (hasTemp) {
+      const hotDisc = applyPromo(p.hotPrice, p);
+      const iceDisc = applyPromo(p.price, p);
+      const hotText = hotDisc < p.hotPrice
+        ? 'Hot <s style="opacity:0.6;font-size:0.85em;">RM ' + p.hotPrice + '</s> RM ' + hotDisc.toFixed(2)
+        : 'Hot RM ' + p.hotPrice;
+      const iceText = iceDisc < p.price
+        ? 'Ice <s style="opacity:0.6;font-size:0.85em;">RM ' + p.price + '</s> RM ' + iceDisc.toFixed(2)
+        : 'Ice RM ' + p.price;
       html += '<div class="menu-item-temp">' +
-        '<button class="temp-btn ' + (tempSelection[key] === 'hot' ? 'selected' : '') + '" onclick="setTemp(\'' + key + '\',\'hot\')">Hot RM ' + p.hotPrice + '</button>' +
-        '<button class="temp-btn ' + (tempSelection[key] === 'ice' ? 'selected' : '') + '" onclick="setTemp(\'' + key + '\',\'ice\')">Ice RM ' + p.price + '</button>' +
+        '<button class="temp-btn ' + (tempSelection[key] === 'hot' ? 'selected' : '') + '" onclick="setTemp(\'' + key + '\',\'hot\')">' + hotText + '</button>' +
+        '<button class="temp-btn ' + (tempSelection[key] === 'ice' ? 'selected' : '') + '" onclick="setTemp(\'' + key + '\',\'ice\')">' + iceText + '</button>' +
         '</div>';
     }
 
@@ -1420,7 +1466,12 @@ function buildMenuGrid() {
     const inCartQty = configurable ? totalQtyForProduct(key) : 0;
 
     html += '<div class="menu-item-bottom">';
-    if (!hasTemp) html += '<span class="menu-item-price">RM ' + p.price.toFixed(2) + '</span>';
+    if (!hasTemp) {
+      const disc = applyPromo(p.price, p);
+      html += disc < p.price
+        ? '<span class="menu-item-price"><s style="opacity:0.6;font-size:0.85em;">RM ' + p.price.toFixed(2) + '</s> RM ' + disc.toFixed(2) + '</span>'
+        : '<span class="menu-item-price">RM ' + p.price.toFixed(2) + '</span>';
+    }
     else html += '<span></span>';
     if (configurable) {
       html += '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 12px;" onclick="addMenuLine(\'' + key + '\')">+ Add</button>';
@@ -1833,6 +1884,8 @@ async function submitOrder() {
       name: m.name + m.label,
       qty: cart[id],
       price: m.unitPrice,
+      originalPrice: m.originalUnitPrice,
+      promoApplied: m.promoApplied,
       addons: m.addons
     };
   });
@@ -2118,12 +2171,39 @@ function buildPickupTimeOptions() {
   }
 }
 
+let _promoWasActive = isPromoActive();
+
+function renderPromoBanner() {
+  const el = document.getElementById('promo-banner');
+  if (!el) return;
+  if (isPromoActive()) {
+    el.innerHTML = '<div style="background:linear-gradient(90deg,#c0783c,#8a4a1c);color:#fff;border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.75rem;font-size:0.85rem;font-weight:600;text-align:center;">' +
+      '🎉 Merdeka Countdown — 8% off drinks &amp; food, online orders only, until 1 Sept 6PM' +
+      '</div>';
+  } else {
+    el.innerHTML = '';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  renderPromoBanner();
   buildMenuGrid();
   buildBeansGrid();
   buildPickupTimeOptions();
   checkShopStatus();
   setTimeout(() => { initDeliveryMap(); }, 300);
+
+  // Re-check every 60s so the promo turns on/off automatically at the exact
+  // start/end time even for someone who's been sitting on the page a while.
+  setInterval(() => {
+    const active = isPromoActive();
+    if (active !== _promoWasActive) {
+      _promoWasActive = active;
+      renderPromoBanner();
+      buildMenuGrid();
+      renderCart();
+    }
+  }, 60000);
 });
 // ── Shop status & availability check ─────────────────────────────────
 let shopIsOpen = true;
