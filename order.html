@@ -757,28 +757,7 @@
 
     <!-- Drip Bags -->
     <div class="category-section" id="cat-drip">
-      <div class="products-grid">
-        <div class="product-card" id="pc-drip-5">
-          <div class="product-name">Drip Bag Set · 5 pcs</div>
-          <div class="product-desc">Single-serve pour-over bags. Easy to brew anywhere.</div>
-          <div class="product-price">RM 25.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('drip-5', -1)">−</button>
-            <span class="qty-value" id="qty-drip-5">0</span>
-            <button class="qty-btn" onclick="changeQty('drip-5', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-drip-10">
-          <div class="product-name">Drip Bag Set · 10 pcs</div>
-          <div class="product-desc">Single-serve pour-over bags. Great for gifts or the office.</div>
-          <div class="product-price">RM 45.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('drip-10', -1)">−</button>
-            <span class="qty-value" id="qty-drip-10">0</span>
-            <button class="qty-btn" onclick="changeQty('drip-10', 1)">+</button>
-          </div>
-        </div>
-      </div>
+      <div id="drip-grid"></div>
     </div>
 
     <!-- Café Menu -->
@@ -788,28 +767,7 @@
     <div id="menu-grid"></div>
   </div>
   <div class="category-section" id="cat-merch">
-      <div class="products-grid">
-        <div class="product-card" id="pc-mug">
-          <div class="product-name">Teduh Mug</div>
-          <div class="product-desc">Ceramic mug with Teduh logo, 350ml.</div>
-          <div class="product-price">RM 35.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('mug', -1)">−</button>
-            <span class="qty-value" id="qty-mug">0</span>
-            <button class="qty-btn" onclick="changeQty('mug', 1)">+</button>
-          </div>
-        </div>
-        <div class="product-card" id="pc-tote">
-          <div class="product-name">Teduh Tote Bag</div>
-          <div class="product-desc">Canvas tote, natural color with logo print.</div>
-          <div class="product-price">RM 25.00</div>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="changeQty('tote', -1)">−</button>
-            <span class="qty-value" id="qty-tote">0</span>
-            <button class="qty-btn" onclick="changeQty('tote', 1)">+</button>
-          </div>
-        </div>
-      </div>
+      <div id="merch-grid"></div>
     </div>
   </div>
 
@@ -1188,12 +1146,12 @@ const PRODUCTS = {
   },
 
   // ── Drip Bags ──────────────────────────────────────────────────────
-  'drip-5':     { name: 'Drip Bags ×5',      price: 25,  hotPrice: null, cat: 'drip', sub: 'Drip Bags' },
-  'drip-10':    { name: 'Drip Bags ×10',     price: 45,  hotPrice: null, cat: 'drip', sub: 'Drip Bags' },
+  'drip-5':     { name: 'Drip Bags ×5',      price: 25,  hotPrice: null, cat: 'drip', sub: 'Drip Bags', desc: 'Single-serve pour-over bags. Easy to brew anywhere.' },
+  'drip-10':    { name: 'Drip Bags ×10',     price: 45,  hotPrice: null, cat: 'drip', sub: 'Drip Bags', desc: 'Single-serve pour-over bags. Great for gifts or the office.' },
 
   // ── Merchandise ────────────────────────────────────────────────────
-  'mug':        { name: 'Teduh Mug',         price: 35,  hotPrice: null, cat: 'merch', sub: 'Merchandise' },
-  'tote':       { name: 'Teduh Tote Bag',    price: 25,  hotPrice: null, cat: 'merch', sub: 'Merchandise' },
+  'mug':        { name: 'Teduh Mug',         price: 35,  hotPrice: null, cat: 'merch', sub: 'Merchandise', desc: 'Ceramic mug with Teduh logo, 350ml.' },
+  'tote':       { name: 'Teduh Tote Bag',    price: 25,  hotPrice: null, cat: 'merch', sub: 'Merchandise', desc: 'Canvas tote, natural color with logo print.' },
 }
 
 // ── State ──────────────────────────────────────────────────────────
@@ -1363,6 +1321,8 @@ function addLine(productKey, opts) {
   }
   buildMenuGrid();
   buildBeansGrid();
+  buildDripGrid();
+  buildMerchGrid();
   renderCart();
   if (loyaltyMember) buildRedeemOptions(loyaltyMember.points);
 }
@@ -1372,6 +1332,8 @@ function changeLineQty(id, delta) {
   if (cart[id] === 0) { delete cart[id]; delete cartMeta[id]; }
   buildMenuGrid();
   buildBeansGrid();
+  buildDripGrid();
+  buildMerchGrid();
   renderCart();
   if (loyaltyMember) buildRedeemOptions(loyaltyMember.points);
 }
@@ -1496,12 +1458,20 @@ function buildMenuGrid() {
 // ── Coffee Beans grid (weight-tier selector, same pattern as temp selector) ──
 const weightSelection = {};
 
+function restockMessageHtml(itemName) {
+  return '<div class="products-grid"><div style="grid-column:1/-1;text-align:center;padding:2.5rem 1rem;color:var(--medium-brown);">' +
+    '<div style="font-size:1.15rem;font-weight:600;margin-bottom:0.4rem;">🔄 Will restock soon</div>' +
+    '<div style="font-size:0.88rem;">' + itemName + ' is currently unavailable — check back soon!</div>' +
+    '</div></div>';
+}
+
 function buildBeansGrid() {
   const grid = document.getElementById('beans-grid');
   if (!grid) return;
   const beanEntries = Object.entries(PRODUCTS).filter(([k, v]) => v.cat === 'beans');
 
   let html = '';
+  let anyVisible = false;
   beanEntries.forEach(([key, p]) => {
     if (!weightSelection[key]) weightSelection[key] = p.weights[0].key;
 
@@ -1513,6 +1483,11 @@ function buildBeansGrid() {
     }));
     const allSoldOut = weightAvail.every(w => w.soldOut);
 
+    // Fully unavailable beans are hidden entirely rather than shown greyed
+    // out — see restockMessageHtml() for what shows if every bean is out.
+    if (allSoldOut) return;
+    anyVisible = true;
+
     // If the currently-selected weight just went sold out, jump to the next
     // available one so "+ Add to cart" doesn't silently add a dead option.
     const currentStillOk = weightAvail.find(w => w.key === weightSelection[key] && !w.soldOut);
@@ -1522,9 +1497,8 @@ function buildBeansGrid() {
     }
 
     const inCartQty = totalQtyForProduct(key);
-    html += '<div class="product-card' + (allSoldOut ? ' sold-out' : '') + (inCartQty ? ' in-cart' : '') + '" id="pc-' + key + '">';
-    const itemLabel = allSoldOut ? (' <span style="font-size:0.68rem;color:var(--error);font-weight:400;">· ' + getItemLabel() + '</span>') : '';
-    html += '<div class="product-name">' + p.name + itemLabel + '</div>';
+    html += '<div class="product-card' + (inCartQty ? ' in-cart' : '') + '" id="pc-' + key + '">';
+    html += '<div class="product-name">' + p.name + '</div>';
     if (p.desc) html += '<div class="product-desc">' + p.desc + '</div>';
 
     html += '<div class="menu-item-temp" style="margin:0.5rem 0;">' +
@@ -1536,18 +1510,62 @@ function buildBeansGrid() {
       }).join('') +
       '</div>';
 
-    if (allSoldOut) {
-      html += '<div class="qty-control"><button class="menu-qty-btn" disabled style="opacity:0.5;cursor:not-allowed;">' + getItemLabel() + '</button></div>';
-    } else {
-      html += '<div class="qty-control">' +
-        '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 14px;" onclick="addBeanLine(\'' + key + '\')">+ Add to cart</button>' +
-        '</div>';
-    }
+    html += '<div class="qty-control">' +
+      '<button class="menu-qty-btn" style="width:auto;border-radius:14px;padding:0 14px;" onclick="addBeanLine(\'' + key + '\')">+ Add to cart</button>' +
+      '</div>';
     if (inCartQty > 0) {
       html += '<div style="font-size:0.72rem;color:var(--accent);margin-top:4px;">' + inCartQty + ' in cart — adjust in order summary below</div>';
     }
     html += '</div>';
   });
+  grid.innerHTML = anyVisible ? ('<div class="products-grid">' + html + '</div>') : restockMessageHtml('Coffee Beans');
+}
+
+function buildDripGrid() {
+  const grid = document.getElementById('drip-grid');
+  if (!grid) return;
+  const entries = Object.entries(PRODUCTS).filter(([k, v]) => v.cat === 'drip');
+  const available = entries.filter(([k]) => !(!shopIsOpen || itemAvailability[k] === false));
+
+  if (!available.length) { grid.innerHTML = restockMessageHtml('Drip Bags'); return; }
+
+  let html = '<div class="products-grid">';
+  available.forEach(([key, p]) => {
+    html += '<div class="product-card" id="pc-' + key + '">' +
+      '<div class="product-name">' + p.name + '</div>' +
+      (p.desc ? '<div class="product-desc">' + p.desc + '</div>' : '') +
+      '<div class="product-price">RM ' + p.price.toFixed(2) + '</div>' +
+      '<div class="qty-control">' +
+        '<button class="qty-btn" onclick="changeQty(\'' + key + '\', -1)">−</button>' +
+        '<span class="qty-value" id="qty-' + key + '">' + (cart[key] || 0) + '</span>' +
+        '<button class="qty-btn" onclick="changeQty(\'' + key + '\', 1)">+</button>' +
+      '</div></div>';
+  });
+  html += '</div>';
+  grid.innerHTML = html;
+}
+
+function buildMerchGrid() {
+  const grid = document.getElementById('merch-grid');
+  if (!grid) return;
+  const entries = Object.entries(PRODUCTS).filter(([k, v]) => v.cat === 'merch');
+  const available = entries.filter(([k]) => !(!shopIsOpen || itemAvailability[k] === false));
+
+  if (!available.length) { grid.innerHTML = restockMessageHtml('Merchandise'); return; }
+
+  let html = '<div class="products-grid">';
+  available.forEach(([key, p]) => {
+    html += '<div class="product-card" id="pc-' + key + '">' +
+      '<div class="product-name">' + p.name + '</div>' +
+      (p.desc ? '<div class="product-desc">' + p.desc + '</div>' : '') +
+      '<div class="product-price">RM ' + p.price.toFixed(2) + '</div>' +
+      '<div class="qty-control">' +
+        '<button class="qty-btn" onclick="changeQty(\'' + key + '\', -1)">−</button>' +
+        '<span class="qty-value" id="qty-' + key + '">' + (cart[key] || 0) + '</span>' +
+        '<button class="qty-btn" onclick="changeQty(\'' + key + '\', 1)">+</button>' +
+      '</div></div>';
+  });
+  html += '</div>';
   grid.innerHTML = html;
 }
 
@@ -2189,6 +2207,8 @@ document.addEventListener('DOMContentLoaded', () => {
   renderPromoBanner();
   buildMenuGrid();
   buildBeansGrid();
+  buildDripGrid();
+  buildMerchGrid();
   buildPickupTimeOptions();
   checkShopStatus();
   setTimeout(() => { initDeliveryMap(); }, 300);
@@ -2252,7 +2272,8 @@ async function checkShopStatus() {
     }
     buildMenuGrid();
     buildBeansGrid();
-    applyStaticAvailability();
+    buildDripGrid();
+    buildMerchGrid();
   } catch(e) { console.warn('Availability check error:', e); }
 }
 
@@ -2260,40 +2281,7 @@ function getItemLabel() {
   return shopIsOpen ? 'Sold out' : 'Shop closed';
 }
 
-// Apply availability to static product cards (beans, drip, merch)
-function applyStaticAvailability() {
-  const staticMap = {
-    'pc-drip-5':   'drip-5',
-    'pc-drip-10':  'drip-10',
-    'pc-mug':      'mug',
-    'pc-tote':     'tote',
-  };
-  Object.entries(staticMap).forEach(([cardId, itemKey]) => {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-    const soldOut = itemAvailability[itemKey] === false;
-    if (soldOut) {
-      card.style.opacity = '0.45';
-      card.style.pointerEvents = 'none';
-      // Add sold out badge if not already there
-      if (!card.querySelector('.sold-out-badge')) {
-        const name = card.querySelector('.product-name');
-        if (name) {
-          const badge = document.createElement('span');
-          badge.className = 'sold-out-badge';
-          badge.style.cssText = 'font-size:0.72rem;color:var(--error);font-weight:400;margin-left:6px;';
-          badge.textContent = '· Sold out';
-          name.appendChild(badge);
-        }
-      }
-    } else {
-      card.style.opacity = '';
-      card.style.pointerEvents = '';
-      const badge = card.querySelector('.sold-out-badge');
-      if (badge) badge.remove();
-    }
-  });
-}
+
 
 // ── Map pin picker ─────────────────────────────────────────────────
 let deliveryMap = null;
