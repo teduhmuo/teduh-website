@@ -1045,7 +1045,7 @@ const PROMO = {
   name: 'Merdeka Countdown',
   discount: 0.08,
   start: new Date('2026-08-22T12:00:00+08:00').getTime(),
-  end: new Date('2026-09-01T18:00:00+08:00').getTime(),
+  end: new Date('2026-08-31T21:00:00+08:00').getTime(),
 };
 
 function isPromoActive() {
@@ -2178,7 +2178,7 @@ function renderPromoBanner() {
   if (!el) return;
   if (isPromoActive()) {
     el.innerHTML = '<div style="background:linear-gradient(90deg,#c0783c,#8a4a1c);color:#fff;border-radius:10px;padding:0.7rem 1rem;margin-bottom:0.75rem;font-size:0.85rem;font-weight:600;text-align:center;">' +
-      '🎉 Merdeka Countdown — 8% off drinks &amp; food, online orders only, until 1 Sept 6PM' +
+      '🎉 Merdeka Countdown — 8% off drinks &amp; food, online orders only, until 31 Aug 9PM' +
       '</div>';
   } else {
     el.innerHTML = '';
