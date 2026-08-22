@@ -375,19 +375,34 @@ function renderQueue() {
         actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'pickup\')">WA Customer</button>' +
           '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Customer Picked Up ✓</button>' +
           '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
+      } else if (o.lalamove_order_id) {
+        // Rider already confirmed and booked — only the next action should
+        // be available, so a second staff member can't accidentally
+        // dispatch a duplicate rider for the same order.
+        const trackBtn = o.lalamove_share_link
+          ? '<a class="qc-btn" style="background:#FF6B35;color:white;border-color:#FF6B35;text-decoration:none;display:inline-block;" href="' + o.lalamove_share_link + '" target="_blank">🛵 Track Rider</a>'
+          : '<span class="qc-btn" style="opacity:0.7;">🛵 Rider booked</span>';
+        actions = trackBtn +
+          '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider Picked Up ✓</button>' +
+          '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
       } else {
         const hasCoords = o.delivery_lat && o.delivery_lng;
         const dispatchBtn = hasCoords
           ? '<button class="qc-btn" style="background:#FF6B35;color:white;border-color:#FF6B35;" onclick="dispatchLalamove(\'' + o.id + '\',\'' + o.customer_name + '\',\'' + o.phone + '\',' + o.delivery_lat + ',' + o.delivery_lng + ',\'' + (o.address || '').replace(/'/g, "\\'") + '\')">🛵 Dispatch</button>'
           : '<button class="qc-btn" disabled title="No coordinates saved">🛵 No coords</button>';
+        // "Rider Picked Up" is intentionally not shown yet — dispatch must
+        // succeed first, otherwise staff could skip straight to it with no
+        // rider actually booked.
         actions = dispatchBtn +
-          '<button class="qc-btn deliver-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">Rider Picked Up ✓</button>' +
           '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'preparing\')">↩</button>';
       }
     } else if (status === 'delivering') {
-      actions = '<button class="qc-btn wa-btn" onclick="waOrderReady(\'' + o.queue_number + '\',\'' + o.phone + '\',\'' + o.customer_name + '\',\'delivery\')">WA Customer</button>' +
-        '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Delivered ✓</button>' +
-        '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'delivering\')">↩</button>';
+      // No "WA Customer" button here — the tracking link message was
+      // already auto-sent the moment this order became "delivering"
+      // (see updateQueueStatus), so a manual resend button would just be
+      // redundant clutter at this stage.
+      actions = '<button class="qc-btn done-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'done\')">Delivered ✓</button>' +
+        '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩</button>';
     } else if (status === 'done') {
       actions = '<button class="qc-btn revert-btn" onclick="updateQueueStatus(\'' + o.id + '\',\'ready\')">↩ Reopen</button>';
     }
@@ -410,21 +425,36 @@ function renderQueue() {
 
 async function updateQueueStatus(id, status) {
   try {
-    await sbFetch('queue_orders?id=eq.' + id, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ status }) });
     const idx = allQueue.findIndex((o) => o.id === id);
+    const prevStatus = idx > -1 ? allQueue[idx].status : null;
+
+    await sbFetch('queue_orders?id=eq.' + id, { method: 'PATCH', headers: { 'Prefer': 'return=minimal' }, body: JSON.stringify({ status }) });
     if (idx > -1) allQueue[idx].status = status;
     renderQueue();
+
+    // "Rider Picked Up" — auto-open a pre-filled WhatsApp message to the
+    // customer, including the Lalamove tracking link if one was saved.
+    // Only fires on an actual transition INTO delivering (not if it's
+    // already there, e.g. from the revert button), so tapping the button
+    // twice or misclicks don't spam the customer with duplicates.
+    if (status === 'delivering' && prevStatus !== 'delivering' && idx > -1) {
+      const o = allQueue[idx];
+      waOrderReady(o.queue_number, o.phone, o.customer_name, 'delivery', o.lalamove_share_link);
+    }
   } catch (e) {
     toast('Could not update status. Try again.', 'error');
   }
 }
 
-function waOrderReady(queueNum, phone, name, type) {
+function waOrderReady(queueNum, phone, name, type, trackingLink) {
   let cleanPhone = phone.replace(/[^0-9]/g, '');
   if (cleanPhone.startsWith('0')) cleanPhone = '6' + cleanPhone;
-  const msg = type === 'pickup'
+  let msg = type === 'pickup'
     ? 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sudah sedia untuk diambil di Teduh, No 11 Jalan Sulaiman, Muar. Sila tunjukkan nombor giliran anda kepada staff. Terima kasih!'
     : 'Hi ' + name + '! Pesanan anda ' + queueNum + ' sedang dalam perjalanan ke alamat anda. Rider kami akan tiba tidak lama lagi. Terima kasih kerana memesan di Teduh!';
+  if (type === 'delivery' && trackingLink) {
+    msg += '\n\nJejaki penghantaran anda di sini: ' + trackingLink;
+  }
   window.open('https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
