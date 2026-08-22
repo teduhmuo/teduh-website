@@ -15,6 +15,31 @@
     .fade-in.visible { opacity: 1; transform: none; }
     .nav-active { color: var(--ink) !important; }
 
+    /* ── Features strip: no icons, clean editorial typography instead ── */
+    .feature-item { text-align: center; }
+    .feature-rule {
+      width: 28px;
+      height: 2px;
+      background: var(--ink, #1a1208);
+      margin: 0 auto 1.1rem;
+      opacity: 0.55;
+    }
+    .feature-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink, #1a1208);
+      margin-bottom: 0.6rem;
+    }
+    .feature-desc {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: rgba(26, 18, 8, 0.6);
+      max-width: 26ch;
+      margin: 0 auto;
+    }
+
     /* ── Loyalty banner ── */
     .loyalty-banner {
       background: var(--ink, #1a1208);
@@ -158,22 +183,22 @@
   <div class="features-strip">
     <div class="features-grid">
       <div class="feature-item fade-in">
-        <div class="feature-icon">☕</div>
+        <div class="feature-rule"></div>
         <div class="feature-title">Café</div>
         <div class="feature-desc">Dine in and enjoy single-origin brews in a calm, thoughtful space.</div>
       </div>
       <div class="feature-item fade-in">
-        <div class="feature-icon">📦</div>
+        <div class="feature-rule"></div>
         <div class="feature-title">Wholesale</div>
         <div class="feature-desc">Quality beans for businesses, restaurants, and fellow coffee lovers.</div>
       </div>
       <div class="feature-item fade-in">
-        <div class="feature-icon">🛍️</div>
+        <div class="feature-rule"></div>
         <div class="feature-title">Retail</div>
         <div class="feature-desc">Take home your favourite roasts — whole bean or ground to order.</div>
       </div>
       <div class="feature-item fade-in">
-        <div class="feature-icon">💧</div>
+        <div class="feature-rule"></div>
         <div class="feature-title">Drip Bags</div>
         <div class="feature-desc">Café-quality coffee anywhere. Easy, portable, and delicious.</div>
       </div>
