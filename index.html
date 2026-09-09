@@ -66,12 +66,18 @@
       height:min(64vh, 560px);
       overflow:hidden;
     }
-    .slide{
-      position:absolute; inset:0;
-      opacity:0;
-      transition:opacity 0.9s ease;
+    .slider-track{
+      display:flex;
+      height:100%;
+      width:300%;
+      transition:transform 0.7s cubic-bezier(0.65,0,0.35,1);
     }
-    .slide.active{ opacity:1; }
+    .slide{
+      position:relative;
+      width:33.3333%;
+      height:100%;
+      flex-shrink:0;
+    }
     .slide img{
       width:100%; height:100%;
       object-fit:cover;
@@ -90,6 +96,7 @@
       right:6vw; bottom:36px;
       display:flex;
       gap:10px;
+      z-index:2;
     }
     .slide-dot{
       width:8px; height:8px;
@@ -173,17 +180,19 @@
 </nav>
 
 <div class="slider" id="slider">
-  <div class="slide active">
-    <img src="../images/community-hero.jpg" alt="Teduh community gathering">
-    <div class="slide-caption">A meeting point for creatives, skaters, and musicians in Muar</div>
-  </div>
-  <div class="slide">
-    <img src="../images/hero.jpg" alt="Teduh café interior">
-    <div class="slide-caption">Café conversations, slow afternoons</div>
-  </div>
-  <div class="slide">
-    <img src="../images/about-thumb.jpg" alt="Coffee being brewed at Teduh">
-    <div class="slide-caption">Every cup roasted a few steps from where you sit</div>
+  <div class="slider-track" id="sliderTrack">
+    <div class="slide">
+      <img src="../images/community-hero.jpg" alt="Teduh community gathering">
+      <div class="slide-caption">A meeting point for creatives, skaters, and musicians in Muar</div>
+    </div>
+    <div class="slide">
+      <img src="../images/hero.jpg" alt="Teduh café interior">
+      <div class="slide-caption">Café conversations, slow afternoons</div>
+    </div>
+    <div class="slide">
+      <img src="../images/about-thumb.jpg" alt="Coffee being brewed at Teduh">
+      <div class="slide-caption">Every cup roasted a few steps from where you sit</div>
+    </div>
   </div>
   <div class="slide-dots" id="sliderDots"></div>
 </div>
@@ -264,8 +273,10 @@
 
 <script>
   (function(){
+    var track = document.getElementById('sliderTrack');
     var slides = document.querySelectorAll('.slide');
     var dotsWrap = document.getElementById('sliderDots');
+    var count = slides.length;
     var i = 0;
     slides.forEach(function(_, idx){
       var dot = document.createElement('button');
@@ -276,13 +287,12 @@
     });
     var dots = document.querySelectorAll('.slide-dot');
     function show(idx){
-      slides[i].classList.remove('active');
       dots[i].classList.remove('active');
       i = idx;
-      slides[i].classList.add('active');
       dots[i].classList.add('active');
+      track.style.transform = 'translateX(-' + (i * (100 / count)) + '%)';
     }
-    setInterval(function(){ show((i + 1) % slides.length); }, 4000);
+    setInterval(function(){ show((i + 1) % count); }, 4000);
   })();
 </script>
 
