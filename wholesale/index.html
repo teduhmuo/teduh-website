@@ -61,6 +61,51 @@
     footer a{ color:#C9B69B !important; }
     footer a:hover{ color:var(--ember) !important; }
 
+    /* ── mobile nav ── */
+    .nav-toggle{
+      display:none;
+      background:none;
+      border:none;
+      cursor:pointer;
+      padding:8px;
+      flex-direction:column;
+      gap:5px;
+    }
+    .nav-toggle span{
+      display:block;
+      width:22px;
+      height:2px;
+      background:var(--ink);
+    }
+    @media (max-width:900px){
+      .nav-toggle{ display:flex; }
+      .nav-links{
+        display:none;
+        position:absolute;
+        top:100%;
+        left:0;
+        right:0;
+        background:var(--wall);
+        border-bottom:1px solid var(--wall-dark);
+        flex-direction:column !important;
+        padding:8px 6vw 20px;
+        gap:0 !important;
+      }
+      .nav-links.open{ display:flex; }
+      .nav-links li{ width:100%; }
+      .nav-links a{
+        display:block;
+        padding:14px 0;
+        border-bottom:1px solid var(--wall-dark);
+      }
+      .nav-links a.btn-nav{
+        margin-top:14px;
+        text-align:center;
+        border-bottom:none !important;
+      }
+      nav{ position:relative; }
+    }
+
     /* ── hero ── */
     .wh-hero{
       max-width:1080px;
@@ -516,6 +561,20 @@
     <span>© 2026 Teduh. All rights reserved. · 202003155860 (003128665-D)</span>
   </div>
 </footer>
+
+<script>
+  (function(){
+    var toggle = document.querySelector('.nav-toggle');
+    var links = document.querySelector('.nav-links');
+    if(!toggle || !links) return;
+    toggle.addEventListener('click', function(){
+      links.classList.toggle('open');
+    });
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){ links.classList.remove('open'); });
+    });
+  })();
+</script>
 
 </body>
 </html>
