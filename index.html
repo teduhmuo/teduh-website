@@ -357,7 +357,7 @@
     #contact h2{ font-size:clamp(28px, 3vw, 38px); margin-bottom:36px; }
     .contact-grid{
       display:grid;
-      grid-template-columns:repeat(4, 1fr);
+      grid-template-columns:repeat(5, 1fr);
       gap:32px;
     }
     .contact-item .label{
@@ -375,6 +375,7 @@
     .contact-item a.value{ color:var(--ink); text-decoration:underline; text-underline-offset:3px; }
     @media (max-width:760px){
       .contact-grid{ grid-template-columns:1fr 1fr; row-gap:28px; }
+      .contact-item:last-child{ grid-column:1 / -1; }
     }
   </style>
 </head>
@@ -509,6 +510,10 @@
     <div class="contact-item">
       <div class="label">Address</div>
       <div class="value">No 11, Jalan Sulaiman,<br>84000 Muar, Johor.</div>
+    </div>
+    <div class="contact-item">
+      <div class="label">Hours</div>
+      <div class="value">Every day except Tuesday,<br>10am – 11pm.</div>
     </div>
     <div class="contact-item">
       <div class="label">Map</div>
