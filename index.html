@@ -165,6 +165,66 @@
       .event-row{ grid-template-columns:1fr; gap:6px; }
       .event-link{ justify-self:start; }
     }
+
+    /* ── wholesale / partnerships ── */
+    .wholesale{
+      max-width:960px;
+      margin:0 auto;
+      padding:2vh 6vw 12vh;
+    }
+    .wholesale-grid{
+      display:grid;
+      grid-template-columns:0.85fr 1.15fr;
+      gap:48px;
+      align-items:center;
+    }
+    .wholesale-image{
+      border-top-left-radius:120px;
+      overflow:hidden;
+      height:380px;
+    }
+    .wholesale-image img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .wholesale-copy .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      font-size:13px;
+      margin-bottom:10px;
+    }
+    .wholesale-copy h2{ font-size:clamp(26px, 2.6vw, 34px); margin-bottom:12px; }
+    .wholesale-lead{
+      font-size:15px;
+      color:var(--ink-soft);
+      margin-bottom:28px;
+    }
+    .wholesale-list{
+      list-style:none;
+      margin:0 0 28px;
+      padding:0;
+    }
+    .wholesale-list li{
+      padding:14px 0;
+      border-top:1px solid var(--wall-dark);
+    }
+    .wholesale-list li:last-child{ border-bottom:1px solid var(--wall-dark); }
+    .wholesale-item-title{
+      font-family:'Fraunces', serif;
+      font-weight:500;
+      font-size:16px;
+    }
+    .wholesale-item-desc{
+      font-size:13px;
+      color:var(--ink-soft);
+      margin-top:2px;
+    }
+    @media (max-width:760px){
+      .wholesale-grid{ grid-template-columns:1fr; }
+      .wholesale-image{ height:260px; border-top-left-radius:80px; }
+    }
   </style>
 </head>
 <body>
@@ -208,35 +268,37 @@
   <div class="slide-dots" id="sliderDots"></div>
 </div>
 
-<section class="events">
-  <div class="eyebrow">What's On</div>
-  <h2>Upcoming at Teduh</h2>
 
-  <div class="event-row">
-    <div class="event-date">20 Sep</div>
-    <div>
-      <div class="event-name">Roof Reverie</div>
-      <div class="event-desc">Live sessions at Lorong Belakang — music, art, and coffee under the open roof.</div>
-    </div>
-    <a class="event-link" href="https://wa.me/60187924608?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Roof%20Reverie." target="_blank">RSVP →</a>
-  </div>
 
-  <div class="event-row">
-    <div class="event-date">Ongoing</div>
-    <div>
-      <div class="event-name">Lorong Belakang, weekends</div>
-      <div class="event-desc">Our weekend art and coffee space at Lorong Seni Muar — drop by and see what's up.</div>
+<section class="wholesale">
+  <div class="wholesale-grid">
+    <div class="wholesale-image">
+      <img src="../images/wholesale-partner.jpg" alt="Teduh wholesale partnership">
     </div>
-    <a class="event-link" href="https://wa.me/60187924608?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Lorong%20Belakang." target="_blank">Ask us →</a>
-  </div>
-
-  <div class="event-row">
-    <div class="event-date">—</div>
-    <div>
-      <div class="event-name">Have something to collaborate on?</div>
-      <div class="event-desc">We welcome collaborations with local brands, creators, and communities.</div>
+    <div class="wholesale-copy">
+      <div class="eyebrow">Wholesale &amp; Partnerships</div>
+      <h2>Beyond the counter</h2>
+      <p class="wholesale-lead">We work with cafés, offices, and kitchens beyond our own four walls.</p>
+      <ul class="wholesale-list">
+        <li>
+          <div class="wholesale-item-title">Coffee beans</div>
+          <div class="wholesale-item-desc">Wholesale roasts for cafés and corporate pantries.</div>
+        </li>
+        <li>
+          <div class="wholesale-item-title">Coffee consulting</div>
+          <div class="wholesale-item-desc">Menu, sourcing, and setup guidance for new cafés.</div>
+        </li>
+        <li>
+          <div class="wholesale-item-title">Machine rental</div>
+          <div class="wholesale-item-desc">Espresso machine and grinder rental, bundled with a bean supply plan.</div>
+        </li>
+        <li>
+          <div class="wholesale-item-title">Pizza dough &amp; shells</div>
+          <div class="wholesale-item-desc">Frozen dough balls and par-baked shells, ready for your kitchen.</div>
+        </li>
+      </ul>
+      <a class="event-link" href="https://wa.me/60187924608?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20wholesale." target="_blank">Enquire about wholesale →</a>
     </div>
-    <a class="event-link" href="https://wa.me/60187924608?text=Hi%20Teduh!%20I%27d%20like%20to%20talk%20about%20a%20collaboration." target="_blank">Reach out →</a>
   </div>
 </section>
 
