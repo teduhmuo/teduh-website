@@ -325,6 +325,30 @@
   </button>
 </nav>
 
+<script>
+  (function(){
+    var banner = document.querySelector('.promo-banner');
+    var nav = document.querySelector('nav');
+    if(!banner || !nav) return;
+    function fix(){
+      var navPos = getComputedStyle(nav).position;
+      var bH = banner.offsetHeight;
+      if(navPos === 'fixed' || navPos === 'sticky'){
+        banner.style.position = 'fixed';
+        banner.style.top = '0';
+        banner.style.left = '0';
+        banner.style.right = '0';
+        banner.style.zIndex = '10000';
+        nav.style.position = 'fixed';
+        nav.style.top = bH + 'px';
+        document.body.style.paddingTop = bH + 'px';
+      }
+    }
+    fix();
+    window.addEventListener('load', fix);
+  })();
+</script>
+
 <div class="slider" id="slider">
   <div class="slider-track" id="sliderTrack">
     <div class="slide">
