@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wholesale &amp; Partnerships — Teduh</title>
+  <meta name="description" content="Teduh wholesale — coffee beans, consulting, machine rental, pizza dough and shells, and B2B support for cafés, offices, and kitchens." />
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --wall:#EDE3D0;
+      --wall-dark:#E4D7BC;
+      --ink:#251A13;
+      --ink-soft:#4A392E;
+      --shutter:#4B5D45;
+      --shutter-dark:#3A4A36;
+      --ember:#BC5B2E;
+      --ember-dark:#8C4A2B;
+      --cream:#F7F1E4;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      background:var(--wall) !important;
+      color:var(--ink) !important;
+      font-family:'Work Sans', sans-serif !important;
+      margin:0;
+    }
+    h1, h2, h3{
+      font-family:'Fraunces', serif !important;
+      font-weight:500 !important;
+      letter-spacing:-0.01em !important;
+    }
+    nav{ background:var(--wall) !important; border-bottom:1px solid var(--wall-dark); }
+    .nav-links a{
+      color:var(--ink-soft) !important;
+      font-size:13px !important;
+      letter-spacing:0.08em !important;
+      text-transform:uppercase !important;
+    }
+    .nav-links a:hover{ color:var(--ink) !important; }
+    .nav-links a.btn-nav{
+      background:var(--ink) !important;
+      color:var(--cream) !important;
+      border-radius:2px !important;
+      border:none !important;
+    }
+    .nav-links li:last-child a.btn-nav{
+      background:transparent !important;
+      color:var(--ink) !important;
+      border:1px solid var(--ink) !important;
+    }
+    footer{ background:var(--ink) !important; color:#C9B69B !important; }
+    footer .logo{ font-family:'Fraunces', serif !important; color:var(--cream) !important; }
+    footer a{ color:#C9B69B !important; }
+    footer a:hover{ color:var(--ember) !important; }
+
+    /* ── hero ── */
+    .wh-hero{
+      max-width:1080px;
+      margin:0 auto;
+      padding:9vh 6vw 6vh;
+      border-bottom:1px solid var(--wall-dark);
+    }
+    .wh-hero .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      font-size:13px;
+      margin-bottom:16px;
+    }
+    .wh-hero h1{
+      font-size:clamp(34px, 4.4vw, 54px);
+      line-height:1.08;
+      max-width:14ch;
+      margin-bottom:22px;
+    }
+    .wh-hero p{
+      font-size:16px;
+      line-height:1.7;
+      color:var(--ink-soft);
+      max-width:56ch;
+      margin-bottom:32px;
+    }
+    .wh-hero-actions{ display:flex; gap:14px; flex-wrap:wrap; }
+    .wh-btn-primary{
+      background:var(--ink);
+      color:var(--cream);
+      font-size:13px;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+      padding:14px 26px;
+      border-radius:2px;
+    }
+    .wh-btn-secondary{
+      font-size:13px;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+      padding:14px 4px;
+      border-bottom:1px solid var(--ink);
+      color:var(--ink);
+    }
+
+    /* ── stats strip ── */
+    .wh-stats{
+      max-width:1080px;
+      margin:0 auto;
+      padding:5vh 6vw;
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:0;
+      border-bottom:1px solid var(--wall-dark);
+    }
+    .wh-stat{
+      padding:0 24px;
+      border-left:1px solid var(--wall-dark);
+    }
+    .wh-stat:first-child{ border-left:none; padding-left:0; }
+    .wh-stat-num{
+      font-family:'Fraunces', serif;
+      font-weight:500;
+      font-size:clamp(26px, 2.6vw, 34px);
+      color:var(--ink);
+    }
+    .wh-stat-label{
+      font-size:13px;
+      color:var(--ink-soft);
+      margin-top:6px;
+      line-height:1.4;
+    }
+
+    /* ── services ── */
+    .wh-services{
+      max-width:1080px;
+      margin:0 auto;
+      padding:9vh 6vw;
+    }
+    .wh-services .section-head{
+      max-width:56ch;
+      margin-bottom:52px;
+    }
+    .wh-services .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    .wh-services h2{ font-size:clamp(28px, 3vw, 38px); }
+    .wh-service-grid{
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:1px;
+      background:var(--wall-dark);
+      border:1px solid var(--wall-dark);
+    }
+    .wh-service{
+      background:var(--wall);
+      padding:32px;
+    }
+    .wh-service-title{
+      font-family:'Fraunces', serif;
+      font-weight:500;
+      font-size:19px;
+      margin-bottom:10px;
+    }
+    .wh-service-desc{
+      font-size:14px;
+      line-height:1.6;
+      color:var(--ink-soft);
+    }
+
+    /* ── process ── */
+    .wh-process{
+      max-width:1080px;
+      margin:0 auto;
+      padding:2vh 6vw 9vh;
+    }
+    .wh-process .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    .wh-process h2{ font-size:clamp(28px, 3vw, 38px); margin-bottom:48px; }
+    .wh-process-grid{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:40px;
+    }
+    .wh-process-step .step-num{
+      font-family:'Fraunces', serif;
+      font-weight:500;
+      font-size:15px;
+      color:var(--ember-dark);
+      margin-bottom:14px;
+    }
+    .wh-process-step h3{
+      font-size:18px;
+      margin-bottom:8px;
+    }
+    .wh-process-step p{
+      font-size:14px;
+      line-height:1.6;
+      color:var(--ink-soft);
+    }
+
+    /* ── CTA band ── */
+    .wh-cta{
+      background:var(--ink);
+      color:var(--cream);
+      padding:8vh 6vw;
+      text-align:left;
+    }
+    .wh-cta-inner{
+      max-width:1080px;
+      margin:0 auto;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:24px;
+    }
+    .wh-cta h2{ color:var(--cream); font-size:clamp(26px, 3vw, 36px); max-width:16ch; }
+    .wh-cta p{ color:#C9B69B; font-size:14px; margin-top:8px; }
+    .wh-cta .wh-btn-primary{ background:var(--ember); }
+
+    @media (max-width:760px){
+      .wh-stats{ grid-template-columns:repeat(2, 1fr); row-gap:28px; }
+      .wh-stat:nth-child(3){ border-left:none; padding-left:0; }
+      .wh-service-grid{ grid-template-columns:1fr; }
+      .wh-process-grid{ grid-template-columns:1fr; }
+      .wh-form-grid{ grid-template-columns:1fr; }
+    }
+
+    /* ── enquiry form ── */
+    .wh-form-section{
+      max-width:1080px;
+      margin:0 auto;
+      padding:2vh 6vw 9vh;
+    }
+    .wh-form-section .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    .wh-form-section h2{ font-size:clamp(28px, 3vw, 38px); margin-bottom:14px; }
+    .wh-form-lead{
+      font-size:15px;
+      color:var(--ink-soft);
+      max-width:56ch;
+      margin-bottom:44px;
+    }
+    .wh-form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:24px 32px;
+    }
+    .wh-field{ display:flex; flex-direction:column; }
+    .wh-field.full{ grid-column:1 / -1; }
+    .wh-field label{
+      font-size:12px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+      margin-bottom:8px;
+    }
+    .wh-field input,
+    .wh-field select,
+    .wh-field textarea{
+      font-family:'Work Sans', sans-serif;
+      font-size:15px;
+      color:var(--ink);
+      background:transparent;
+      border:none;
+      border-bottom:1px solid var(--wall-dark);
+      padding:10px 2px;
+      outline:none;
+    }
+    .wh-field input:focus,
+    .wh-field select:focus,
+    .wh-field textarea:focus{
+      border-bottom:1px solid var(--ember);
+    }
+    .wh-field textarea{ resize:vertical; min-height:90px; }
+    .wh-form-actions{
+      grid-column:1 / -1;
+      display:flex;
+      align-items:center;
+      gap:20px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .wh-btn-primary.as-submit{
+      border:none;
+      cursor:pointer;
+      font-family:'Work Sans', sans-serif;
+    }
+    .wh-or{
+      font-size:13px;
+      color:var(--ink-soft);
+    }
+    .wh-btn-whatsapp{
+      font-size:13px;
+      letter-spacing:0.05em;
+      text-transform:uppercase;
+      color:var(--shutter-dark);
+      border-bottom:1px solid var(--shutter-dark);
+      padding-bottom:2px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="../images/logo.png" alt="Teduh">
+  </a>
+   <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/wholesale" class="nav-active">Wholesale</a></li>
+    <li><a href="/community">Community</a></li>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/events">Events</a></li>
+    <li><a href="/loyalty">Loyalty</a></li>
+    <li><a href="/order" class="btn-nav">Order</a></li>
+    <li><a href="/#contact" class="btn-nav">Find Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section class="wh-hero">
+  <div class="eyebrow">Wholesale &amp; Partnerships</div>
+  <h1>Coffee and kitchen products, built for your business</h1>
+  <p>We supply beans, equipment, and ready-to-bake products to cafés, offices, and kitchens across Muar and beyond — backed by five years of running our own roastery and shop.</p>
+  <div class="wh-hero-actions">
+    <a class="wh-btn-primary" href="https://wa.me/60187924608?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20wholesale." target="_blank">Enquire about wholesale</a>
+    <a class="wh-btn-secondary" href="#wh-services">See what we offer</a>
+  </div>
+</section>
+
+<div class="wh-stats">
+  <div class="wh-stat">
+    <div class="wh-stat-num">5 yrs</div>
+    <div class="wh-stat-label">Running our own roastery and café</div>
+  </div>
+  <div class="wh-stat">
+    <div class="wh-stat-num">300kg</div>
+    <div class="wh-stat-label">Monthly roasting capacity</div>
+  </div>
+  <div class="wh-stat">
+    <div class="wh-stat-num">Independent</div>
+    <div class="wh-stat-label">Founder-led, not a franchise</div>
+  </div>
+  <div class="wh-stat">
+    <div class="wh-stat-num">B2B + B2C</div>
+    <div class="wh-stat-label">Supplying businesses and home users</div>
+  </div>
+</div>
+
+<section class="wh-services" id="wh-services">
+  <div class="section-head">
+    <div class="eyebrow">What We Offer</div>
+    <h2>Six ways we work with other businesses</h2>
+  </div>
+  <div class="wh-service-grid">
+    <div class="wh-service">
+      <div class="wh-service-title">Coffee beans</div>
+      <div class="wh-service-desc">Wholesale roasts for cafés and corporate pantries, sourced and roasted in-house — order from as little as 5kg. Free delivery within the Muar radius, with shipping available outside it. Our standard is a single-origin Brazil medium-dark espresso roast, built to suit a wide range of coffee drinkers.</div>
+    </div>
+    <div class="wh-service">
+      <div class="wh-service-title">Coffee consulting</div>
+      <div class="wh-service-desc">Menu development, sourcing, and setup guidance for new cafés getting started. We also train your baristas and walk through the costing of coffee-based drinks, plus machine positioning, calibration, and maintenance.</div>
+    </div>
+    <div class="wh-service">
+      <div class="wh-service-title">Machine rental</div>
+      <div class="wh-service-desc">Espresso machine and grinder rental, bundled with a bean supply plan. Full commercial setup from RM500/month, with a 1-year contract — bundle in your coffee bean supply and get free training and free maintenance included.</div>
+    </div>
+    <div class="wh-service">
+      <div class="wh-service-title">Pizza dough &amp; shells</div>
+      <div class="wh-service-desc">Frozen dough balls and par-baked Neapolitan shells, ready for your kitchen. Shells just need a reheat in a home microwave or oven — or start from frozen dough if you want the full pizzeria experience with your own technique and equipment.</div>
+    </div>
+    <div class="wh-service">
+      <div class="wh-service-title">B2B support</div>
+      <div class="wh-service-desc">Ongoing support to help scale your business, from supply planning to operations. We advise on what you and your customers actually need, so you can deliver the service with confidence.</div>
+    </div>
+    <div class="wh-service">
+      <div class="wh-service-title">Coffee catering</div>
+      <div class="wh-service-desc">We'll make sure your event runs smoothly, without you having to think twice about how to delight your guests. Rule of thumb: a free cup of coffee brightens someone's day like a morning sun.</div>
+    </div>
+  </div>
+</section>
+
+<section class="wh-process">
+  <div class="eyebrow">How It Works</div>
+  <h2>Getting started is simple</h2>
+  <div class="wh-process-grid">
+    <div class="wh-process-step">
+      <div class="step-num">01</div>
+      <h3>Tell us what you need</h3>
+      <p>Reach out with your business, volume, and what you're looking for.</p>
+    </div>
+    <div class="wh-process-step">
+      <div class="step-num">02</div>
+      <h3>We tailor a plan</h3>
+      <p>We work out pricing, quantities, and a supply schedule that fits.</p>
+    </div>
+    <div class="wh-process-step">
+      <div class="step-num">03</div>
+      <h3>Start working together</h3>
+      <p>Ongoing supply and support, with room to adjust as you grow.</p>
+    </div>
+  </div>
+</section>
+
+<section class="wh-form-section">
+  <div class="eyebrow">Get In Touch</div>
+  <h2>Tell us what you need</h2>
+  <p class="wh-form-lead">Fill this in and it'll land straight in our inbox — or skip the form and message us directly on WhatsApp.</p>
+
+  <form class="wh-form-grid" name="wholesale-enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="wholesale-enquiry" />
+    <p style="display:none;"><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+    <div class="wh-field">
+      <label for="wh-name">Name</label>
+      <input type="text" id="wh-name" name="name" required>
+    </div>
+
+    <div class="wh-field">
+      <label for="wh-email">Email</label>
+      <input type="email" id="wh-email" name="email" required>
+    </div>
+
+    <div class="wh-field">
+      <label for="wh-phone">No. Phone</label>
+      <input type="tel" id="wh-phone" name="phone" required>
+    </div>
+
+    <div class="wh-field">
+      <label for="wh-inquiry">Inquiry</label>
+      <select id="wh-inquiry" name="inquiry" required>
+        <option value="" disabled selected>Select an option</option>
+        <option value="Coffee Beans">Coffee Beans</option>
+        <option value="Coffee Consulting">Coffee Consulting</option>
+        <option value="Machine Rental">Machine Rental</option>
+        <option value="Pizza Dough & Shells">Pizza Dough &amp; Shells</option>
+        <option value="B2B Support">B2B Support</option>
+        <option value="Coffee Catering">Coffee Catering</option>
+      </select>
+    </div>
+
+    <div class="wh-field full">
+      <label for="wh-message">Message</label>
+      <textarea id="wh-message" name="message" required></textarea>
+    </div>
+
+    <div class="wh-form-actions">
+      <button type="submit" class="wh-btn-primary as-submit">Send enquiry</button>
+      <span class="wh-or">or</span>
+      <a class="wh-btn-whatsapp" href="https://wa.me/601170264828" target="_blank">Message us on WhatsApp →</a>
+    </div>
+  </form>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Teduh</div>
+      <p>A coffee brand rooted in Muar —
+        coffee shop, wholesale, retail beans, community & merchandise.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/shop">Shop</a></li>
+        <li><a href="/wholesale">Wholesale</a></li>
+        <li><a href="/community">Community</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a href="/events">Events</a></li>
+        <li><a href="/loyalty">Loyalty</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="/#contact">Location & Hours</a></li>
+        <li><a href="https://wa.me/60187924608" target="_blank">WhatsApp Us</a></li>
+        <li><a href="mailto:hello@teduh.com.my">Email Us</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="https://instagram.com/perniagaan.teduh" target="_blank">Instagram</a></li>
+        <li><a href="https://facebook.com/perniagaanteduh" target="_blank">Facebook</a></li>
+        <li><a href="https://tiktok.com/@perniagaanteduh" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Teduh. All rights reserved. · 202003155860 (003128665-D)</span>
+  </div>
+</footer>
+
+</body>
+</html>
