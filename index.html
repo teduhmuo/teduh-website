@@ -339,6 +339,43 @@
       .story-grid{ grid-template-columns:1fr; }
       .story-image{ height:260px; border-top-right-radius:80px; order:-1; }
     }
+
+    /* ── find us ── */
+    #contact{
+      max-width:1080px;
+      margin:0 auto;
+      padding:9vh 6vw;
+      border-top:1px solid var(--wall-dark);
+    }
+    #contact .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    #contact h2{ font-size:clamp(28px, 3vw, 38px); margin-bottom:36px; }
+    .contact-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:32px;
+    }
+    .contact-item .label{
+      font-size:12px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      color:var(--ember-dark);
+      margin-bottom:8px;
+    }
+    .contact-item .value{
+      font-size:15px;
+      line-height:1.6;
+      color:var(--ink);
+    }
+    .contact-item a.value{ color:var(--ink); text-decoration:underline; text-underline-offset:3px; }
+    @media (max-width:760px){
+      .contact-grid{ grid-template-columns:1fr 1fr; row-gap:28px; }
+    }
   </style>
 </head>
 <body>
@@ -357,10 +394,8 @@
     <img src="../images/logo.png" alt="Teduh">
   </a>
    <ul class="nav-links">
-    <li><a href="/">Home</a></li>
+    <li><a href="/" class="nav-active">Home</a></li>
     <li><a href="/wholesale">Wholesale</a></li>
-    <li><a href="/community" class="nav-active">Community</a></li>
-    <li><a href="/#about">About</a></li>
     <li><a href="/events">Events</a></li>
     <li><a href="/loyalty">Loyalty</a></li>
     <li><a href="/order" class="btn-nav">Order</a></li>
@@ -467,6 +502,29 @@
   </div>
 </section>
 
+<section id="contact">
+  <div class="eyebrow">Find Us</div>
+  <h2>Come say hi</h2>
+  <div class="contact-grid">
+    <div class="contact-item">
+      <div class="label">Address</div>
+      <div class="value">No 11, Jalan Sulaiman,<br>84000 Muar, Johor.</div>
+    </div>
+    <div class="contact-item">
+      <div class="label">Map</div>
+      <a class="value" href="https://www.google.com/maps/search/?api=1&query=No+11%2C+Jalan+Sulaiman%2C+84000+Muar%2C+Johor" target="_blank">View on Google Maps →</a>
+    </div>
+    <div class="contact-item">
+      <div class="label">Email</div>
+      <a class="value" href="mailto:hello@teduh.com.my">hello@teduh.com.my</a>
+    </div>
+    <div class="contact-item">
+      <div class="label">WhatsApp</div>
+      <a class="value" href="https://wa.me/601170264828" target="_blank">+60 11-7026 4828</a>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
@@ -478,11 +536,7 @@
       <h4>Explore</h4>
       <ul>
         <li><a href="/">Home</a></li>
-        <li><a href="/menu">Menu</a></li>
-        <li><a href="/shop">Shop</a></li>
         <li><a href="/wholesale">Wholesale</a></li>
-        <li><a href="/community">Community</a></li>
-        <li><a href="/#about">About</a></li>
         <li><a href="/events">Events</a></li>
         <li><a href="/loyalty">Loyalty</a></li>
       </ul>
@@ -491,7 +545,7 @@
       <h4>Visit</h4>
       <ul>
         <li><a href="/#contact">Location & Hours</a></li>
-        <li><a href="https://wa.me/60187924608" target="_blank">WhatsApp Us</a></li>
+        <li><a href="https://wa.me/601170264828" target="_blank">WhatsApp Us</a></li>
         <li><a href="mailto:hello@teduh.com.my">Email Us</a></li>
         <li><a href="/feedback">Feedback</a></li>
       </ul>
