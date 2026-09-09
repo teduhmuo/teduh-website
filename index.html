@@ -60,6 +60,32 @@
     footer a{ color:#C9B69B !important; }
     footer a:hover{ color:var(--ember) !important; }
 
+    /* ── promo banner ── */
+    .promo-banner{
+      background:var(--shutter-dark);
+      color:var(--cream);
+      overflow:hidden;
+      position:relative;
+      height:40px;
+    }
+    .promo-track{
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+    .promo-track span{
+      height:40px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:13px;
+      letter-spacing:0.02em;
+      flex-shrink:0;
+      padding:0 1rem;
+      text-align:center;
+    }
+    .promo-track span b{ font-weight:600; margin-right:6px; }
+
     /* ── image slider ── */
     .slider{
       position:relative;
@@ -272,6 +298,15 @@
 </head>
 <body>
 
+<div class="promo-banner">
+  <div class="promo-track" id="promoTrack">
+    <span><b>Loyalty</b> members earn RM1 = 1 point</span>
+    <span><b>New</b> Citrus Series is coming soon</span>
+    <span><b>Upcoming events</b> — check the Events tab</span>
+    <span><b>B2B support</b> available to help scale your business</span>
+  </div>
+</div>
+
 <nav>
   <a class="nav-logo" href="/">
     <img src="../images/logo.png" alt="Teduh">
@@ -352,6 +387,10 @@
           <div class="wholesale-item-title">Pizza dough &amp; shells</div>
           <div class="wholesale-item-desc">Frozen dough balls and par-baked shells, ready for your kitchen.</div>
         </li>
+        <li>
+          <div class="wholesale-item-title">B2B support</div>
+          <div class="wholesale-item-desc">Support to help scale your business up.</div>
+        </li>
       </ul>
       <a class="event-link" href="https://wa.me/60187924608?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20wholesale." target="_blank">Enquire about wholesale →</a>
     </div>
@@ -422,6 +461,20 @@
       track.style.transform = 'translateX(-' + (i * (100 / count)) + '%)';
     }
     setInterval(function(){ show((i + 1) % count); }, 4000);
+  })();
+</script>
+
+<script>
+  (function(){
+    var track = document.getElementById('promoTrack');
+    if(!track) return;
+    var items = track.children.length;
+    var i = 0;
+    setInterval(function(){
+      i = (i + 1) % items;
+      track.style.transition = 'transform 0.5s ease';
+      track.style.transform = 'translateY(-' + (i * 40) + 'px)';
+    }, 4000);
   })();
 </script>
 
