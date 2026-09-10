@@ -761,10 +761,7 @@
   </div>
   <div class="wh-price-note">Each package includes a set service duration: 100 pax = 3 hours, 200 pax = 4 hours, 300 pax = 5 hours, 400 pax = 6 hours, 500 pax = 7 hours. For 600+ pax, message us directly for a custom quote.</div>
 
-  <form class="cater-form" name="catering-enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
-    <input type="hidden" name="form-name" value="catering-enquiry" />
-    <p style="display:none;"><label>Don't fill this out: <input name="bot-field" /></label></p>
-
+  <div class="cater-form">
     <div class="cater-row2">
       <div class="cater-field">
         <label for="cat-name">Name</label>
@@ -804,12 +801,10 @@
       <div class="total-line"><span>Estimated total</span><span id="cat-total-price">RM0.00</span></div>
     </div>
 
-    <div style="margin-top:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-      <button type="submit" class="wh-btn-primary as-submit">Send enquiry</button>
-      <span class="wh-or">or</span>
-      <a class="wh-btn-whatsapp" id="cat-whatsapp-link" href="https://wa.me/601170264828" target="_blank" onclick="return sendCateringWhatsApp(event)">Message us on WhatsApp →</a>
+    <div style="margin-top:20px;">
+      <a class="wh-btn-primary" id="cat-whatsapp-link" href="https://wa.me/601170264828" target="_blank" onclick="return sendCateringWhatsApp(event)">Message us on WhatsApp →</a>
     </div>
-  </form>
+  </div>
 </div>
 
 <section class="wh-process wh-default-view">
