@@ -807,7 +807,7 @@
     <div style="margin-top:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
       <button type="submit" class="wh-btn-primary as-submit">Send enquiry</button>
       <span class="wh-or">or</span>
-      <a class="wh-btn-whatsapp" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Coffee%20Catering." target="_blank">Message us on WhatsApp →</a>
+      <a class="wh-btn-whatsapp" id="cat-whatsapp-link" href="https://wa.me/601170264828" target="_blank" onclick="return sendCateringWhatsApp(event)">Message us on WhatsApp →</a>
     </div>
   </form>
 </div>
@@ -1034,6 +1034,35 @@
   }
 
   document.addEventListener('DOMContentLoaded', updateCateringQuote);
+
+  function sendCateringWhatsApp(e){
+    e.preventDefault();
+
+    var name = document.getElementById('cat-name').value.trim();
+    var venue = document.getElementById('cat-venue').value.trim();
+    var date = document.getElementById('cat-date').value;
+    var coffee = parseInt(document.getElementById('cat-coffee').value, 10) || 0;
+    var matcha = parseInt(document.getElementById('cat-matcha').value, 10) || 0;
+    var chocolate = parseInt(document.getElementById('cat-chocolate').value, 10) || 0;
+    var total = coffee + matcha + chocolate;
+    var tier = getCaterTier(total);
+
+    var lines = ['Hi Teduh! I\\'d like to enquire about Coffee Catering.', ''];
+    if (name)  lines.push('Name: ' + name);
+    if (venue) lines.push('Venue: ' + venue);
+    if (date)  lines.push('Date: ' + date);
+    if (total > 0) {
+      lines.push('');
+      lines.push('Drink mix: ' + coffee + ' coffee, ' + matcha + ' matcha, ' + chocolate + ' chocolate (' + total + ' cups total)');
+      if (tier) {
+        lines.push('Package: ' + tier.pax + ' pax tier · ' + tier.hours + ' hours service · RM' + tier.rate.toFixed(2) + '/cup');
+        lines.push('Estimated total: RM' + (total * tier.rate).toFixed(2));
+      }
+    }
+
+    var message = encodeURIComponent(lines.join('\\n'));
+    window.open('https://wa.me/601170264828?text=' + message, '_blank');
+  }
 </script>
 
 </body>
