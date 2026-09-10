@@ -256,6 +256,149 @@
       color:var(--ink-soft);
       margin-bottom:20px;
     }
+
+    /* ── pricing blocks ── */
+    .wh-price-label{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      color:var(--ink-soft);
+      margin-bottom:12px;
+      margin-top:28px;
+    }
+    .wh-price-table{
+      border:1px solid var(--wall-dark);
+      border-radius:2px;
+      overflow:hidden;
+      margin-bottom:8px;
+    }
+    .wh-price-row{
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+      padding:14px 18px;
+      border-top:1px solid var(--wall-dark);
+      font-size:14px;
+    }
+    .wh-price-row:first-child{ border-top:none; }
+    .wh-price-row .tier{ color:var(--ink); }
+    .wh-price-row .price{ color:var(--ember-dark); font-weight:600; }
+    .wh-price-note{
+      font-size:13px;
+      color:var(--ink-soft);
+      margin-bottom:24px;
+    }
+    .wh-price-groups{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+      margin-bottom:8px;
+    }
+    .wh-price-group-title{
+      font-family:'Fraunces', serif;
+      font-weight:500;
+      font-size:16px;
+      margin-bottom:10px;
+    }
+    .wh-inclusions{
+      list-style:none;
+      margin:0 0 24px;
+      padding:0;
+    }
+    .wh-inclusions li{
+      font-size:14px;
+      color:var(--ink-soft);
+      padding:8px 0 8px 18px;
+      border-top:1px solid var(--wall-dark);
+      position:relative;
+    }
+    .wh-inclusions li:first-child{ border-top:none; }
+    .wh-inclusions li::before{
+      content:'—';
+      position:absolute;
+      left:0;
+      color:var(--ember-dark);
+    }
+    .wh-gift-note{
+      background:var(--wall-dark);
+      padding:14px 18px;
+      border-radius:2px;
+      font-size:13.5px;
+      color:var(--ink);
+      margin-bottom:24px;
+    }
+    @media (max-width:600px){
+      .wh-price-groups{ grid-template-columns:1fr; }
+    }
+
+    /* ── catering quote builder ── */
+    .cater-form{
+      border:1px solid var(--wall-dark);
+      border-radius:2px;
+      padding:24px;
+      margin-top:8px;
+    }
+    .cater-field{ margin-bottom:18px; }
+    .cater-field label{
+      display:block;
+      font-size:12px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+      margin-bottom:8px;
+    }
+    .cater-field input, .cater-field select{
+      width:100%;
+      font-family:'Work Sans', sans-serif;
+      font-size:15px;
+      color:var(--ink);
+      background:transparent;
+      border:none;
+      border-bottom:1px solid var(--wall-dark);
+      padding:9px 2px;
+      outline:none;
+    }
+    .cater-field input:focus, .cater-field select:focus{ border-bottom:1px solid var(--ember); }
+    .cater-row2{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+    .cater-mix-title{
+      font-size:12px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      color:var(--ink-soft);
+      margin:24px 0 12px;
+    }
+    .cater-mix-row{
+      display:grid;
+      grid-template-columns:1fr 90px;
+      gap:12px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .cater-mix-row span{ font-size:14px; color:var(--ink); }
+    .cater-mix-row input{
+      text-align:right;
+      border:1px solid var(--wall-dark);
+      border-radius:2px;
+      padding:8px;
+      font-size:14px;
+    }
+    .cater-summary{
+      margin-top:20px;
+      padding:16px 18px;
+      background:var(--wall-dark);
+      border-radius:2px;
+      font-size:14px;
+    }
+    .cater-summary .total-line{
+      display:flex;
+      justify-content:space-between;
+      font-weight:600;
+      font-size:16px;
+      margin-top:8px;
+      padding-top:8px;
+      border-top:1px solid rgba(37,26,19,0.15);
+    }
+    .cater-summary .warn{ color:var(--error); }
     .wh-back-link{
       display:inline-block;
       font-size:13px;
@@ -478,7 +621,7 @@
     </div>
     <div class="wh-service">
       <div class="wh-service-title">Machine rental</div>
-      <div class="wh-service-desc">Espresso machine and grinder rental, bundled with a bean supply plan. Full commercial setup from RM500/month, with a 1-year contract — bundle in your coffee bean supply and get free training and free maintenance included.</div>
+      <div class="wh-service-desc">Espresso machine and grinder rental, bundled with a bean supply plan. Full commercial setup from RM450/month, with a 1-year contract and a minimum 10kg coffee bean purchase monthly — free training and maintenance included.</div>
       <a class="wh-read-more" href="#machine-rental">Read more →</a>
     </div>
     <div class="wh-service">
@@ -504,7 +647,15 @@
   <div class="eyebrow">Coffee Beans</div>
   <h3>Wholesale roasts for your cafe or pantry</h3>
   <p>We roast in-house and supply from as little as 5kg per order, so you're not locked into a large minimum just to get started. Our standard offering is a single-origin Brazil medium-dark espresso roast — a reliable, crowd-pleasing profile built to suit a wide range of coffee drinkers, from casual pantry drinkers to café regulars.</p>
-  <p>Delivery is free within the Muar radius, and we can arrange shipping if you're further out. Pricing scales with volume — reach out and we'll work out a rate that fits your order size.</p>
+  <p>Delivery is free within the Muar radius, and we can arrange shipping if you're further out.</p>
+
+  <div class="wh-price-label">Pricing</div>
+  <div class="wh-price-table">
+    <div class="wh-price-row"><span class="tier">5kg – 20kg</span><span class="price">RM87 / kg</span></div>
+    <div class="wh-price-row"><span class="tier">Above 20kg</span><span class="price">RM85 / kg</span></div>
+  </div>
+  <div class="wh-price-note">Minimum order 5kg. Prices are for our standard single-origin Brazil roast.</div>
+
   <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Coffee%20Beans." target="_blank">Ask about Coffee Beans</a>
 </div>
 
@@ -512,8 +663,21 @@
   <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Coffee Consulting</div>
   <h3>Everything a new café needs to get started right</h3>
-  <p>Opening a café involves more decisions than just picking a bean. We help with menu development, sourcing, and general setup guidance — the kind of groundwork that's easy to get wrong the first time around.</p>
-  <p>We also train your baristas directly, walk through how to cost your coffee-based drinks properly, and help with machine positioning, calibration, and ongoing maintenance — so your setup runs smoothly from day one.</p>
+  <p>Opening a café involves more decisions than just picking a bean. We cover the full setup, end to end.</p>
+
+  <div class="wh-price-label">What's included</div>
+  <ul class="wh-inclusions">
+    <li>Coffee machine &amp; equipment — buy from us, or we advise on your own purchase</li>
+    <li>Counter positioning for efficient barista workflow</li>
+    <li>Menu development</li>
+    <li>Ongoing machine maintenance</li>
+    <li>Advice and hands-on barista training</li>
+  </ul>
+
+  <div class="wh-gift-note">After your setup is commissioned, you'll receive a free 1kg bag of coffee beans, 1 carton of milk, and sugar syrup to get your first day of service started.</div>
+
+  <div class="wh-price-note">Pricing depends on the scope of your setup — reach out for a custom quote.</div>
+
   <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Coffee%20Consulting." target="_blank">Ask about Coffee Consulting</a>
 </div>
 
@@ -521,8 +685,15 @@
   <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Machine Rental</div>
   <h3>A full commercial setup without the upfront cost</h3>
-  <p>We rent out an espresso machine and grinder, bundled with a bean supply plan — a full commercial setup starting from RM500/month, on a 1-year contract. Bundling in your coffee bean supply with us also gets you free training and free maintenance included for the length of the contract.</p>
-  <p>This is a good fit if you want to test running a coffee counter without committing to buying equipment outright.</p>
+  <p>Espresso machine and commercial grinder rental — maintenance and training included for the length of your contract.</p>
+
+  <div class="wh-price-label">Pricing</div>
+  <div class="wh-price-table">
+    <div class="wh-price-row"><span class="tier">1 Group machine + grinder</span><span class="price">RM450 – RM550 / month</span></div>
+    <div class="wh-price-row"><span class="tier">2 Group machine + grinder</span><span class="price">RM600 – RM700 / month</span></div>
+  </div>
+  <div class="wh-price-note">Requires a 1-year contract with a minimum purchase of 10kg of our coffee beans every month. Maintenance and training included at no extra cost.</div>
+
   <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Machine%20Rental." target="_blank">Ask about Machine Rental</a>
 </div>
 
@@ -530,16 +701,47 @@
   <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Pizza Dough &amp; Shells</div>
   <h3>Neapolitan pizza, ready for your kitchen</h3>
-  <p>We supply frozen dough balls and par-baked Neapolitan shells. The shells are the simpler route — just reheat in a home microwave or oven, no pizza-making technique required. If you want the full pizzeria experience, start from frozen dough instead and bring your own technique and equipment to the bake.</p>
-  <p>Either way, it's a way to serve genuine Neapolitan-style pizza without building a pizza kitchen from scratch.</p>
+  <p>Two separate products — pick whichever fits how hands-on you want to be.</p>
+
+  <div class="wh-price-groups">
+    <div>
+      <div class="wh-price-group-title">Frozen Dough</div>
+      <p style="font-size:13px; margin-bottom:12px;">For the full pizzeria experience — bring your own technique and equipment.</p>
+      <div class="wh-price-table">
+        <div class="wh-price-row"><span class="tier">Retail</span><span class="price">RM5 / piece</span></div>
+        <div class="wh-price-row"><span class="tier">Wholesale (MOQ 50)</span><span class="price">RM4 / piece</span></div>
+      </div>
+    </div>
+    <div>
+      <div class="wh-price-group-title">Par-Baked Shells</div>
+      <p style="font-size:13px; margin-bottom:12px;">Just reheat in a home microwave or oven — no technique needed.</p>
+      <div class="wh-price-table">
+        <div class="wh-price-row"><span class="tier">Retail</span><span class="price">RM15 / bag of 2</span></div>
+        <div class="wh-price-row"><span class="tier">Wholesale (MOQ 20 bags)</span><span class="price">RM12 / bag</span></div>
+      </div>
+    </div>
+  </div>
+
   <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Pizza%20Dough%20%26%20Shells." target="_blank">Ask about Pizza Dough & Shells</a>
 </div>
 
 <div id="b2b-support" class="wh-detail">
   <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">B2B Support</div>
-  <h3>Ongoing support as your business grows</h3>
-  <p>Beyond the initial setup, we stay involved — advising on supply planning and day-to-day operations as your needs change. The goal is simple: we make sure you and your customers actually get what you need, so you can deliver your service with confidence rather than guesswork.</p>
+  <h3>Everything your coffee business needs, in one place</h3>
+  <p>A single package covering the full range of what it takes to run a coffee operation, so you're not sourcing from five different suppliers.</p>
+
+  <div class="wh-price-label">What's included</div>
+  <ul class="wh-inclusions">
+    <li>Machine rental</li>
+    <li>Barista training</li>
+    <li>Coffee beans supply</li>
+    <li>Supplies — milk, syrup</li>
+    <li>Tools — weighing scale, tamper</li>
+  </ul>
+
+  <div class="wh-price-note">Priced as a custom package based on which parts of the above you need — reach out and we'll put together a plan.</div>
+
   <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20B2B%20Support." target="_blank">Ask about B2B Support</a>
 </div>
 
@@ -547,8 +749,86 @@
   <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Coffee Catering</div>
   <h3>Coffee for your event, handled</h3>
-  <p>We'll make sure your event runs smoothly, without you having to think twice about how to delight your guests. Rule of thumb: a free cup of coffee brightens someone's day like a morning sun — and that's exactly the kind of small, reliable touch we bring to any event we cater.</p>
-  <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Coffee%20Catering." target="_blank">Ask about Coffee Catering</a>
+  <p>Packages run from 100 to 500 pax, each priced per cup and covering a range of service hours. Pick your pax count below and build your own drink mix — we'll work out the estimate as you go.</p>
+
+  <div class="wh-price-label">Package pricing</div>
+  <div class="wh-price-table">
+    <div class="wh-price-row"><span class="tier">100 pax</span><span class="price">RM6.50 / cup</span></div>
+    <div class="wh-price-row"><span class="tier">200 pax</span><span class="price">RM6.25 / cup</span></div>
+    <div class="wh-price-row"><span class="tier">300 pax</span><span class="price">RM6.00 / cup</span></div>
+    <div class="wh-price-row"><span class="tier">400 pax</span><span class="price">RM5.75 / cup</span></div>
+    <div class="wh-price-row"><span class="tier">500 pax</span><span class="price">RM5.50 / cup</span></div>
+  </div>
+  <div class="wh-price-note">Service duration runs 3–7 hours depending on your package. For 600+ pax, message us directly for a custom quote.</div>
+
+  <form class="cater-form" name="catering-enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="catering-enquiry" />
+    <p style="display:none;"><label>Don't fill this out: <input name="bot-field" /></label></p>
+
+    <div class="cater-row2">
+      <div class="cater-field">
+        <label for="cat-name">Name</label>
+        <input type="text" id="cat-name" name="name" required>
+      </div>
+      <div class="cater-field">
+        <label for="cat-contact">Contact number</label>
+        <input type="tel" id="cat-contact" name="contact" required>
+      </div>
+    </div>
+    <div class="cater-row2">
+      <div class="cater-field">
+        <label for="cat-email">Email</label>
+        <input type="email" id="cat-email" name="email" required>
+      </div>
+      <div class="cater-field">
+        <label for="cat-date">Event date</label>
+        <input type="date" id="cat-date" name="date" required>
+      </div>
+    </div>
+    <div class="cater-field">
+      <label for="cat-venue">Venue</label>
+      <input type="text" id="cat-venue" name="venue" required>
+    </div>
+    <div class="cater-row2">
+      <div class="cater-field">
+        <label for="cat-pax">Package (pax)</label>
+        <select id="cat-pax" name="pax" onchange="updateCateringQuote()">
+          <option value="100">100 pax — RM6.50/cup</option>
+          <option value="200">200 pax — RM6.25/cup</option>
+          <option value="300">300 pax — RM6.00/cup</option>
+          <option value="400">400 pax — RM5.75/cup</option>
+          <option value="500">500 pax — RM5.50/cup</option>
+        </select>
+      </div>
+      <div class="cater-field">
+        <label for="cat-hours">Service hours</label>
+        <select id="cat-hours" name="hours">
+          <option>3 hours</option>
+          <option>4 hours</option>
+          <option>5 hours</option>
+          <option>6 hours</option>
+          <option>7 hours</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="cater-mix-title">Drink mix (should add up to your total pax)</div>
+    <div class="cater-mix-row"><span>Coffee</span><input type="number" id="cat-coffee" name="coffee_cups" min="0" value="0" oninput="updateCateringQuote()"></div>
+    <div class="cater-mix-row"><span>Matcha</span><input type="number" id="cat-matcha" name="matcha_cups" min="0" value="0" oninput="updateCateringQuote()"></div>
+    <div class="cater-mix-row"><span>Chocolate</span><input type="number" id="cat-chocolate" name="chocolate_cups" min="0" value="0" oninput="updateCateringQuote()"></div>
+
+    <div class="cater-summary">
+      <div>Total cups: <strong id="cat-total-cups">0</strong> / <span id="cat-target-pax">100</span> pax</div>
+      <div id="cat-mix-warning" class="warn" style="display:none; margin-top:6px;">Your drink mix doesn't add up to your selected pax yet.</div>
+      <div class="total-line"><span>Estimated total</span><span id="cat-total-price">RM0.00</span></div>
+    </div>
+
+    <div style="margin-top:20px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+      <button type="submit" class="wh-btn-primary as-submit">Send enquiry</button>
+      <span class="wh-or">or</span>
+      <a class="wh-btn-whatsapp" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Coffee%20Catering." target="_blank">Message us on WhatsApp →</a>
+    </div>
+  </form>
 </div>
 
 <section class="wh-process wh-default-view">
@@ -722,6 +1002,30 @@
     var initialId = window.location.hash.slice(1);
     if (detailIds.indexOf(initialId) !== -1) showDetail(initialId);
   })();
+</script>
+
+<script>
+  var CATER_RATES = { '100': 6.50, '200': 6.25, '300': 6.00, '400': 5.75, '500': 5.50 };
+
+  function updateCateringQuote(){
+    var pax = document.getElementById('cat-pax').value;
+    var rate = CATER_RATES[pax];
+    var coffee = parseInt(document.getElementById('cat-coffee').value, 10) || 0;
+    var matcha = parseInt(document.getElementById('cat-matcha').value, 10) || 0;
+    var chocolate = parseInt(document.getElementById('cat-chocolate').value, 10) || 0;
+    var total = coffee + matcha + chocolate;
+
+    document.getElementById('cat-total-cups').textContent = total;
+    document.getElementById('cat-target-pax').textContent = pax;
+
+    var warning = document.getElementById('cat-mix-warning');
+    warning.style.display = (total !== parseInt(pax, 10)) ? 'block' : 'none';
+
+    var price = total * rate;
+    document.getElementById('cat-total-price').textContent = 'RM' + price.toFixed(2);
+  }
+
+  document.addEventListener('DOMContentLoaded', updateCateringQuote);
 </script>
 
 </body>
