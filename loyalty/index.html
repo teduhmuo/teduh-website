@@ -4,144 +4,150 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Loyalty — Teduh</title>
+<link rel="icon" type="image/x-icon" href="../favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --cream: #F7F3EE;
-    --warm-brown: #3D2B1F;
-    --medium-brown: #7A5C46;
-    --light-brown: #C4A882;
-    --accent: #5B7E5A;
-    --accent-light: #EAF0E9;
-    --border: #E2D9CE;
-    --white: #FFFFFF;
-    --error: #C0392B;
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'DM Sans', sans-serif;
+    --wall:#EDE3D0;
+    --wall-dark:#E4D7BC;
+    --ink:#251A13;
+    --ink-soft:#4A392E;
+    --shutter:#4B5D45;
+    --shutter-dark:#3A4A36;
+    --ember:#BC5B2E;
+    --ember-dark:#8C4A2B;
+    --cream:#F7F1E4;
+    --white:#FFFFFF;
+    --error:#B23B2E;
+    --gold:#D9A441;
+    --gold-dark:#8A6420;
+    --silver:#B9BFC4;
+    --silver-dark:#4A4F53;
+    --platinum:#2B2420;
+    --font-display:'Fraunces', Georgia, serif;
+    --font-body:'Work Sans', sans-serif;
   }
 
   body {
     font-family: var(--font-body);
-    background: var(--cream);
-    color: var(--warm-brown);
+    background: var(--wall) !important;
+    color: var(--ink) !important;
     min-height: 100vh;
   }
+  h1, h2, h3 { font-family: var(--font-display) !important; font-weight: 500 !important; letter-spacing: -0.01em !important; }
 
-  header {
-    background: var(--warm-brown);
-    padding: 1.25rem 2rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  /* ── nav (matches site) ── */
+  nav{ background:var(--wall) !important; border-bottom:1px solid var(--wall-dark); }
+  .nav-links a{
+    color:var(--ink-soft) !important;
+    font-size:13px !important;
+    letter-spacing:0.08em !important;
+    text-transform:uppercase !important;
+  }
+  .nav-links a:hover, .nav-links a.nav-active{ color:var(--ink) !important; }
+  .nav-links a.btn-nav{
+    background:var(--ink) !important;
+    color:var(--cream) !important;
+    border-radius:2px !important;
+    border:none !important;
+  }
+  .nav-links li:last-child a.btn-nav{
+    background:transparent !important;
+    color:var(--ink) !important;
+    border:1px solid var(--ink) !important;
+  }
+  footer{ background:var(--ink) !important; color:#C9B69B !important; }
+  footer .logo{ font-family:var(--font-display) !important; color:var(--cream) !important; }
+  footer a{ color:#C9B69B !important; }
+  footer a:hover{ color:var(--ember) !important; }
+
+  /* mobile nav */
+  .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; flex-direction:column; gap:5px; }
+  .nav-toggle span{ display:block; width:22px; height:2px; background:var(--ink); }
+  @media (max-width:900px){
+    .nav-toggle{ display:flex; }
+    .nav-links{
+      display:none; position:absolute; top:100%; left:0; right:0;
+      background:var(--wall); border-bottom:1px solid var(--wall-dark);
+      flex-direction:column !important; padding:8px 6vw 20px; gap:0 !important;
+    }
+    .nav-links.open{ display:flex; }
+    .nav-links li{ width:100%; }
+    .nav-links a{ display:block; padding:14px 0; border-bottom:1px solid var(--wall-dark); }
+    .nav-links a.btn-nav{ margin-top:14px; text-align:center; border-bottom:none !important; }
+    nav{ position:relative; }
   }
 
-  header .logo {
-    font-family: var(--font-display);
-    font-size: 1.6rem;
-    color: var(--cream);
-    text-decoration: none;
-  }
-
-  header .tagline {
-    font-size: 0.75rem;
-    color: var(--light-brown);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* Hero */
+  /* ── hero ── */
   .hero {
-    background: var(--warm-brown);
-    padding: 2.5rem 1.5rem 4rem;
+    background: var(--ink);
+    padding: 3rem 1.5rem 4.5rem;
     text-align: center;
   }
-
-  .hero-icon {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 0.75rem;
-  }
-
   .hero h1 {
-    font-family: var(--font-display);
-    font-size: clamp(1.8rem, 5vw, 2.4rem);
+    font-size: clamp(2rem, 5vw, 2.6rem);
     color: var(--cream);
-    font-weight: 400;
     margin-bottom: 0.5rem;
   }
-
   .hero p {
-    color: var(--light-brown);
-    font-size: 0.88rem;
+    color: #C9B69B;
+    font-size: 0.92rem;
     font-weight: 300;
     line-height: 1.6;
-    max-width: 320px;
+    max-width: 340px;
     margin: 0 auto;
   }
 
-  /* Perks strip */
+  /* ── perks strip ── */
   .perks {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0;
-    background: #2C1E14;
+    background: var(--shutter-dark);
     padding: 1rem 1.5rem;
     max-width: 480px;
     margin: 0 auto;
   }
+  .perk { text-align: center; padding: 0.5rem 0.25rem; }
+  .perk-label { font-size: 0.82rem; font-weight: 600; color: var(--cream); line-height: 1.3; letter-spacing: 0.01em; }
+  .perk-label strong { color: var(--ember); font-weight: 700; }
 
-  .perk {
-    text-align: center;
-    padding: 0.5rem 0.25rem;
-  }
+  /* ── main content ── */
+  main { max-width: 480px; margin: -1.5rem auto 3rem; padding: 0 1.25rem; }
 
-  .perk-icon { font-size: 1.2rem; display: block; margin-bottom: 0.3rem; }
-  .perk-label { font-size: 0.7rem; color: var(--light-brown); line-height: 1.3; }
-
-  /* Main content */
-  main {
-    max-width: 480px;
-    margin: -1.5rem auto 3rem;
-    padding: 0 1.25rem;
-  }
-
-  /* Tab switcher */
   .tab-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     background: var(--white);
-    border-radius: 12px 12px 0 0;
-    border: 1px solid var(--border);
+    border-radius: 4px 4px 0 0;
+    border: 1px solid var(--wall-dark);
     border-bottom: none;
     overflow: hidden;
   }
-
   .tab-btn {
     padding: 0.9rem;
     background: transparent;
     border: none;
     font-family: var(--font-body);
-    font-size: 0.85rem;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     font-weight: 500;
-    color: var(--medium-brown);
+    color: var(--ink-soft);
     cursor: pointer;
     transition: all 0.15s;
     border-bottom: 2px solid transparent;
   }
-
-  .tab-btn.active {
-    color: var(--warm-brown);
-    border-bottom-color: var(--warm-brown);
-    background: var(--cream);
-  }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--ember); background: var(--wall); }
 
   .card {
     background: var(--white);
-    border-radius: 0 0 12px 12px;
-    border: 1px solid var(--border);
+    border-radius: 0 0 4px 4px;
+    border: 1px solid var(--wall-dark);
     padding: 1.75rem;
     margin-bottom: 1.25rem;
   }
@@ -149,166 +155,141 @@
   .panel { display: none; }
   .panel.active { display: block; }
 
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
-    margin-bottom: 0.85rem;
-  }
+  .form-group { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.85rem; }
+  label { font-size: 12px; font-weight: 500; color: var(--ink-soft); letter-spacing: 0.06em; text-transform: uppercase; }
 
-  label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--medium-brown);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  input[type="text"],
-  input[type="tel"] {
+  input[type="text"], input[type="tel"] {
     width: 100%;
     padding: 0.75rem 0.9rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid var(--wall-dark);
+    border-radius: 2px;
     font-family: var(--font-body);
     font-size: 1rem;
-    color: var(--warm-brown);
+    color: var(--ink);
     background: var(--white);
     outline: none;
     transition: border-color 0.15s;
     -webkit-appearance: none;
   }
-
-  input:focus { border-color: var(--medium-brown); }
+  input:focus { border-color: var(--ember); }
 
   .submit-btn {
     width: 100%;
     padding: 0.9rem;
-    background: var(--warm-brown);
+    background: var(--ink);
     color: var(--cream);
     border: none;
-    border-radius: 8px;
-    font-family: var(--font-display);
-    font-size: 1.05rem;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
     cursor: pointer;
     transition: background 0.15s;
     margin-top: 0.5rem;
-    letter-spacing: 0.02em;
   }
-
-  .submit-btn:hover { background: #2C1E14; }
+  .submit-btn:hover { background: var(--ember-dark); }
   .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-  .msg {
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.85rem;
-    margin-top: 0.85rem;
-    display: none;
-  }
-
-  .msg.success { background: var(--accent-light); color: var(--accent); border: 1px solid #b6d4b5; display: block; }
+  .msg { border-radius: 2px; padding: 0.75rem 1rem; font-size: 0.85rem; margin-top: 0.85rem; display: none; }
+  .msg.success { background: #EAF0E9; color: var(--shutter-dark); border: 1px solid #c3d6c1; display: block; }
   .msg.error { background: #fdf0ef; color: var(--error); border: 1px solid #f5c6c6; display: block; }
-  .msg.info { background: var(--cream); color: var(--medium-brown); border: 1px solid var(--border); display: block; }
+  .msg.info { background: var(--wall); color: var(--ink-soft); border: 1px solid var(--wall-dark); display: block; }
 
-  /* Member card (shown after lookup) */
+  /* ── member card ── */
   .member-card {
-    background: var(--warm-brown);
-    border-radius: 10px;
-    padding: 1.25rem;
+    background: var(--ink);
+    border-radius: 4px;
+    padding: 1.5rem;
     color: var(--cream);
     margin-top: 1rem;
     display: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .mc-name { font-size: 1rem; font-weight: 500; opacity: 0.85; margin-bottom: 0.15rem; }
+  .mc-phone { font-size: 0.75rem; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 1.1rem; }
+
+  .mc-pts-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 4px; }
+  .mc-pts {
+    font-family: var(--font-display);
+    font-size: 3rem;
+    font-weight: 500;
+    line-height: 1;
+  }
+  .mc-pts-label { font-size: 0.8rem; opacity: 0.6; }
+
+  .mc-redeem-nudge {
+    font-size: 0.82rem;
+    color: #E8C88A;
+    margin-bottom: 1.1rem;
   }
 
-  .mc-name { font-size: 1rem; font-weight: 500; opacity: 0.85; margin-bottom: 0.15rem; }
-  .mc-phone { font-size: 0.75rem; opacity: 0.5; letter-spacing: 0.04em; margin-bottom: 1rem; }
-  .mc-pts-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 0.2rem; }
-  .mc-pts { font-size: 2.2rem; font-weight: 500; line-height: 1; }
-  .mc-pts-label { font-size: 0.78rem; opacity: 0.6; }
   .mc-tier {
-    display: inline-block;
-    background: var(--light-brown);
-    color: var(--warm-brown);
-    font-size: 0.68rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    padding: 3px 10px;
+    padding: 4px 12px;
     border-radius: 20px;
     margin-top: 0.75rem;
   }
+  .tier-regular  { background: var(--wall-dark); color: var(--ink); }
+  .tier-silver   { background: var(--silver); color: var(--silver-dark); }
+  .tier-gold     { background: var(--gold); color: var(--gold-dark); }
+  .tier-platinum { background: linear-gradient(135deg,#4A3B2E,#2B2420); color: var(--cream); }
 
-  /* Tier progress bar */
-  .tier-bar-wrap { margin-top: 0.75rem; }
-  .tier-bar-labels {
+  /* ── tier ladder ── */
+  .tier-ladder { margin-top: 1rem; }
+  .tier-ladder-track {
     display: flex;
-    justify-content: space-between;
-    font-size: 0.68rem;
-    opacity: 0.55;
-    margin-bottom: 4px;
+    gap: 4px;
   }
-  .tier-bar {
-    height: 5px;
-    background: rgba(255,255,255,0.15);
+  .tier-ladder-seg {
+    flex: 1;
+    height: 6px;
     border-radius: 3px;
+    background: rgba(255,255,255,0.12);
     overflow: hidden;
+    position: relative;
   }
-  .tier-fill {
+  .tier-ladder-seg .fill {
     height: 100%;
-    background: var(--light-brown);
-    border-radius: 3px;
-    transition: width 0.6s ease;
+    width: 0%;
+    background: var(--ember);
+    transition: width 0.8s ease;
   }
-
-  /* History */
-  .history-item {
+  .tier-ladder-labels {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    padding: 0.65rem 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 0.85rem;
-  }
-  .history-item:last-child { border-bottom: none; }
-  .h-desc { color: var(--warm-brown); }
-  .h-date { font-size: 0.72rem; color: var(--medium-brown); margin-top: 2px; }
-  .h-pts { font-weight: 500; }
-  .h-pts.earn { color: var(--accent); }
-  .h-pts.redeem { color: var(--error); }
-
-  .empty-hist { text-align: center; padding: 1.5rem 0; color: var(--light-brown); font-size: 0.85rem; }
-
-  /* How it works */
-  .how-card {
-    background: var(--white);
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    padding: 1.5rem;
-    margin-bottom: 1.25rem;
-  }
-
-  .how-title {
-    font-size: 0.75rem;
-    font-weight: 500;
+    margin-top: 6px;
+    font-size: 0.62rem;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--medium-brown);
-    margin-bottom: 1rem;
+    opacity: 0.55;
   }
+  .tier-ladder-labels span.current { opacity: 1; color: var(--ember); font-weight: 600; }
+  .mc-tier-next { font-size: 0.75rem; opacity: 0.65; margin-top: 8px; }
+  .history-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 0.65rem 0; border-bottom: 1px solid var(--wall-dark); font-size: 0.85rem; }
+  .history-item:last-child { border-bottom: none; }
+  .h-desc { color: var(--ink); }
+  .h-date { font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
+  .h-pts { font-weight: 500; }
+  .h-pts.earn { color: var(--shutter-dark); }
+  .h-pts.redeem { color: var(--error); }
+  .empty-hist { text-align: center; padding: 1.5rem 0; color: var(--ink-soft); font-size: 0.85rem; }
 
-  .how-step {
-    display: flex;
-    gap: 0.85rem;
-    align-items: flex-start;
-    margin-bottom: 0.85rem;
-  }
-
+  /* ── how it works ── */
+  .how-card { background: var(--white); border-radius: 4px; border: 1px solid var(--wall-dark); padding: 1.5rem; margin-bottom: 1.25rem; }
+  .how-title { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ember-dark); margin-bottom: 1rem; }
+  .how-step { display: flex; gap: 0.85rem; align-items: flex-start; margin-bottom: 0.85rem; }
   .how-step:last-child { margin-bottom: 0; }
-
   .how-num {
     width: 26px; height: 26px;
-    background: var(--warm-brown);
+    background: var(--ink);
     color: var(--cream);
     border-radius: 50%;
     font-size: 0.75rem;
@@ -317,45 +298,43 @@
     flex-shrink: 0;
     margin-top: 1px;
   }
-
-  .how-text { font-size: 0.85rem; color: var(--medium-brown); line-height: 1.5; }
-  .how-text strong { color: var(--warm-brown); font-weight: 500; }
-
-  footer {
-    text-align: center;
-    padding: 2rem;
-    font-size: 0.78rem;
-    color: var(--light-brown);
-  }
-
-  footer a { color: var(--medium-brown); text-decoration: none; }
+  .how-text { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.5; }
+  .how-text strong { color: var(--ink); font-weight: 600; }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="/" class="logo">Teduh</a>
-  <span class="tagline">Coffee Shop · Muar</span>
-</header>
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="../images/logo.png" alt="Teduh">
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/wholesale">Wholesale</a></li>
+    <li><a href="/events">Events</a></li>
+    <li><a href="/loyalty" class="nav-active">Loyalty</a></li>
+    <li><a href="/order" class="btn-nav">Order</a></li>
+    <li><a href="/#contact" class="btn-nav">Find Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
 
 <div class="hero">
-  <span class="hero-icon">⭐</span>
   <h1>Teduh Loyalty</h1>
   <p>Earn points every time you order. Redeem them for free drinks and more.</p>
 </div>
 
 <div class="perks">
   <div class="perk">
-    <span class="perk-icon">☕</span>
-    <span class="perk-label">RM1 = 1 point</span>
+    <span class="perk-label"><strong>RM1 = 1 point</strong></span>
   </div>
   <div class="perk">
-    <span class="perk-icon">🎁</span>
-    <span class="perk-label">Redeem for free drinks</span>
+    <span class="perk-label">Redeem for <strong>free drinks</strong></span>
   </div>
   <div class="perk">
-    <span class="perk-icon">🏆</span>
-    <span class="perk-label">Unlock member tiers</span>
+    <span class="perk-label">Unlock <strong>member tiers</strong></span>
   </div>
 </div>
 
@@ -394,18 +373,30 @@
       <div class="member-card" id="member-card">
         <div class="mc-name" id="mc-name"></div>
         <div class="mc-phone" id="mc-phone"></div>
+
         <div class="mc-pts-row">
           <span class="mc-pts" id="mc-pts">0</span>
           <span class="mc-pts-label">points</span>
         </div>
-        <div class="tier-bar-wrap">
-          <div class="tier-bar-labels">
-            <span id="mc-tier-name">Regular</span>
-            <span id="mc-tier-next"></span>
+        <div class="mc-redeem-nudge" id="mc-redeem-nudge"></div>
+
+        <span class="mc-tier" id="mc-tier-badge">Regular</span>
+
+        <div class="tier-ladder">
+          <div class="tier-ladder-track">
+            <div class="tier-ladder-seg"><div class="fill" id="seg-regular"></div></div>
+            <div class="tier-ladder-seg"><div class="fill" id="seg-silver"></div></div>
+            <div class="tier-ladder-seg"><div class="fill" id="seg-gold"></div></div>
+            <div class="tier-ladder-seg"><div class="fill" id="seg-platinum"></div></div>
           </div>
-          <div class="tier-bar"><div class="tier-fill" id="mc-tier-fill" style="width:0%"></div></div>
+          <div class="tier-ladder-labels">
+            <span id="lbl-regular">Regular</span>
+            <span id="lbl-silver">Silver</span>
+            <span id="lbl-gold">Gold</span>
+            <span id="lbl-platinum">Platinum</span>
+          </div>
+          <div class="mc-tier-next" id="mc-tier-next"></div>
         </div>
-        <div class="mc-tier" id="mc-tier-badge">Regular</div>
 
         <!-- Transaction history -->
         <div style="margin-top:1.25rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.12);">
@@ -441,8 +432,42 @@
 </main>
 
 <footer>
-  <p>© 2025 Teduh Coffee Roastery · Muar, Johor</p>
-  <p style="margin-top:0.35rem;"><a href="/">teduh.com.my</a></p>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Teduh</div>
+      <p>A coffee brand rooted in Muar —
+        coffee shop, wholesale, retail beans, community & merchandise.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/wholesale">Wholesale</a></li>
+        <li><a href="/events">Events</a></li>
+        <li><a href="/loyalty">Loyalty</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="/#contact">Location & Hours</a></li>
+        <li><a href="https://wa.me/601170264828" target="_blank">WhatsApp Us</a></li>
+        <li><a href="mailto:hello@teduh.com.my">Email Us</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="https://instagram.com/perniagaan.teduh" target="_blank">Instagram</a></li>
+        <li><a href="https://facebook.com/perniagaanteduh" target="_blank">Facebook</a></li>
+        <li><a href="https://tiktok.com/@perniagaanteduh" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Teduh. All rights reserved. · 202003155860 (003128665-D)</span>
+  </div>
 </footer>
 
 <script>
@@ -450,17 +475,19 @@ const SUPABASE_URL = 'https://nazkkichtnanodrgdyff.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5hemtraWNodG5hbm9kcmdkeWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3MjA5MjIsImV4cCI6MjA5MTI5NjkyMn0.GesVlIsTmtkoDUkhPkQtOGUz2gyV2EtAN5QXIrR9il0';
 
 const TIERS = [
-  { name: 'Regular', min: 0,    max: 199  },
-  { name: 'Silver',  min: 200,  max: 499  },
-  { name: 'Gold',    min: 500,  max: 999  },
-  { name: 'Platinum',min: 1000, max: Infinity },
+  { name: 'Regular', key: 'regular',  min: 0,    max: 199  },
+  { name: 'Silver',  key: 'silver',   min: 200,  max: 499  },
+  { name: 'Gold',    key: 'gold',     min: 500,  max: 999  },
+  { name: 'Platinum',key: 'platinum', min: 1000, max: Infinity },
 ];
+
+const REDEEM_THRESHOLD = 150;
 
 function getTier(pts) { return TIERS.find(t => pts >= t.min && pts <= t.max) || TIERS[0]; }
 
 function getTierProgress(pts) {
   const tier = getTier(pts);
-  if (tier.max === Infinity) return { pct: 100, nextLabel: 'Max tier' };
+  if (tier.max === Infinity) return { pct: 100, nextLabel: 'You\'ve reached the top tier' };
   const next = TIERS[TIERS.indexOf(tier) + 1];
   const pct = Math.round(((pts - tier.min) / (tier.max - tier.min + 1)) * 100);
   return { pct: Math.min(pct, 100), nextLabel: `${tier.max + 1 - pts} pts to ${next.name}` };
@@ -481,6 +508,37 @@ function showMsg(id, text, type) {
   const el = document.getElementById(id);
   el.textContent = text;
   el.className = 'msg ' + type;
+}
+
+/* ── animated count-up for the points number ── */
+function animateCount(el, target) {
+  const duration = 700;
+  const start = 0;
+  const startTime = performance.now();
+  function tick(now) {
+    const p = Math.min((now - startTime) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3);
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ── tier ladder fill ── */
+function updateTierLadder(pts) {
+  const tier = getTier(pts);
+  TIERS.forEach(t => {
+    const seg = document.getElementById('seg-' + t.key);
+    const lbl = document.getElementById('lbl-' + t.key);
+    let pct = 0;
+    if (pts > t.max) pct = 100;
+    else if (pts >= t.min) {
+      const span = (t.max === Infinity ? t.min + 200 : t.max) - t.min + 1;
+      pct = Math.min(100, Math.round(((pts - t.min) / span) * 100));
+    }
+    seg.style.width = pct + '%';
+    lbl.classList.toggle('current', t.key === tier.key);
+  });
 }
 
 async function registerMember() {
@@ -521,7 +579,7 @@ async function registerMember() {
     }
 
     if (data.registered) {
-      showMsg('reg-msg', `🎉 Welcome to Teduh Loyalty, ${name}! Every RM1 earns 1 point. 🎁 You get 10 free points as a welcome reward!`, 'success');
+      showMsg('reg-msg', `Welcome to Teduh Loyalty, ${name}! Every RM1 earns 1 point. You get 10 free points as a welcome reward.`, 'success');
       document.getElementById('reg-name').value = '';
       document.getElementById('reg-phone').value = '';
     } else {
@@ -565,18 +623,26 @@ async function checkPoints() {
     document.getElementById('check-msg').className = 'msg';
     document.getElementById('mc-name').textContent = member.name;
     document.getElementById('mc-phone').textContent = member.phone;
-    document.getElementById('mc-pts').textContent = member.points;
+
+    animateCount(document.getElementById('mc-pts'), member.points);
 
     const tier = getTier(member.points);
     const prog = getTierProgress(member.points);
-    document.getElementById('mc-tier-name').textContent = tier.name;
     document.getElementById('mc-tier-next').textContent = prog.nextLabel;
-    document.getElementById('mc-tier-fill').style.width = prog.pct + '%';
     document.getElementById('mc-tier-badge').textContent = tier.name + ' Member';
+    document.getElementById('mc-tier-badge').className = 'mc-tier tier-' + tier.key;
+    updateTierLadder(member.points);
+
+    const redeemEl = document.getElementById('mc-redeem-nudge');
+    if (member.points >= REDEEM_THRESHOLD) {
+      redeemEl.textContent = `You have enough points to redeem a free drink.`;
+    } else {
+      redeemEl.textContent = `${REDEEM_THRESHOLD - member.points} pts until you can redeem a free drink`;
+    }
 
     const histEl = document.getElementById('mc-history');
     if (!transactions || transactions.length === 0) {
-      histEl.innerHTML = '<div class="empty-hist" style="color:rgba(247,243,238,0.4); padding:0.5rem 0;">No transactions yet.</div>';
+      histEl.innerHTML = '<div class="empty-hist" style="color:rgba(247,241,228,0.4); padding:0.5rem 0;">No transactions yet.</div>';
     } else {
       histEl.innerHTML = transactions.map(t => `
         <div class="history-item" style="border-bottom-color:rgba(255,255,255,0.1);">
@@ -606,6 +672,17 @@ function normalizePhone(phone) {
   else if (p.startsWith('60') && !p.startsWith('+')) p = '+' + p;
   return p;
 }
+
+/* ── mobile nav toggle ── */
+(function(){
+  var toggle = document.querySelector('.nav-toggle');
+  var links = document.querySelector('.nav-links');
+  if(!toggle || !links) return;
+  toggle.addEventListener('click', function(){ links.classList.toggle('open'); });
+  links.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ links.classList.remove('open'); });
+  });
+})();
 </script>
 </body>
 </html>
