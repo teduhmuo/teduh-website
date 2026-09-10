@@ -1047,7 +1047,7 @@
     var total = coffee + matcha + chocolate;
     var tier = getCaterTier(total);
 
-    var lines = ['Hi Teduh! I\\'d like to enquire about Coffee Catering.', ''];
+    var lines = ['Hi Teduh! I\'d like to enquire about Coffee Catering.', ''];
     if (name)  lines.push('Name: ' + name);
     if (venue) lines.push('Venue: ' + venue);
     if (date)  lines.push('Date: ' + date);
@@ -1060,7 +1060,7 @@
       }
     }
 
-    var message = encodeURIComponent(lines.join('\\n'));
+    var message = encodeURIComponent(lines.join('\n'));
     window.open('https://wa.me/601170264828?text=' + message, '_blank');
   }
 </script>
