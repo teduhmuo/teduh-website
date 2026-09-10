@@ -256,6 +256,18 @@
       color:var(--ink-soft);
       margin-bottom:20px;
     }
+    .wh-back-link{
+      display:inline-block;
+      font-size:13px;
+      color:var(--ink-soft);
+      margin-bottom:24px;
+    }
+    .wh-back-link:hover{ color:var(--ink); }
+
+    /* ── single-service view toggle ── */
+    body.wh-detail-open .wh-default-view{ display:none !important; }
+    .wh-detail{ display:none; }
+    body.wh-detail-open .wh-detail.active{ display:block; }
 
     /* ── process ── */
     .wh-process{
@@ -419,7 +431,7 @@
   </button>
 </nav>
 
-<section class="wh-hero">
+<section class="wh-hero wh-default-view">
   <div class="eyebrow">Wholesale &amp; Partnerships</div>
   <h1>Coffee and kitchen products, built for your business</h1>
   <p>We supply beans, equipment, and ready-to-bake products to cafés, offices, and kitchens across Muar and beyond — backed by five years of running our own roastery and shop.</p>
@@ -429,7 +441,7 @@
   </div>
 </section>
 
-<div class="wh-stats">
+<div class="wh-stats wh-default-view">
   <div class="wh-stat">
     <div class="wh-stat-num">5 yrs</div>
     <div class="wh-stat-label">Running our own roastery and café</div>
@@ -448,7 +460,7 @@
   </div>
 </div>
 
-<section class="wh-services" id="wh-services">
+<section class="wh-services wh-default-view" id="wh-services">
   <div class="section-head">
     <div class="eyebrow">What We Offer</div>
     <h2>Six ways we work with other businesses</h2>
@@ -488,6 +500,7 @@
 </section>
 
 <div id="coffee-beans" class="wh-detail">
+  <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Coffee Beans</div>
   <h3>Wholesale roasts for your cafe or pantry</h3>
   <p>We roast in-house and supply from as little as 5kg per order, so you're not locked into a large minimum just to get started. Our standard offering is a single-origin Brazil medium-dark espresso roast — a reliable, crowd-pleasing profile built to suit a wide range of coffee drinkers, from casual pantry drinkers to café regulars.</p>
@@ -496,6 +509,7 @@
 </div>
 
 <div id="coffee-consulting" class="wh-detail">
+  <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Coffee Consulting</div>
   <h3>Everything a new café needs to get started right</h3>
   <p>Opening a café involves more decisions than just picking a bean. We help with menu development, sourcing, and general setup guidance — the kind of groundwork that's easy to get wrong the first time around.</p>
@@ -504,6 +518,7 @@
 </div>
 
 <div id="machine-rental" class="wh-detail">
+  <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Machine Rental</div>
   <h3>A full commercial setup without the upfront cost</h3>
   <p>We rent out an espresso machine and grinder, bundled with a bean supply plan — a full commercial setup starting from RM500/month, on a 1-year contract. Bundling in your coffee bean supply with us also gets you free training and free maintenance included for the length of the contract.</p>
@@ -512,6 +527,7 @@
 </div>
 
 <div id="pizza-dough" class="wh-detail">
+  <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Pizza Dough &amp; Shells</div>
   <h3>Neapolitan pizza, ready for your kitchen</h3>
   <p>We supply frozen dough balls and par-baked Neapolitan shells. The shells are the simpler route — just reheat in a home microwave or oven, no pizza-making technique required. If you want the full pizzeria experience, start from frozen dough instead and bring your own technique and equipment to the bake.</p>
@@ -520,6 +536,7 @@
 </div>
 
 <div id="b2b-support" class="wh-detail">
+  <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">B2B Support</div>
   <h3>Ongoing support as your business grows</h3>
   <p>Beyond the initial setup, we stay involved — advising on supply planning and day-to-day operations as your needs change. The goal is simple: we make sure you and your customers actually get what you need, so you can deliver your service with confidence rather than guesswork.</p>
@@ -527,13 +544,14 @@
 </div>
 
 <div id="coffee-catering" class="wh-detail">
+  <a href="#" class="wh-back-link" onclick="closeDetail(event)">← Back to all services</a>
   <div class="eyebrow">Coffee Catering</div>
   <h3>Coffee for your event, handled</h3>
   <p>We'll make sure your event runs smoothly, without you having to think twice about how to delight your guests. Rule of thumb: a free cup of coffee brightens someone's day like a morning sun — and that's exactly the kind of small, reliable touch we bring to any event we cater.</p>
   <a class="wh-btn-primary" href="https://wa.me/601170264828?text=Hi%20Teduh!%20I%27d%20like%20to%20know%20more%20about%20Coffee%20Catering." target="_blank">Ask about Coffee Catering</a>
 </div>
 
-<section class="wh-process">
+<section class="wh-process wh-default-view">
   <div class="eyebrow">How It Works</div>
   <h2>Getting started is simple</h2>
   <div class="wh-process-grid">
@@ -555,7 +573,7 @@
   </div>
 </section>
 
-<section class="wh-form-section">
+<section class="wh-form-section wh-default-view">
   <div class="eyebrow">Get In Touch</div>
   <h2>Tell us what you need</h2>
   <p class="wh-form-lead">Fill this in and it'll land straight in our inbox — or skip the form and message us directly on WhatsApp.</p>
@@ -655,6 +673,54 @@
     links.querySelectorAll('a').forEach(function(a){
       a.addEventListener('click', function(){ links.classList.remove('open'); });
     });
+  })();
+</script>
+
+<script>
+  (function(){
+    var detailIds = ['coffee-beans','coffee-consulting','machine-rental','pizza-dough','b2b-support','coffee-catering'];
+
+    function showDetail(id){
+      document.querySelectorAll('.wh-detail').forEach(function(d){
+        d.classList.toggle('active', d.id === id);
+      });
+      document.body.classList.add('wh-detail-open');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    function closeDetail(){
+      document.body.classList.remove('wh-detail-open');
+      document.querySelectorAll('.wh-detail').forEach(function(d){ d.classList.remove('active'); });
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    // Intercept "Read more" clicks
+    document.querySelectorAll('.wh-read-more').forEach(function(link){
+      link.addEventListener('click', function(e){
+        e.preventDefault();
+        var id = link.getAttribute('href').slice(1);
+        history.pushState(null, '', '#' + id);
+        showDetail(id);
+      });
+    });
+
+    // Intercept "Back" clicks
+    window.closeDetail = function(e){
+      e.preventDefault();
+      history.pushState(null, '', window.location.pathname);
+      closeDetail();
+    };
+
+    // Handle browser back/forward
+    window.addEventListener('popstate', function(){
+      var id = window.location.hash.slice(1);
+      if (detailIds.indexOf(id) !== -1) showDetail(id);
+      else closeDetail();
+    });
+
+    // Handle a direct link/bookmark landing on a detail hash
+    var initialId = window.location.hash.slice(1);
+    if (detailIds.indexOf(initialId) !== -1) showDetail(initialId);
   })();
 </script>
 
