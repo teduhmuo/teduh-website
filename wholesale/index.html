@@ -327,6 +327,23 @@
       color:var(--ink);
       margin-bottom:24px;
     }
+    .wh-img-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      margin:24px 0;
+    }
+    .wh-img-grid img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+      border-radius:4px;
+      display:block;
+    }
+    @media (max-width:600px){
+      .wh-img-grid{ grid-template-columns:1fr; }
+      .wh-img-grid img{ height:auto; }
+    }
     @media (max-width:600px){
       .wh-price-groups{ grid-template-columns:1fr; }
     }
@@ -821,6 +838,15 @@
   <p>There's something genuinely fun about watching green coffee beans go through their whole transformation — the color shift, the first crack, the smell filling the room — right up to the moment they come out as a finished roast. We bring that experience to you.</p>
   <p>We roast live using a <strong style="color:var(--ink);">Kaleido Sniper M2 Dual Pro</strong>, integrated with <strong style="color:var(--ink);">Artisan-scope software</strong> so you can follow the actual roast curve on a live graph log as it happens — not just watch, but see exactly what's going on inside the roast in real time.</p>
   <p>It's a good fit for cafés, offices, or events that want to show their guests or customers where their coffee actually comes from — the full journey from green bean to roasted bean, explained as it happens.</p>
+
+  <div class="wh-img-grid">
+    <img src="../images/roasting-1.jpg" alt="Loading roasted beans into the Kaleido Sniper M2 Dual Pro">
+    <img src="../images/roasting-2.jpg" alt="Green coffee beans loaded into the hopper before roasting">
+  </div>
+  <div class="wh-img-grid">
+    <img src="../images/roasting-3.jpg" alt="The Kaleido Sniper M2 Dual Pro roaster with Artisan-scope display">
+    <img src="../images/roasting-4.jpg" alt="Live Artisan-scope roast curve graph log">
+  </div>
 
   <div class="wh-price-label">How to book</div>
   <div class="wh-gift-note">Purchase 5kg of our coffee beans at wholesale price, and the live demo roasting session is free.</div>
