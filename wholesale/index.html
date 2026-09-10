@@ -759,7 +759,7 @@
     <div class="wh-price-row"><span class="tier">400 pax</span><span class="price">RM5.75 / cup</span></div>
     <div class="wh-price-row"><span class="tier">500 pax</span><span class="price">RM5.50 / cup</span></div>
   </div>
-  <div class="wh-price-note">Service duration runs 3–7 hours depending on your package. For 600+ pax, message us directly for a custom quote.</div>
+  <div class="wh-price-note">Each package includes a set service duration: 100 pax = 3 hours, 200 pax = 4 hours, 300 pax = 5 hours, 400 pax = 6 hours, 500 pax = 7 hours. For 600+ pax, message us directly for a custom quote.</div>
 
   <form class="cater-form" name="catering-enquiry" method="POST" data-netlify="true" netlify-honeypot="bot-field">
     <input type="hidden" name="form-name" value="catering-enquiry" />
@@ -789,37 +789,18 @@
       <label for="cat-venue">Venue</label>
       <input type="text" id="cat-venue" name="venue" required>
     </div>
-    <div class="cater-row2">
-      <div class="cater-field">
-        <label for="cat-pax">Package (pax)</label>
-        <select id="cat-pax" name="pax" onchange="updateCateringQuote()">
-          <option value="100">100 pax — RM6.50/cup</option>
-          <option value="200">200 pax — RM6.25/cup</option>
-          <option value="300">300 pax — RM6.00/cup</option>
-          <option value="400">400 pax — RM5.75/cup</option>
-          <option value="500">500 pax — RM5.50/cup</option>
-        </select>
-      </div>
-      <div class="cater-field">
-        <label for="cat-hours">Service hours</label>
-        <select id="cat-hours" name="hours">
-          <option>3 hours</option>
-          <option>4 hours</option>
-          <option>5 hours</option>
-          <option>6 hours</option>
-          <option>7 hours</option>
-        </select>
-      </div>
-    </div>
 
-    <div class="cater-mix-title">Drink mix (should add up to your total pax)</div>
+    <div class="cater-mix-title">Drink mix — enter how many cups of each</div>
     <div class="cater-mix-row"><span>Coffee</span><input type="number" id="cat-coffee" name="coffee_cups" min="0" value="0" oninput="updateCateringQuote()"></div>
     <div class="cater-mix-row"><span>Matcha</span><input type="number" id="cat-matcha" name="matcha_cups" min="0" value="0" oninput="updateCateringQuote()"></div>
     <div class="cater-mix-row"><span>Chocolate</span><input type="number" id="cat-chocolate" name="chocolate_cups" min="0" value="0" oninput="updateCateringQuote()"></div>
+    <input type="hidden" id="cat-pax-field" name="pax_tier">
+    <input type="hidden" id="cat-hours-field" name="service_hours">
 
     <div class="cater-summary">
-      <div>Total cups: <strong id="cat-total-cups">0</strong> / <span id="cat-target-pax">100</span> pax</div>
-      <div id="cat-mix-warning" class="warn" style="display:none; margin-top:6px;">Your drink mix doesn't add up to your selected pax yet.</div>
+      <div>Total cups: <strong id="cat-total-cups">0</strong></div>
+      <div id="cat-mix-warning" class="warn" style="display:none; margin-top:6px;">Minimum package is 100 cups.</div>
+      <div id="cat-mix-info" style="margin-top:6px; display:none;">Package: <strong id="cat-pax-display"></strong> pax tier · <strong id="cat-hours-display"></strong> hours service · <strong id="cat-rate-display"></strong>/cup</div>
       <div class="total-line"><span>Estimated total</span><span id="cat-total-price">RM0.00</span></div>
     </div>
 
@@ -1005,23 +986,50 @@
 </script>
 
 <script>
-  var CATER_RATES = { '100': 6.50, '200': 6.25, '300': 6.00, '400': 5.75, '500': 5.50 };
+  var CATER_TIERS = [
+    { min: 100, max: 199, pax: 100, hours: 3, rate: 6.50 },
+    { min: 200, max: 299, pax: 200, hours: 4, rate: 6.25 },
+    { min: 300, max: 399, pax: 300, hours: 5, rate: 6.00 },
+    { min: 400, max: 499, pax: 400, hours: 6, rate: 5.75 },
+    { min: 500, max: Infinity, pax: 500, hours: 7, rate: 5.50 },
+  ];
+
+  function getCaterTier(total){
+    if (total < 100) return null;
+    return CATER_TIERS.find(function(t){ return total >= t.min && total <= t.max; }) || CATER_TIERS[CATER_TIERS.length - 1];
+  }
 
   function updateCateringQuote(){
-    var pax = document.getElementById('cat-pax').value;
-    var rate = CATER_RATES[pax];
     var coffee = parseInt(document.getElementById('cat-coffee').value, 10) || 0;
     var matcha = parseInt(document.getElementById('cat-matcha').value, 10) || 0;
     var chocolate = parseInt(document.getElementById('cat-chocolate').value, 10) || 0;
     var total = coffee + matcha + chocolate;
 
     document.getElementById('cat-total-cups').textContent = total;
-    document.getElementById('cat-target-pax').textContent = pax;
 
+    var tier = getCaterTier(total);
     var warning = document.getElementById('cat-mix-warning');
-    warning.style.display = (total !== parseInt(pax, 10)) ? 'block' : 'none';
+    var info = document.getElementById('cat-mix-info');
 
-    var price = total * rate;
+    if (!tier) {
+      warning.style.display = 'block';
+      info.style.display = 'none';
+      document.getElementById('cat-total-price').textContent = 'RM0.00';
+      document.getElementById('cat-pax-field').value = '';
+      document.getElementById('cat-hours-field').value = '';
+      return;
+    }
+
+    warning.style.display = 'none';
+    info.style.display = 'block';
+    document.getElementById('cat-pax-display').textContent = tier.pax;
+    document.getElementById('cat-hours-display').textContent = tier.hours;
+    document.getElementById('cat-rate-display').textContent = 'RM' + tier.rate.toFixed(2);
+
+    document.getElementById('cat-pax-field').value = tier.pax + ' pax tier';
+    document.getElementById('cat-hours-field').value = tier.hours + ' hours';
+
+    var price = total * tier.rate;
     document.getElementById('cat-total-price').textContent = 'RM' + price.toFixed(2);
   }
 
