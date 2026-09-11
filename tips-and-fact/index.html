@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <link rel="icon" type="image/x-icon" href="../favicon.ico">
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tips and Fact — Teduh</title>
+  <meta name="description" content="Articles on coffee, arts, pizza, and community from Teduh." />
+  <link rel="stylesheet" href="../css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --wall:#EDE3D0;
+      --wall-dark:#E4D7BC;
+      --ink:#251A13;
+      --ink-soft:#4A392E;
+      --shutter:#4B5D45;
+      --shutter-dark:#3A4A36;
+      --ember:#BC5B2E;
+      --ember-dark:#8C4A2B;
+      --cream:#F7F1E4;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      background:var(--wall) !important;
+      color:var(--ink) !important;
+      font-family:'Work Sans', sans-serif !important;
+      margin:0;
+    }
+    h1, h2, h3{
+      font-family:'Fraunces', serif !important;
+      font-weight:500 !important;
+      letter-spacing:-0.01em !important;
+    }
+    nav{ background:var(--wall) !important; border-bottom:1px solid var(--wall-dark); }
+    .nav-links a{
+      color:var(--ink-soft) !important;
+      font-size:13px !important;
+      letter-spacing:0.08em !important;
+      text-transform:uppercase !important;
+    }
+    .nav-links a:hover, .nav-links a.nav-active{ color:var(--ink) !important; }
+    .nav-links a.btn-nav{
+      background:var(--ink) !important;
+      color:var(--cream) !important;
+      border-radius:2px !important;
+      border:none !important;
+    }
+    .nav-links li:last-child a.btn-nav{
+      background:transparent !important;
+      color:var(--ink) !important;
+      border:1px solid var(--ink) !important;
+    }
+    footer{ background:var(--ink) !important; color:#C9B69B !important; }
+    footer .logo{ font-family:'Fraunces', serif !important; color:var(--cream) !important; }
+    footer a{ color:#C9B69B !important; }
+    footer a:hover{ color:var(--ember) !important; }
+
+    .nav-toggle{ display:none; background:none; border:none; cursor:pointer; padding:8px; flex-direction:column; gap:5px; }
+    .nav-toggle span{ display:block; width:22px; height:2px; background:var(--ink); }
+    @media (max-width:900px){
+      .nav-toggle{ display:flex; }
+      .nav-links{
+        display:none; position:absolute; top:100%; left:0; right:0;
+        background:var(--wall); border-bottom:1px solid var(--wall-dark);
+        flex-direction:column !important; padding:8px 6vw 20px; gap:0 !important;
+      }
+      .nav-links.open{ display:flex; }
+      .nav-links li{ width:100%; }
+      .nav-links a{ display:block; padding:14px 0; border-bottom:1px solid var(--wall-dark); }
+      .nav-links a.btn-nav{ margin-top:14px; text-align:center; border-bottom:none !important; }
+      nav{ position:relative; }
+    }
+
+    /* ── hero ── */
+    .us-hero{
+      max-width:760px;
+      margin:0 auto;
+      padding:8vh 6vw 3vh;
+    }
+    .us-hero .eyebrow{
+      color:var(--ember-dark);
+      text-transform:uppercase;
+      letter-spacing:0.1em;
+      font-size:13px;
+      margin-bottom:14px;
+    }
+    .us-hero h1{
+      font-size:clamp(32px, 4vw, 48px);
+      margin-bottom:16px;
+    }
+    .us-hero p{
+      font-size:16px;
+      line-height:1.7;
+      color:var(--ink-soft);
+      max-width:56ch;
+    }
+
+    /* ── filter tabs ── */
+    .us-filters{
+      max-width:1080px;
+      margin:0 auto;
+      padding:0 6vw 4vh;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .us-filter-btn{
+      font-size:12px;
+      letter-spacing:0.06em;
+      text-transform:uppercase;
+      padding:9px 18px;
+      border:1px solid var(--wall-dark);
+      border-radius:20px;
+      background:transparent;
+      color:var(--ink-soft);
+      cursor:pointer;
+      font-family:'Work Sans', sans-serif;
+    }
+    .us-filter-btn.active{
+      background:var(--ink);
+      color:var(--cream);
+      border-color:var(--ink);
+    }
+
+    /* ── article grid ── */
+    .us-grid{
+      max-width:1080px;
+      margin:0 auto;
+      padding:0 6vw 10vh;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:1px;
+      background:var(--wall-dark);
+      border:1px solid var(--wall-dark);
+    }
+    .us-card{
+      background:var(--wall);
+      padding:28px;
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+    }
+    .us-card-tag{
+      font-size:11px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--ember-dark);
+      margin-bottom:12px;
+    }
+    .us-card-title{
+      font-family:'Fraunces', serif;
+      font-weight:500;
+      font-size:19px;
+      line-height:1.3;
+      margin-bottom:10px;
+    }
+    .us-card-excerpt{
+      font-size:13.5px;
+      color:var(--ink-soft);
+      line-height:1.6;
+      flex-grow:1;
+      margin-bottom:16px;
+    }
+    .us-card-read{
+      font-size:12px;
+      letter-spacing:0.04em;
+      color:var(--ink);
+      border-bottom:1px solid var(--ink);
+      align-self:flex-start;
+    }
+    @media (max-width:900px){
+      .us-grid{ grid-template-columns:1fr 1fr; }
+    }
+    @media (max-width:600px){
+      .us-grid{ grid-template-columns:1fr; }
+    }
+
+    /* ── article detail view ── */
+    body.us-article-open .us-default-view{ display:none !important; }
+    .us-article{ display:none; }
+    body.us-article-open .us-article.active{ display:block; }
+
+    .us-article{
+      max-width:680px;
+      margin:0 auto;
+      padding:8vh 6vw 10vh;
+    }
+    .us-back-link{
+      display:inline-block;
+      font-size:13px;
+      color:var(--ink-soft);
+      margin-bottom:32px;
+    }
+    .us-back-link:hover{ color:var(--ink); }
+    .us-article .tag{
+      font-size:12px;
+      letter-spacing:0.08em;
+      text-transform:uppercase;
+      color:var(--ember-dark);
+      margin-bottom:14px;
+    }
+    .us-article h2{
+      font-size:clamp(28px, 3.4vw, 40px);
+      line-height:1.15;
+      margin-bottom:24px;
+    }
+    .us-article p{
+      font-size:16px;
+      line-height:1.8;
+      color:var(--ink-soft);
+      margin-bottom:20px;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="../images/logo.png" alt="Teduh">
+  </a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/wholesale">Wholesale</a></li>
+    <li><a href="/tips-and-fact" class="nav-active">Tips and Fact</a></li>
+    <li><a href="/events">Events</a></li>
+    <li><a href="/loyalty">Loyalty</a></li>
+    <li><a href="/order" class="btn-nav">Order</a></li>
+    <li><a href="/#contact" class="btn-nav">Find Us</a></li>
+  </ul>
+  <button class="nav-toggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<section class="us-hero us-default-view">
+  <div class="eyebrow">Tips and Fact</div>
+  <h1>Coffee, arts, pizza, community</h1>
+  <p>Short reads from Teduh — on what we roast, what we bake, who we work with, and what's happening around the shoplot in Muar.</p>
+</section>
+
+<div class="us-filters us-default-view">
+  <button class="us-filter-btn active" data-filter="all">All</button>
+  <button class="us-filter-btn" data-filter="coffee">Coffee</button>
+  <button class="us-filter-btn" data-filter="arts">Arts</button>
+  <button class="us-filter-btn" data-filter="pizza">Pizza</button>
+  <button class="us-filter-btn" data-filter="community">Community</button>
+</div>
+
+<div class="us-grid us-default-view" id="us-grid">
+
+  <div class="us-card" data-category="coffee" onclick="openArticle('green-to-roasted')">
+    <div class="us-card-tag">Coffee</div>
+    <div class="us-card-title">From Green to Roasted: What Actually Happens in the Drum</div>
+    <div class="us-card-excerpt">First crack, the color shift, the smell that fills the room — a plain-language walk through what a bean goes through before it's ready to brew.</div>
+    <div class="us-card-read">Read →</div>
+  </div>
+
+  <div class="us-card" data-category="coffee" onclick="openArticle('brazil-roast')">
+    <div class="us-card-tag">Coffee</div>
+    <div class="us-card-title">Why We Default to a Medium-Dark Brazil</div>
+    <div class="us-card-excerpt">Not every café needs an exotic single-origin story. Here's why our standard wholesale roast is built to just work, every time.</div>
+    <div class="us-card-read">Read →</div>
+  </div>
+
+  <div class="us-card" data-category="arts" onclick="openArticle('lorong-belakang')">
+    <div class="us-card-tag">Arts</div>
+    <div class="us-card-title">Inside Lorong Belakang, Our Weekend Art Space</div>
+    <div class="us-card-excerpt">A back-alley space at Lorong Seni Muar where coffee, art, and whoever's in town on a Saturday all end up in the same room.</div>
+    <div class="us-card-read">Read →</div>
+  </div>
+
+  <div class="us-card" data-category="arts" onclick="openArticle('roof-reverie')">
+    <div class="us-card-tag">Arts</div>
+    <div class="us-card-title">Roof Reverie: What Happens When Music Meets Coffee</div>
+    <div class="us-card-excerpt">Live sessions under an open roof, a few speakers, and a room full of people who came for the music and stayed for the coffee.</div>
+    <div class="us-card-read">Read →</div>
+  </div>
+
+  <div class="us-card" data-category="pizza" onclick="openArticle('neapolitan-technique')">
+    <div class="us-card-tag">Pizza</div>
+    <div class="us-card-title">Bringing Neapolitan Technique Into a Coffee Shop Kitchen</div>
+    <div class="us-card-excerpt">We didn't set out to become a pizza place. Here's how a high-hydration dough and a lot of trial and error ended up on the menu anyway.</div>
+    <div class="us-card-read">Read →</div>
+  </div>
+
+  <div class="us-card" data-category="community" onclick="openArticle('five-years')">
+    <div class="us-card-tag">Community</div>
+    <div class="us-card-title">Five Years in a Heritage Shoplot</div>
+    <div class="us-card-excerpt">From a small family effort in 2020 to a roastery, kitchen, and gathering space — a short look back at how Teduh got here.</div>
+    <div class="us-card-read">Read →</div>
+  </div>
+
+</div>
+
+<!-- ============ ARTICLES ============ -->
+
+<div id="green-to-roasted" class="us-article">
+  <a href="#" class="us-back-link" onclick="closeArticle(event)">← Back to Tips and Fact</a>
+  <div class="tag">Coffee</div>
+  <h2>From Green to Roasted: What Actually Happens in the Drum</h2>
+  <p>Before a coffee bean is a coffee bean, it's a small, hard, faintly grassy-smelling seed — pale green, dense, and not something you'd recognize as the start of your morning cup. Roasting is what turns it into that.</p>
+  <p>Inside the drum, the beans are tumbled continuously over heat, and for the first few minutes, not much seems to happen. The beans are drying out, losing moisture, still green. Then the color starts to shift — green to yellow, yellow to a light tan, gradually deepening toward brown as sugars inside the bean begin to caramelize.</p>
+  <p>Around the midpoint of the roast, you'll hear what roasters call "first crack" — an audible pop, similar to popcorn, as pressure builds inside the bean and its structure physically expands. This is the point where a bean is technically coffee — anything roasted before this stays underdeveloped and grassy tasting.</p>
+  <p>From here, it's a matter of minutes. Pull it early past first crack and you get a lighter roast — brighter, more acidic, more of the origin's own character coming through. Let it run longer and the sugars caramelize further, flavors round out, and you head toward the medium and dark profiles most people recognize as "coffee shop coffee."</p>
+  <p>We log this whole curve digitally as it happens — tracking bean temperature, rate of rise, and the exact timing of first crack — so a roast we liked last month can be repeated, not just remembered. If you've never actually watched it happen, it's a genuinely fun thing to see in person — which is part of why we started offering live demo roasting sessions in the first place.</p>
+</div>
+
+<div id="brazil-roast" class="us-article">
+  <a href="#" class="us-back-link" onclick="closeArticle(event)">← Back to Tips and Fact</a>
+  <div class="tag">Coffee</div>
+  <h2>Why We Default to a Medium-Dark Brazil</h2>
+  <p>Ask ten coffee people what the "best" bean is and you'll get ten different, very confident answers — usually pointing toward something rare, small-batch, and expensive. That's a fun conversation to have, but it's not always the right answer for a business that needs to serve a lot of different people, reliably, every single day.</p>
+  <p>That's why our standard wholesale offering is a single-origin Brazil, roasted medium-dark. Brazilian coffee tends to be naturally low in acidity, with a round, nutty, chocolatey character that doesn't ask much of the drinker — no need to "get" it the way you might need to with a bright, funky natural-process bean from somewhere more exotic.</p>
+  <p>Roasted medium-dark, that profile gets pushed further toward the familiar: bold, smooth, a little sweet, with enough body to hold up in milk-based drinks without disappearing. It's the kind of cup that works whether someone takes their coffee black, with condensed milk, or as the base of a latte.</p>
+  <p>For a café or a corporate pantry, that consistency matters more than novelty. You want the same cup on a Tuesday as you got on a Friday, and you want it to work for the widest range of people walking through the door — not just the ones who already know what a "washed Ethiopian" means.</p>
+</div>
+
+<div id="lorong-belakang" class="us-article">
+  <a href="#" class="us-back-link" onclick="closeArticle(event)">← Back to Tips and Fact</a>
+  <div class="tag">Arts</div>
+  <h2>Inside Lorong Belakang, Our Weekend Art Space</h2>
+  <p>Lorong Belakang — literally "back alley" — sits at Lorong Seni Muar, and it's exactly what the name suggests: a low-key, slightly hidden space that only really comes alive on weekends.</p>
+  <p>It started as an extension of an idea we already believed in — that a coffee shop doesn't have to just be a coffee shop. On any given Saturday, you might find local artists setting up work along the walls, a few people just there for a slow coffee and a read, and no fixed schedule telling anyone what's supposed to happen next.</p>
+  <p>That looseness is deliberate. We're not trying to run a formal gallery or a ticketed event space — just a room that gives Muar's creative community somewhere to show up, without needing a big production behind it. Some weekends it's quiet. Others it's packed. Either way, the door's open.</p>
+</div>
+
+<div id="roof-reverie" class="us-article">
+  <a href="#" class="us-back-link" onclick="closeArticle(event)">← Back to Tips and Fact</a>
+  <div class="tag">Arts</div>
+  <h2>Roof Reverie: What Happens When Music Meets Coffee</h2>
+  <p>Roof Reverie is our live session series — musicians performing under an open roof, a couple of speakers, string lights, and a crowd that's usually a mix of regulars and people who found out about it an hour before doors opened.</p>
+  <p>There's no stage in the traditional sense. Performers set up more or less where the crowd naturally gathers, which keeps the whole thing feeling closer to a living room show than a formal gig. It's intimate by accident more than by design — the space just isn't big enough to be anything else, and that turns out to be exactly the point.</p>
+  <p>Coffee's still part of it, obviously — but by the time a set's underway, most people have forgotten they came in for a drink. That's usually the sign it went well.</p>
+</div>
+
+<div id="neapolitan-technique" class="us-article">
+  <a href="#" class="us-back-link" onclick="closeArticle(event)">← Back to Tips and Fact</a>
+  <div class="tag">Pizza</div>
+  <h2>Bringing Neapolitan Technique Into a Coffee Shop Kitchen</h2>
+  <p>We didn't open as a pizza place, and for a while, pizza wasn't part of the plan at all. But once we started experimenting with high-hydration dough — the kind used in genuine Neapolitan pizza — it was hard to stop.</p>
+  <p>Neapolitan dough is deceptively simple on paper: flour, water, salt, yeast. In practice, getting it right means managing hydration levels around 70-plus percent, which makes the dough wetter and stickier than most home bakers are used to working with. Handled right, that's what gives you the airy, blistered crust with the big irregular bubbles — handled wrong, it's an unworkable mess.</p>
+  <p>We went through a lot of failed batches getting our process consistent enough to offer it to other people — which is now exactly what we do, supplying both frozen dough balls for kitchens that want to do their own thing, and par-baked shells for anyone who just wants to reheat and serve. Different level of commitment, same dough behind both.</p>
+</div>
+
+<div id="five-years" class="us-article">
+  <a href="#" class="us-back-link" onclick="closeArticle(event)">← Back to Tips and Fact</a>
+  <div class="tag">Community</div>
+  <h2>Five Years in a Heritage Shoplot</h2>
+  <p>Teduh started in 2020 as a small family effort — modest capital, a lot of uncertainty, and a shoplot on Jalan Sulaiman that's been home ever since. Like a lot of businesses that started around then, the first stretch meant working through the MCO, then rebuilding again after the floods that followed. Nothing about the early years was smooth.</p>
+  <p>What's changed since is less about any single big decision and more about steadily adding rooms to the same house. What began as a café became a roastery. The roastery became a wholesale supplier to other cafés and corporate pantries. The kitchen picked up Neapolitan pizza. And somewhere along the way, without really planning it, the shop became a place that also hosts live music and gives space to local artists.</p>
+  <p>None of that happened on a five-year plan. It happened because we kept saying yes to the next thing that made sense — and because a heritage shoplot in Muar turned out to be a pretty good place to keep doing that.</p>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Teduh</div>
+      <p>A coffee brand rooted in Muar —
+        coffee shop, wholesale, retail beans, community & merchandise.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Explore</h4>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/wholesale">Wholesale</a></li>
+        <li><a href="/tips-and-fact">Tips and Fact</a></li>
+        <li><a href="/events">Events</a></li>
+        <li><a href="/loyalty">Loyalty</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Visit</h4>
+      <ul>
+        <li><a href="/#contact">Location & Hours</a></li>
+        <li><a href="https://wa.me/601170264828" target="_blank">WhatsApp Us</a></li>
+        <li><a href="mailto:hello@teduh.com.my">Email Us</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Follow</h4>
+      <ul>
+        <li><a href="https://instagram.com/perniagaan.teduh" target="_blank">Instagram</a></li>
+        <li><a href="https://facebook.com/perniagaanteduh" target="_blank">Facebook</a></li>
+        <li><a href="https://tiktok.com/@perniagaanteduh" target="_blank">TikTok</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Teduh. All rights reserved. · 202003155860 (003128665-D)</span>
+  </div>
+</footer>
+
+<script>
+  var articleIds = ['green-to-roasted','brazil-roast','lorong-belakang','roof-reverie','neapolitan-technique','five-years'];
+
+  function openArticle(id){
+    document.querySelectorAll('.us-article').forEach(function(a){
+      a.classList.toggle('active', a.id === id);
+    });
+    document.body.classList.add('us-article-open');
+    history.pushState(null, '', '#' + id);
+    window.scrollTo({ top: 0 });
+  }
+
+  function closeArticle(e){
+    if (e) e.preventDefault();
+    document.body.classList.remove('us-article-open');
+    document.querySelectorAll('.us-article').forEach(function(a){ a.classList.remove('active'); });
+    history.pushState(null, '', window.location.pathname);
+    window.scrollTo({ top: 0 });
+  }
+
+  window.addEventListener('popstate', function(){
+    var id = window.location.hash.slice(1);
+    if (articleIds.indexOf(id) !== -1) openArticle(id);
+    else closeArticle();
+  });
+
+  var initialId = window.location.hash.slice(1);
+  if (articleIds.indexOf(initialId) !== -1) openArticle(initialId);
+
+  // Category filter
+  document.querySelectorAll('.us-filter-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.us-filter-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      var filter = btn.getAttribute('data-filter');
+      document.querySelectorAll('.us-card').forEach(function(card){
+        card.style.display = (filter === 'all' || card.getAttribute('data-category') === filter) ? '' : 'none';
+      });
+    });
+  });
+
+  // Mobile nav toggle
+  (function(){
+    var toggle = document.querySelector('.nav-toggle');
+    var links = document.querySelector('.nav-links');
+    if(!toggle || !links) return;
+    toggle.addEventListener('click', function(){ links.classList.toggle('open'); });
+    links.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){ links.classList.remove('open'); });
+    });
+  })();
+</script>
+
+</body>
+</html>
