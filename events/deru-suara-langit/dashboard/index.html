@@ -134,6 +134,16 @@
     <div class="section-label">Merch to prepare (paid orders only)</div>
     <div class="merch-fulfillment" id="merch-fulfillment"></div>
 
+    <div class="section-label">Send announcement to all paid buyers</div>
+    <div class="capacity-box" style="flex-direction:column; align-items:stretch; gap:0.7rem;">
+      <input type="text" id="announce-subject" placeholder="Subject (e.g. Venue change notice)" style="border:1px solid rgba(0,0,0,0.2); border-radius:6px; padding:0.6rem 0.8rem; font-family:var(--font-body); font-size:0.85rem;">
+      <textarea id="announce-message" placeholder="Message (plain text or simple HTML, e.g. use <br> for line breaks)" rows="4" style="border:1px solid rgba(0,0,0,0.2); border-radius:6px; padding:0.6rem 0.8rem; font-family:var(--font-body); font-size:0.85rem; resize:vertical;"></textarea>
+      <div style="display:flex; align-items:center; gap:0.8rem;">
+        <button id="announce-send" style="font-family:var(--font-body); font-size:0.8rem; border:2px solid var(--black); background:var(--sunset-coral); color:var(--white); border-radius:6px; padding:0.6rem 1rem; box-shadow:2px 2px 0px var(--black); font-weight:700;">Send to all paid buyers</button>
+        <span id="announce-status" style="font-size:0.78rem; color:var(--muted-text);"></span>
+      </div>
+    </div>
+
     <div class="section-label">Buyers / Orders</div>
     <div class="buyer-controls">
       <input type="text" id="buyer-search" placeholder="Search by name, email, or order number…">
@@ -336,6 +346,43 @@
 
   document.getElementById('buyer-search').addEventListener('input', renderBuyers);
   document.getElementById('status-filter').addEventListener('change', renderBuyers);
+
+  document.getElementById('announce-send').addEventListener('click', async () => {
+    const subject = document.getElementById('announce-subject').value.trim();
+    const messageRaw = document.getElementById('announce-message').value.trim();
+    const statusEl = document.getElementById('announce-status');
+    if (!subject || !messageRaw) {
+      statusEl.textContent = 'Fill in both subject and message first.';
+      return;
+    }
+    const paidCount = (dashboardData.buyers || []).filter(b => b.status === 'paid').length;
+    if (!confirm(`Send "${subject}" to all paid buyers (up to ${paidCount} order(s), deduplicated by email)?`)) return;
+
+    const btn = document.getElementById('announce-send');
+    btn.disabled = true;
+    statusEl.textContent = 'Sending…';
+
+    // Convert plain line breaks to <br> if the organiser typed plain text
+    const message_html = messageRaw.includes('<') ? messageRaw : messageRaw.replace(/\n/g, '<br>');
+
+    try {
+      const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/deru-notify-buyers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` },
+        body: JSON.stringify({ pin: currentPin, subject, message_html }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        statusEl.textContent = data.error;
+      } else {
+        statusEl.textContent = `Sent to ${data.sent} of ${data.total} buyer(s)${data.failed.length ? `, ${data.failed.length} failed` : ''}.`;
+      }
+    } catch (e) {
+      statusEl.textContent = 'Connection error — try again.';
+    } finally {
+      btn.disabled = false;
+    }
+  });
 </script>
 
 </body>
